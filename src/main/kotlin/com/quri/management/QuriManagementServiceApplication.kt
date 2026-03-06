@@ -1,4 +1,4 @@
-package com.quri.management.quri_management_service
+package com.quri.management
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

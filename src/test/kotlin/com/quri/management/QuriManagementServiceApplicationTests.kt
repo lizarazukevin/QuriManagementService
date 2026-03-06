@@ -1,4 +1,4 @@
-package com.quri.management.quri_management_service
+package com.quri.management
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

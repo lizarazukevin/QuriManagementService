@@ -1,0 +1,15 @@
+[versions]
+quri-models-version = "0.1.0"
+mongodb-version = "5.6.4"
+smithy-java-version = "0.0.3"
+
+[libraries]
+# Smithy server
+quri-models = { module = "com.quri:quri-models", version.ref = "quri-models-version" }
+smithy-java-aws-server-restjson = { module = "software.amazon.smithy.java:aws-server-restjson", version.ref = "smithy-java-version" }
+smithy-java-server-core = { module = "software.amazon.smithy.java:server-core", version.ref = "smithy-java-version" }
+smithy-java-server-netty = { module = "software.amazon.smithy.java:server-netty", version.ref = "smithy-java-version" }
+
+# Database
+mongodb-bson-kotlinx = { module = "org.mongodb:bson-kotlinx", version.ref = "mongodb-version" }
+mongodb-driver-kotlin-coroutine = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb-version" }

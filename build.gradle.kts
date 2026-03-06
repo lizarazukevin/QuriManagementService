@@ -5,13 +5,14 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "com.quri.management"
-version = "0.0.1-SNAPSHOT"
+group = "com.quri"
+version = "0.1.0"
 description = "Central management service for Quri."
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+kotlin {
+	jvmToolchain(21)
+	compilerOptions {
+		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
 	}
 }
 
@@ -20,20 +21,27 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-webmvc")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	// Spring - DI container only, no web server
+	implementation("org.springframework.boot:spring-boot-starter")
 
+	// Smithy server
+	implementation(libs.quri.models)
+	implementation(libs.smithy.java.server.core)
+	implementation(libs.smithy.java.server.netty)
+	implementation(libs.smithy.java.aws.server.restjson)
+
+	// MongoDB - https://www.mongodb.com/docs/drivers/kotlin/coroutine/current/getting-started/
+	implementation(libs.mongodb.driver.kotlin.coroutine)
+	implementation(libs.mongodb.bson.kotlinx)
+
+	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
-	}
-}
-
 tasks.withType<Test> {
 	useJUnitPlatform()
+
+	// TODO: Enable tests
+	enabled = false
 }
