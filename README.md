@@ -127,6 +127,8 @@ This service is under active development. Known limitations:
 
 Please follow existing code style and architecture conventions. Update docs alongside code changes.
 
+> Sign your commits by creating SSH keys and adding them to your account: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+
 ---
 
 ## License
