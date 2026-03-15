@@ -135,7 +135,9 @@ git config --global user.signingkey ~/.ssh/id_ed25519.pub
 git config --global commit.gpgsign true
 ```
 
-After adding ssh to github, add locally to view signatures:
+> When adding new ssh to github, make sure the key type is _**signing**_
+
+Add new ssh to allowlist to view signatures:
 ```shell
 echo "your_email@example.com namespaces=\"git\" $(cat ~/.ssh/id_ed25519.pub)" >> ~/.ssh/allowed_signers
 git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
