@@ -128,6 +128,21 @@ This service is under active development. Known limitations:
 Please follow existing code style and architecture conventions. Update docs alongside code changes.
 
 > Sign your commits by creating SSH keys and adding them to your account: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+```shell
+ssh-add ~/.ssh/id_ed25519
+git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_ed25519.pub
+git config --global commit.gpgsign true
+```
+
+> When adding new ssh to github, make sure the key type is _**signing**_
+
+Add new ssh to allowlist to view signatures:
+```shell
+echo "your_email@example.com namespaces=\"git\" $(cat ~/.ssh/id_ed25519.pub)" >> ~/.ssh/allowed_signers
+git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
+```
+
 
 ---
 
