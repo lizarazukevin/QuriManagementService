@@ -5,13 +5,12 @@ import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.quri.management.db.mongo.MongoSchema.Collections.PROFILES
 import com.quri.management.db.mongo.documents.ProfileDocument
+import com.quri.management.db.mongo.paginate
 import com.quri.server.model.CreateProfileInput
 import com.quri.server.model.Profile
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.toList
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 /**
  * Data access layer for the profiles collection in MongoDB.
@@ -44,7 +43,7 @@ class ProfileCollection(
      * Persists a new profile document and returns it alongside its generated ID.
      *
      * @param input the [CreateProfileInput] containing personal user info
-     * @return the persisted [Profile] with [Profile.profileId] populated, or `null` if
+     * @return the persisted [Profile] with [Profile.id] populated, or `null` if
      * the insert did not return a generated ID
      */
     suspend fun create(input: CreateProfileInput): Profile? {
@@ -58,20 +57,23 @@ class ProfileCollection(
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
         return doc.toSmithyModel().toBuilder()
-            .profileId(generatedId)
+            .id(generatedId)
             .createdAt(doc.createdAt)
             .updatedAt(doc.updatedAt)
             .build()
     }
 
     /**
-     * Returns all profiles in the collection.
+     * Returns a paginated list of all profiles in the collection in ascending order by ID.
      *
-     * @return list of all [Profile] documents mapped to Smithy models
+     * @param pageSize is the maximum results per page
+     * @param nextToken is the bookmarked ID the next paginated list starts from
+     *
+     * @return pair of all [Profile] documents mapped to Smithy models and nullable pagination token
      */
-    suspend fun listAll(): List<Profile> {
-        return collection.find().toList().map { it.toSmithyModel() }
-    }
+    suspend fun listAll(pageSize: Int, nextToken: String?): Pair<List<Profile>, String?> =
+        paginate(collection, pageSize, nextToken) { it.id }
+            .let { (docs, token) -> docs.map { it.toSmithyModel()} to token }
 
     /**
      * Deletes a profile by its [ObjectId].
@@ -86,11 +88,13 @@ class ProfileCollection(
 
     private fun ProfileDocument.toSmithyModel(): Profile =
         Profile.builder()
-            .profileId(id.toString())
+            .id(id.toString())
             .username(username)
             .firstName(firstName)
             .lastName(lastName)
             .email(email)
             .phoneNumber(phoneNumber)
+            .createdAt(createdAt)
+            .updatedAt(updatedAt)
             .build()
 }

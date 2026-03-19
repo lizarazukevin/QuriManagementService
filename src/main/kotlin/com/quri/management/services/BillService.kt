@@ -44,11 +44,12 @@ class BillService(
                 .build()
 
     /**
-     * Returns all bills.
+     * Returns a paginated list of bills.
      *
-     * @return list of all [Bill] records
+     * @return list of all [Bill] records and nullable pagination token
      */
-    suspend fun listBills(): List<Bill> = billCollection.findAll()
+    suspend fun listBills(pageSize: Int, nextToken: String?): Pair<List<Bill>, String?> =
+        billCollection.listAll(pageSize, nextToken)
 
     /**
      * Deletes a bill by its ID.

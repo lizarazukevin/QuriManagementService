@@ -19,7 +19,7 @@ data class ProfileDocument(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val phoneNumber: String,
+    val phoneNumber: String?,
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now()
 )

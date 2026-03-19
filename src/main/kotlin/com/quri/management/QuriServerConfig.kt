@@ -70,7 +70,7 @@ class QuriServerConfig {
     @Bean
     fun smithyServer(
         quriService: Quri,
-        @Value("\${smithy.server.port}") port: Int): Server {
+        @Value($$"${smithy.server.port}") port: Int): Server {
         val server = NettyServerProvider()
             .serverBuilder()
             .endpoints(URI.create("http://localhost:$port"))
