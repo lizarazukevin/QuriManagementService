@@ -6,11 +6,11 @@ import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.quri.management.db.mongo.MongoSchema.Collections.BILLS
 import com.quri.management.db.mongo.documents.BillDocument
 import com.quri.management.db.mongo.documents.MonetaryAmountDocument
+import com.quri.management.db.mongo.paginate
 import com.quri.server.model.Bill
 import com.quri.server.model.CreateBillInput
 import com.quri.server.model.MonetaryAmount
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.toList
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
 
@@ -45,7 +45,7 @@ class BillCollection(
      * Persists a new bill document and returns it alongside its generated ID.
      *
      * @param input the [CreateBillInput] containing total and balance
-     * @return the persisted [Bill] with [Bill.billId] populated, or `null` if
+     * @return the persisted [Bill] with [Bill.id] populated, or `null` if
      * the insert did not return a generated ID
      */
     suspend fun create(input: CreateBillInput): Bill? {
@@ -56,20 +56,23 @@ class BillCollection(
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
         return doc.toSmithyModel().toBuilder()
-            .billId(generatedId)
+            .id(generatedId)
             .createdAt(doc.createdAt)
             .updatedAt(doc.updatedAt)
             .build()
     }
 
     /**
-     * Returns all bills in the collection.
+     * Returns a paginated list of all bills in the collection in ascending order by ID.
      *
-     * @return list of all [Bill] documents mapped to Smithy models
+     * @param pageSize is the maximum results per page
+     * @param nextToken is the bookmarked ID the next paginated list starts from
+     *
+     * @return list of all [Bill] documents mapped to Smithy models and nullable pagination token
      */
-    suspend fun findAll(): List<Bill> {
-        return collection.find().toList().map { it.toSmithyModel() }
-    }
+    suspend fun listAll(pageSize: Int, nextToken: String?): Pair<List<Bill>, String?> =
+        paginate(collection, pageSize, nextToken) { it.id }
+            .let { (docs, token) -> docs.map { it.toSmithyModel()} to token }
 
     /**
      * Deletes a bill by its [ObjectId]
@@ -84,7 +87,7 @@ class BillCollection(
 
     private fun BillDocument.toSmithyModel(): Bill =
         Bill.builder()
-            .billId(id.toString())
+            .id(id.toString())
             .total(
                 MonetaryAmount.builder()
                     .amount(total.amount)
@@ -97,5 +100,7 @@ class BillCollection(
                     .currencyCode(balance.currencyCode)
                     .build()
             )
+            .createdAt(createdAt)
+            .updatedAt(updatedAt)
             .build()
 }

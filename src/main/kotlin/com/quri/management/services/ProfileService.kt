@@ -45,11 +45,12 @@ class ProfileService(
                 .build()
 
     /**
-     * Returns all profiles.
+     * Returns a paginated list of profiles.
      *
-     * @return list of all [Profile] records
+     * @return list of all [Profile] records and nullable pagination token
      */
-    suspend fun listProfiles(): List<Profile> = profileCollection.listAll()
+    suspend fun listProfiles(pageSize: Int, nextToken: String?): Pair<List<Profile>, String?> =
+        profileCollection.listAll(pageSize, nextToken)
 
     /**
      * Deletes a profile by its ID.

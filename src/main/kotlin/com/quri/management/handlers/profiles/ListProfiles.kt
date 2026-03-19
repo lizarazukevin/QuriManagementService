@@ -21,12 +21,16 @@ class ListProfiles(
     private val profilesService: ProfileService
 ): ListProfilesOperation {
     override fun listProfiles(input: ListProfilesInput, context: RequestContext?): ListProfilesOutput {
-        val profilesFound = runBlocking {
-            profilesService.listProfiles()
+        val (profiles, newToken) = runBlocking {
+            profilesService.listProfiles(
+                pageSize = input.maxResults ?: 20,
+                nextToken = input.nextToken
+            )
         }
 
         return ListProfilesOutput.builder()
-            .profiles(profilesFound)
+            .profiles(profiles)
+            .nextToken(newToken)
             .build()
     }
 }

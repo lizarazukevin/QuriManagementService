@@ -21,12 +21,16 @@ class ListBills(
     private val billService: BillService
 ): ListBillsOperation {
     override fun listBills(input: ListBillsInput, context: RequestContext?): ListBillsOutput {
-        val billsFound = runBlocking {
-            billService.listBills()
+        val (bills, newToken) = runBlocking {
+            billService.listBills(
+                pageSize = input.maxResults ?: 20,
+                nextToken = input.nextToken
+            )
         }
 
         return ListBillsOutput.builder()
-            .bills(billsFound)
+            .bills(bills)
+            .nextToken(newToken)
             .build()
     }
 }
