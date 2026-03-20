@@ -1,11 +1,11 @@
 package com.quri.management.services
 
 import com.quri.management.db.mongo.collections.ProfileCollection
-import com.quri.server.model.Profile
 import com.quri.server.model.CreateProfileInput
 import com.quri.server.model.DeleteProfileInput
 import com.quri.server.model.GetProfileInput
 import com.quri.server.model.InternalError
+import com.quri.server.model.Profile
 import com.quri.server.model.ResourceNotFoundException
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service
  * Business logic layer for profile operations.
  */
 @Service
-class ProfileService(
-    private val profileCollection: ProfileCollection
-) {
+class ProfileService(private val profileCollection: ProfileCollection) {
 
     /**
      * Retrieves a profile by its ID.
@@ -47,10 +45,15 @@ class ProfileService(
     /**
      * Returns a paginated list of profiles.
      *
+     * @param pageSize is the maximum results per page
+     * @param nextToken is the bookmarked ID the next paginated list starts from
+     *
      * @return list of all [Profile] records and nullable pagination token
      */
-    suspend fun listProfiles(pageSize: Int, nextToken: String?): Pair<List<Profile>, String?> =
-        profileCollection.listAll(pageSize, nextToken)
+    suspend fun listProfiles(
+        pageSize: Int,
+        nextToken: String?,
+    ): Pair<List<Profile>, String?> = profileCollection.listAll(pageSize, nextToken)
 
     /**
      * Deletes a profile by its ID.

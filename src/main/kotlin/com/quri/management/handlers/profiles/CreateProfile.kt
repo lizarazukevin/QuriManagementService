@@ -17,10 +17,11 @@ import software.amazon.smithy.java.server.RequestContext
  * @see ProfileService.createProfile
  */
 @Component
-class CreateProfile (
-    private val profileService: ProfileService
-): CreateProfileOperation {
-    override fun createProfile(input: CreateProfileInput, context: RequestContext?): CreateProfileOutput {
+class CreateProfile(private val profileService: ProfileService) : CreateProfileOperation {
+    override fun createProfile(
+        input: CreateProfileInput,
+        context: RequestContext?,
+    ): CreateProfileOutput {
         val createdProfile = runBlocking {
             profileService.createProfile(input)
         }

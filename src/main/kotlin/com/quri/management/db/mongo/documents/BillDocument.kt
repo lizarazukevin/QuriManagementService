@@ -15,5 +15,5 @@ data class BillDocument(
     val total: MonetaryAmountDocument,
     val balance: MonetaryAmountDocument,
     val createdAt: Instant = Instant.now(),
-    val updatedAt: Instant = Instant.now()
+    val updatedAt: Instant = Instant.now(),
 )

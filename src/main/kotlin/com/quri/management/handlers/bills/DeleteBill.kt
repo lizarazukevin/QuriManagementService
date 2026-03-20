@@ -17,10 +17,11 @@ import software.amazon.smithy.java.server.RequestContext
  * @see BillService.deleteBill
  */
 @Component
-class DeleteBill(
-    private val billService: BillService
-) : DeleteBillOperation {
-    override fun deleteBill(input: DeleteBillInput, context: RequestContext?): DeleteBillOutput {
+class DeleteBill(private val billService: BillService) : DeleteBillOperation {
+    override fun deleteBill(
+        input: DeleteBillInput,
+        context: RequestContext?,
+    ): DeleteBillOutput {
         val deletedBillId = runBlocking {
             billService.deleteBill(input)
         }

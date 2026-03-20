@@ -1,12 +1,12 @@
 package com.quri.management.handlers.bills
 
 import com.quri.management.services.BillService
-import com.quri.server.service.CreateBillOperation
 import com.quri.server.model.CreateBillInput
 import com.quri.server.model.CreateBillOutput
+import com.quri.server.service.CreateBillOperation
 import kotlinx.coroutines.runBlocking
-import software.amazon.smithy.java.server.RequestContext
 import org.springframework.stereotype.Component
+import software.amazon.smithy.java.server.RequestContext
 
 /**
  * Handles the [CreateBill] operation.
@@ -17,10 +17,11 @@ import org.springframework.stereotype.Component
  * @see BillService.createBill
  */
 @Component
-class CreateBill(
-    private val billService: BillService
-) : CreateBillOperation {
-    override fun createBill(input: CreateBillInput, context: RequestContext?): CreateBillOutput {
+class CreateBill(private val billService: BillService) : CreateBillOperation {
+    override fun createBill(
+        input: CreateBillInput,
+        context: RequestContext?,
+    ): CreateBillOutput {
         val createdBill = runBlocking {
             billService.createBill(input)
         }

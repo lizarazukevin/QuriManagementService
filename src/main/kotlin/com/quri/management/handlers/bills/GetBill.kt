@@ -17,10 +17,11 @@ import software.amazon.smithy.java.server.RequestContext
  * @see BillService.getBill
  */
 @Component
-class GetBill (
-    private val billService: BillService
-): GetBillOperation {
-    override fun getBill(input: GetBillInput, context: RequestContext?): GetBillOutput {
+class GetBill(private val billService: BillService) : GetBillOperation {
+    override fun getBill(
+        input: GetBillInput,
+        context: RequestContext?,
+    ): GetBillOutput {
         val billFound = runBlocking {
             billService.getBill(input)
         }

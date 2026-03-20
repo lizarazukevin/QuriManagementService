@@ -42,8 +42,8 @@ class MongoClientProvider {
      */
     private fun requireEnv(name: String): String =
         System.getenv(name)?.takeIf { it.isNotBlank() }
-            ?: throw IllegalStateException(
+            ?: error(
                 "Required environment variable '$name' is not set. " +
-                        "Check your run configuration or deployment secrets."
+                    "Check your run configuration or deployment secrets.",
             )
 }

@@ -26,7 +26,7 @@ suspend fun <T : Any> paginate(
     pageSize: Int,
     nextToken: String?,
     filter: Bson = Filters.empty(),
-    idExtractor: (T) -> ObjectId
+    idExtractor: (T) -> ObjectId,
 ): Pair<List<T>, String?> {
     val cursorFilter = nextToken
         ?.let { Filters.and(filter, Filters.gt("_id", ObjectId(it))) }
