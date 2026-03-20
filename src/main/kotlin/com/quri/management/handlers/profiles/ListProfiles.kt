@@ -8,6 +8,8 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import software.amazon.smithy.java.server.RequestContext
 
+const val DEFAULT_PROFILE_PAGE_SIZE = 20
+
 /**
  * Handles the [ListProfiles] operation.
  *
@@ -17,14 +19,15 @@ import software.amazon.smithy.java.server.RequestContext
  * @see ProfileService.listProfiles
  */
 @Component
-class ListProfiles(
-    private val profilesService: ProfileService
-): ListProfilesOperation {
-    override fun listProfiles(input: ListProfilesInput, context: RequestContext?): ListProfilesOutput {
+class ListProfiles(private val profilesService: ProfileService) : ListProfilesOperation {
+    override fun listProfiles(
+        input: ListProfilesInput,
+        context: RequestContext?,
+    ): ListProfilesOutput {
         val (profiles, newToken) = runBlocking {
             profilesService.listProfiles(
-                pageSize = input.maxResults ?: 20,
-                nextToken = input.nextToken
+                pageSize = input.maxResults ?: DEFAULT_PROFILE_PAGE_SIZE,
+                nextToken = input.nextToken,
             )
         }
 

@@ -12,9 +12,7 @@ import org.springframework.context.annotation.Configuration
  * Add a new [Bean] here for each additional database the application needs.
  */
 @Configuration
-class MongoDatabaseProvider(
-    private val mongoClient: MongoClient
-) {
+class MongoDatabaseProvider(private val mongoClient: MongoClient) {
     @Bean
     fun dataStoreDatabase(): MongoDatabase = mongoClient.getDatabase(DATA_STORE)
 }

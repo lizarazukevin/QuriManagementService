@@ -25,9 +25,7 @@ import org.springframework.stereotype.Component
  * @param dataStoreDatabase the MongoDB database instance injected by Spring
  */
 @Component
-class BillCollection(
-    dataStoreDatabase: MongoDatabase
-) {
+class BillCollection(dataStoreDatabase: MongoDatabase) {
     private val collection: MongoCollection<BillDocument> =
         dataStoreDatabase.getCollection(BILLS, BillDocument::class.java)
 
@@ -37,9 +35,9 @@ class BillCollection(
      * @param id the [ObjectId] of the bill to retrieve
      * @return the matching [Bill], or `null` if not found
      */
-    suspend fun findById(id: ObjectId): Bill? {
-        return collection.find(eq("_id", id)).firstOrNull()?.toSmithyModel()
-    }
+    suspend fun findById(id: ObjectId): Bill? =
+        collection.find(eq("_id", id))
+            .firstOrNull()?.toSmithyModel()
 
     /**
      * Persists a new bill document and returns it alongside its generated ID.
@@ -51,7 +49,7 @@ class BillCollection(
     suspend fun create(input: CreateBillInput): Bill? {
         val doc = BillDocument(
             total = MonetaryAmountDocument(input.total.amount, input.total.currencyCode),
-            balance = MonetaryAmountDocument(input.balance.amount, input.balance.currencyCode)
+            balance = MonetaryAmountDocument(input.balance.amount, input.balance.currencyCode),
         )
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
@@ -70,9 +68,12 @@ class BillCollection(
      *
      * @return list of all [Bill] documents mapped to Smithy models and nullable pagination token
      */
-    suspend fun listAll(pageSize: Int, nextToken: String?): Pair<List<Bill>, String?> =
+    suspend fun listAll(
+        pageSize: Int,
+        nextToken: String?,
+    ): Pair<List<Bill>, String?> =
         paginate(collection, pageSize, nextToken) { it.id }
-            .let { (docs, token) -> docs.map { it.toSmithyModel()} to token }
+            .let { (docs, token) -> docs.map { it.toSmithyModel() } to token }
 
     /**
      * Deletes a bill by its [ObjectId]
@@ -92,13 +93,13 @@ class BillCollection(
                 MonetaryAmount.builder()
                     .amount(total.amount)
                     .currencyCode(total.currencyCode)
-                    .build()
+                    .build(),
             )
             .balance(
                 MonetaryAmount.builder()
                     .amount(balance.amount)
                     .currencyCode(balance.currencyCode)
-                    .build()
+                    .build(),
             )
             .createdAt(createdAt)
             .updatedAt(updatedAt)

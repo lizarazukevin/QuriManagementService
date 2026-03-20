@@ -17,10 +17,11 @@ import software.amazon.smithy.java.server.RequestContext
  * @see ProfileService.deleteProfile
  */
 @Component
-class DeleteProfile(
-    private val profileService: ProfileService
-): DeleteProfileOperation {
-    override fun deleteProfile(input: DeleteProfileInput, context: RequestContext?): DeleteProfileOutput {
+class DeleteProfile(private val profileService: ProfileService) : DeleteProfileOperation {
+    override fun deleteProfile(
+        input: DeleteProfileInput,
+        context: RequestContext?,
+    ): DeleteProfileOutput {
         val deletedProfileId = runBlocking {
             profileService.deleteProfile(input)
         }

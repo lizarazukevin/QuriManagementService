@@ -8,6 +8,8 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import software.amazon.smithy.java.server.RequestContext
 
+const val DEFAULT_BILLS_PAGE_SIZE = 100
+
 /**
  * Handles the [ListBills] operation.
  *
@@ -17,14 +19,15 @@ import software.amazon.smithy.java.server.RequestContext
  * @see BillService.listBills
  */
 @Component
-class ListBills(
-    private val billService: BillService
-): ListBillsOperation {
-    override fun listBills(input: ListBillsInput, context: RequestContext?): ListBillsOutput {
+class ListBills(private val billService: BillService) : ListBillsOperation {
+    override fun listBills(
+        input: ListBillsInput,
+        context: RequestContext?,
+    ): ListBillsOutput {
         val (bills, newToken) = runBlocking {
             billService.listBills(
-                pageSize = input.maxResults ?: 20,
-                nextToken = input.nextToken
+                pageSize = input.maxResults ?: DEFAULT_BILLS_PAGE_SIZE,
+                nextToken = input.nextToken,
             )
         }
 

@@ -23,9 +23,7 @@ import org.springframework.stereotype.Component
  *  @param dataStoreDatabase the MongoDB database instance injected by Spring
  */
 @Component
-class ProfileCollection(
-    dataStoreDatabase: MongoDatabase
-) {
+class ProfileCollection(dataStoreDatabase: MongoDatabase) {
     private val collection: MongoCollection<ProfileDocument> =
         dataStoreDatabase.getCollection(PROFILES, ProfileDocument::class.java)
 
@@ -35,9 +33,11 @@ class ProfileCollection(
      * @param id the [ObjectId] of the profile to retrieve
      * @return the matching [Profile], or `null` if not found
      */
-    suspend fun findById(id: ObjectId): Profile? {
-        return collection.find(eq("_id", id)).firstOrNull()?.toSmithyModel()
-    }
+    suspend fun findById(id: ObjectId): Profile? =
+        collection
+            .find(eq("_id", id))
+            .firstOrNull()
+            ?.toSmithyModel()
 
     /**
      * Persists a new profile document and returns it alongside its generated ID.
@@ -52,7 +52,7 @@ class ProfileCollection(
             firstName = input.firstName,
             lastName = input.lastName,
             email = input.email,
-            phoneNumber = input.phoneNumber
+            phoneNumber = input.phoneNumber,
         )
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
@@ -71,9 +71,14 @@ class ProfileCollection(
      *
      * @return pair of all [Profile] documents mapped to Smithy models and nullable pagination token
      */
-    suspend fun listAll(pageSize: Int, nextToken: String?): Pair<List<Profile>, String?> =
+    suspend fun listAll(
+        pageSize: Int,
+        nextToken: String?,
+    ): Pair<List<Profile>, String?> =
         paginate(collection, pageSize, nextToken) { it.id }
-            .let { (docs, token) -> docs.map { it.toSmithyModel()} to token }
+            .let { (docs, token) ->
+                docs.map { it.toSmithyModel() } to token
+            }
 
     /**
      * Deletes a profile by its [ObjectId].

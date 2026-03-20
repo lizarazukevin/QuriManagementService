@@ -37,6 +37,7 @@ class QuriServerConfig {
      * fail to compile rather than fail at runtime.
      */
     @Bean
+    @Suppress("LongParameterList")
     fun quriService(
         createBillHandler: CreateBill,
         createProfileHandler: CreateProfile,
@@ -45,17 +46,18 @@ class QuriServerConfig {
         getBillHandler: GetBill,
         getProfileHandler: GetProfile,
         listBillsHandler: ListBills,
-        listProfilesHandler: ListProfiles
-    ): Quri = Quri.builder()
-        .addCreateBillOperation(createBillHandler)
-        .addDeleteBillOperation(deleteBillHandler)
-        .addGetBillOperation(getBillHandler)
-        .addListBillsOperation(listBillsHandler)
-        .addCreateProfileOperation(createProfileHandler)
-        .addDeleteProfileOperation(deleteProfileHandler)
-        .addGetProfileOperation(getProfileHandler)
-        .addListProfilesOperation(listProfilesHandler)
-        .build()
+        listProfilesHandler: ListProfiles,
+    ): Quri =
+        Quri.builder()
+            .addCreateBillOperation(createBillHandler)
+            .addDeleteBillOperation(deleteBillHandler)
+            .addGetBillOperation(getBillHandler)
+            .addListBillsOperation(listBillsHandler)
+            .addCreateProfileOperation(createProfileHandler)
+            .addDeleteProfileOperation(deleteProfileHandler)
+            .addGetProfileOperation(getProfileHandler)
+            .addListProfilesOperation(listProfilesHandler)
+            .build()
 
     /**
      * Starts the Smithy Netty HTTP server and registers it as a Spring bean
@@ -70,7 +72,8 @@ class QuriServerConfig {
     @Bean
     fun smithyServer(
         quriService: Quri,
-        @Value($$"${smithy.server.port}") port: Int): Server {
+        @Value($$"${smithy.server.port}") port: Int,
+    ): Server {
         val server = NettyServerProvider()
             .serverBuilder()
             .endpoints(URI.create("http://localhost:$port"))

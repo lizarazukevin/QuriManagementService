@@ -57,6 +57,41 @@ The service starts at `http://localhost:8080`.
 
 ---
 
+## Code Quality
+
+This project uses static analysis tools to maintain code quality and consistency:
+
+### Detekt
+[Detekt](https://detekt.dev/) is a static analysis tool for Kotlin that helps identify code smells, complexity issues, and potential bugs. It's configured with comprehensive rules covering:
+
+- **Complexity analysis** - Detects overly complex functions and classes
+- **Naming conventions** - Enforces consistent naming patterns
+- **Performance optimizations** - Identifies potential performance issues
+- **Potential bugs** - Catches common programming mistakes
+- **Style enforcement** - Maintains consistent code formatting
+
+### ktlint
+[ktlint](https://pinterest.github.io/ktlint/) is a Kotlin code formatter that enforces the official Kotlin coding style. It automatically formats code to ensure consistency across the project.
+
+### Usage
+
+Run the linters to check code quality:
+```bash
+./gradlew detekt
+```
+
+The linters are configured to:
+- Auto-correct formatting issues (ktlint)
+- Generate multiple report formats (HTML, SARIF, Markdown)
+- Integrate with your IDE for real-time feedback
+- Work with CI/CD pipelines
+
+Configuration files:
+- Main config: `config/detekt/detekt.yml`
+- Rules are based on IntelliJ IDEA style with custom project-specific settings
+
+---
+
 ## API
 
 All endpoints accept and return JSON.

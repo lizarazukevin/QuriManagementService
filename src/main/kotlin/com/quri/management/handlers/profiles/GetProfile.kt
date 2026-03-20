@@ -17,10 +17,11 @@ import software.amazon.smithy.java.server.RequestContext
  * @see ProfileService.getProfileFromId
  */
 @Component
-class GetProfile(
-    private val profileService: ProfileService
-): GetProfileOperation {
-    override fun getProfile(input: GetProfileInput, context: RequestContext?): GetProfileOutput {
+class GetProfile(private val profileService: ProfileService) : GetProfileOperation {
+    override fun getProfile(
+        input: GetProfileInput,
+        context: RequestContext?,
+    ): GetProfileOutput {
         val foundProfile = runBlocking {
             profileService.getProfileFromId(input)
         }

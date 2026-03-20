@@ -11,7 +11,8 @@ import java.math.BigDecimal
  * @param amount numerical value
  * @param currencyCode ISO 4217 alphabetic currency code (e.g. USD, EUR, JPY)
  */
+@Suppress("ClassSignature")
 data class MonetaryAmountDocument(
     val amount: BigDecimal,
-    val currencyCode: String
+    val currencyCode: String,
 )

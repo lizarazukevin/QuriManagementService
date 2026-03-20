@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service
  * Business logic layer for bill operations.
  */
 @Service
-class BillService(
-    private val billCollection: BillCollection
-) {
+class BillService(private val billCollection: BillCollection) {
     /**
      * Retrieves a bill by its ID.
      *
@@ -46,10 +44,15 @@ class BillService(
     /**
      * Returns a paginated list of bills.
      *
+     * @param pageSize is the maximum results per page
+     * @param nextToken is the bookmarked ID the next paginated list starts from
+     *
      * @return list of all [Bill] records and nullable pagination token
      */
-    suspend fun listBills(pageSize: Int, nextToken: String?): Pair<List<Bill>, String?> =
-        billCollection.listAll(pageSize, nextToken)
+    suspend fun listBills(
+        pageSize: Int,
+        nextToken: String?,
+    ): Pair<List<Bill>, String?> = billCollection.listAll(pageSize, nextToken)
 
     /**
      * Deletes a bill by its ID.
@@ -58,10 +61,9 @@ class BillService(
      * @return the deleted bill ID as a [String]
      * @throws ResourceNotFoundException if no bill exists with the given ID
      */
-    suspend fun deleteBill(input: DeleteBillInput): String {
-        return billCollection.deleteById(ObjectId(input.billId))?.toString()
+    suspend fun deleteBill(input: DeleteBillInput): String =
+        billCollection.deleteById(ObjectId(input.billId))?.toString()
             ?: throw ResourceNotFoundException.builder()
                 .message("Bill with ID '${input.billId}' not found")
                 .build()
-    }
 }
