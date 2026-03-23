@@ -48,8 +48,8 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
      */
     suspend fun create(input: CreateBillInput): Bill? {
         val doc = BillDocument(
-            total = MonetaryAmountDocument(input.total.amount, input.total.currencyCode),
-            balance = MonetaryAmountDocument(input.balance.amount, input.balance.currencyCode),
+            total = MonetaryAmountDocument(input.total.amount, input.total.currency),
+            balance = MonetaryAmountDocument(input.balance.amount, input.balance.currency),
         )
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
@@ -92,13 +92,13 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
             .total(
                 MonetaryAmount.builder()
                     .amount(total.amount)
-                    .currencyCode(total.currencyCode)
+                    .currency(total.currencyCode)
                     .build(),
             )
             .balance(
                 MonetaryAmount.builder()
                     .amount(balance.amount)
-                    .currencyCode(balance.currencyCode)
+                    .currency(balance.currencyCode)
                     .build(),
             )
             .createdAt(createdAt)
