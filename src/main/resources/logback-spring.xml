@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Restores Spring Boot's %highlight, %cyan, and %clr color converters -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- Imports from application.properties -->
+    <springProperty scope="context" name="appName" source="spring.application.name"/>
+
+    <!-- ==========================================
+     CONSOLE — human-readable, for local dev
+     ========================================== -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %clr(%d{HH:mm:ss.SSS}){faint} %highlight(%-5level) %cyan(%-30.30logger{30}) [%X{requestId:-no-request-id}] %msg%n%ex
+            </pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ==========================================
+         FILE — structured JSON, for aggregators
+         Add logstash-logback-encoder dependency
+         when this appender is activated
+         ========================================== -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${appName}.log</file>
+
+        <!-- Roll daily AND when file hits 10MB — %i required for size-based index -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/${appName}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+
+        <!-- JSON encoder — every field queryable -->
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <timeZone>UTC</timeZone>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <level>level</level>
+                <logger>logger</logger>
+                <thread>thread</thread>
+                <message>message</message>
+                <stackTrace>stackTrace</stackTrace>
+
+                <!-- Strip noise -->
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+        </encoder>
+    </appender>
+
+    <!-- Async wrapper so file I/O never blocks request threads -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <!-- ==========================================
+         PROFILE ROUTING
+         local -> console only, no file I/O overhead
+         prod/staging -> both, JSON goes to file
+         ========================================== -->
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="com.quri" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="prod,staging">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+        </root>
+        <logger name="com.quri" level="INFO" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+        </logger>
+    </springProfile>
+
+    <!-- Suppress noisy third-party frameworks -->
+    <logger name="software.amazon.smithy" level="WARN"/>
+    <logger name="org.springframework"    level="WARN"/>
+    <logger name="org.mongodb.driver"     level="WARN"/>
+
+</configuration>

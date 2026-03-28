@@ -32,6 +32,9 @@ dependencies {
 	// Spring - DI container only, no web server
 	implementation("org.springframework.boot:spring-boot-starter")
 
+	// Structured JSON logging for external monitoring tools
+	implementation(libs.logstash.logback.encoder)
+
 	// Smithy server
 	implementation(libs.quri.models)
 	implementation(libs.smithy.java.server.core)
@@ -64,4 +67,13 @@ tasks.withType<Test> {
 
 	// TODO: Enable tests
 	enabled = false
+}
+
+configurations.all {
+	resolutionStrategy.eachDependency {
+		if (requested.group == "com.fasterxml.jackson.core") {
+			useVersion("2.18.6")
+			because("GHSA-72hv-8253-57qq patched in 2.18.6")
+		}
+	}
 }
