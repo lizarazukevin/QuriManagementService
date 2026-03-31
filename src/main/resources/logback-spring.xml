@@ -13,7 +13,7 @@
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                %clr(%d{HH:mm:ss.SSS}){faint} %highlight(%-5level) %cyan(%-30.30logger{30}) [%X{requestId:-no-request-id}] %msg%n%ex
+                %clr(%d{HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr(${PID:- }){magenta} %cyan(%-30.30logger{30}) [%X{requestId:-no-request-id}] %msg%n%ex
             </pattern>
             <charset>utf8</charset>
         </encoder>
