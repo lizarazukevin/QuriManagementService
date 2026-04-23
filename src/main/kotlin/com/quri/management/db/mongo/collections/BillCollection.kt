@@ -3,13 +3,13 @@ package com.quri.management.db.mongo.collections
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import com.quri.client.model.Bill
+import com.quri.client.model.CreateBillInput
+import com.quri.client.model.MonetaryAmount
 import com.quri.management.db.mongo.MongoSchema.Collections.BILLS
 import com.quri.management.db.mongo.documents.BillDocument
 import com.quri.management.db.mongo.documents.MonetaryAmountDocument
 import com.quri.management.db.mongo.paginate
-import com.quri.server.model.Bill
-import com.quri.server.model.CreateBillInput
-import com.quri.server.model.MonetaryAmount
 import kotlinx.coroutines.flow.firstOrNull
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component

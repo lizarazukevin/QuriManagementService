@@ -1,12 +1,12 @@
 package com.quri.management.services
 
+import com.quri.client.model.Bill
+import com.quri.client.model.CreateBillInput
+import com.quri.client.model.DeleteBillInput
+import com.quri.client.model.GetBillInput
+import com.quri.client.model.InternalFailureException
+import com.quri.client.model.ResourceNotFoundException
 import com.quri.management.db.mongo.collections.BillCollection
-import com.quri.server.model.Bill
-import com.quri.server.model.CreateBillInput
-import com.quri.server.model.DeleteBillInput
-import com.quri.server.model.GetBillInput
-import com.quri.server.model.InternalError
-import com.quri.server.model.ResourceNotFoundException
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 
@@ -22,10 +22,10 @@ class BillService(private val billCollection: BillCollection) {
      * @return the matching [Bill]
      * @throws ResourceNotFoundException if no bill exists with the given ID
      */
-    suspend fun getBill(input: GetBillInput): Bill =
+    suspend fun getBillFromId(input: GetBillInput): Bill =
         billCollection.findById(ObjectId(input.billId))
             ?: throw ResourceNotFoundException.builder()
-                .message("Bill with ID '${input.billId}' not found")
+                .message("Bill with ID `${input.billId}` not found")
                 .build()
 
     /**
@@ -33,11 +33,11 @@ class BillService(private val billCollection: BillCollection) {
      *
      * @param input contains the total and balance for the new bill
      * @return the persisted [Bill] with its generated ID
-     * @throws InternalError if the insert did not return a generated ID
+     * @throws InternalFailureException if the insert did not return a generated ID
      */
     suspend fun createBill(input: CreateBillInput): Bill =
         billCollection.create(input)
-            ?: throw InternalError.builder()
+            ?: throw InternalFailureException.builder()
                 .message("Failed to create bill")
                 .build()
 

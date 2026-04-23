@@ -1,24 +1,31 @@
 import dev.detekt.gradle.Detekt
 
 plugins {
-	kotlin("jvm") version "2.2.20"
-	kotlin("plugin.spring") version "2.2.20"
-	id("org.springframework.boot") version "4.0.0-RC1"
-	id("io.spring.dependency-management") version "1.1.7"
-	id("dev.detekt") version("2.0.0-alpha.1")
+	alias(libs.plugins.detekt)
+	alias(libs.plugins.kotlin.jvm)
+	alias(libs.plugins.kotlin.spring)
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.spring.dependency)
 }
 
 group = "com.quri"
 version = "0.1.0"
 description = "Central management service for Quri."
 
+// ── Kotlin Compiler ───────────────────────────────────────────────────────────
 kotlin {
 	jvmToolchain(21)
 	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+		// Treat platform types (Java nullability) as errors rather than warnings.
+		// param-property enables annotation targets on constructor parameters.
+		freeCompilerArgs.addAll(
+			"-Xjsr305=strict",
+			"-Xannotation-default-target=param-property")
 	}
 }
 
+// ── Detekt (static analysis + ktlint formatting) ──────────────────────────────
+// Ref: https://detekt.dev/docs/2.0.0-alpha.1/intro
 detekt {
 	config.setFrom(file("config/detekt/detekt.yml"))
 	buildUponDefaultConfig = true
@@ -28,31 +35,49 @@ repositories {
 	mavenCentral()
 }
 
+// ── Dependencies ──────────────────────────────────────────────────────────────
+// Spring Boot BOM manages versions for all spring.* and jackson.* artifacts.
+// Do not specify versions for Spring dependencies — let the BOM resolve them.
 dependencies {
-	// Spring - DI container only, no web server
-	implementation("org.springframework.boot:spring-boot-starter")
+	// ── Spring ────────────────────────────────────────────────────────────────
+	implementation(libs.spring.boot.starter)
+	implementation(libs.spring.boot.starter.oauth2.resource.server)
+	implementation(libs.spring.boot.starter.security)
+	implementation(libs.spring.boot.starter.webflux)
 
-	// Structured JSON logging for external monitoring tools
-	implementation(libs.logstash.logback.encoder)
+	// ── Kotlin ────────────────────────────────────────────────────────────────
+	// Required for WebFlux to bridge suspend functions into Reactor Mono/Flux.
+	implementation(libs.kotlinx.coroutines.reactor)
 
-	// Smithy server
+	// ── Internal ──────────────────────────────────────────────────────────────
 	implementation(libs.quri.models)
-	implementation(libs.smithy.java.server.core)
-	implementation(libs.smithy.java.server.netty)
-	implementation(libs.smithy.java.aws.server.restjson)
+	implementation(libs.smithy.java.core)
 
-	// MongoDB - https://www.mongodb.com/docs/drivers/kotlin/coroutine/current/getting-started/
+	// ── Database ──────────────────────────────────────────────────────────────
+	// Ref: https://www.mongodb.com/docs/drivers/kotlin/coroutine/current/getting-started/
 	implementation(libs.mongodb.driver.kotlin.coroutine)
 	implementation(libs.mongodb.bson.kotlinx)
 
-	// Test
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.jetbrains.kotlin:kotlin-test")
+	// ── Observability ─────────────────────────────────────────────────────────
+	// Formats logback logs to structured JSON logging for analysis
+	// Ref: https://github.com/logfellow/logstash-logback-encoder
+	implementation(libs.logstash.logback.encoder)
 
-	// Detekt formatter rules --> https://detekt.dev/docs/intro
-	detektPlugins("dev.detekt:detekt-rules-ktlint-wrapper:2.0.0-alpha.1")
+	// ── Test ──────────────────────────────────────────────────────────────────
+	testImplementation(libs.spring.boot.starter.test)
+	testImplementation(libs.kotlin.test)
+
+	// ── Code Quality ──────────────────────────────────────────────────────────
+	// Ref: https://detekt.dev/docs/intro
+	detektPlugins(libs.detekt.rules.ktlint.wrapper)
+
+	// ── Other ──────────────────────────────────────────────────────────
+	// Netty dns resolver for macos arm64
+	// Ref: https://github.com/netty/netty/issues/11020
+	runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.2.12.Final:osx-aarch_64")
 }
 
+// ── Detekt Reports ────────────────────────────────────────────────────────────
 tasks.withType<Detekt>().configureEach {
 	reports {
 		checkstyle.required.set(true)
@@ -62,18 +87,9 @@ tasks.withType<Detekt>().configureEach {
 	}
 }
 
+// ── Test ──────────────────────────────────────────────────────────────────────
 tasks.withType<Test> {
 	useJUnitPlatform()
-
-	// TODO: Enable tests
+	// TODO: Re-enable once integration test infrastructure is in place.
 	enabled = false
-}
-
-configurations.all {
-	resolutionStrategy.eachDependency {
-		if (requested.group == "com.fasterxml.jackson.core") {
-			useVersion("2.18.6")
-			because("GHSA-72hv-8253-57qq patched in 2.18.6")
-		}
-	}
 }

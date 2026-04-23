@@ -2,7 +2,7 @@
 
 > Backend management service for the best bill splitter application.
 
-A Kotlin/Spring Boot microservice providing RESTful APIs for user profile and bill management. Built on top of [Smithy](https://smithy.io/) for API generation and MongoDB for persistence.
+A Kotlin/Spring Boot microservice providing RESTful APIs for user profile and bill management. Uses [Smithy](https://smithy.io/) client models for request/response types and MongoDB for persistence.
 
 ---
 
@@ -12,7 +12,9 @@ A Kotlin/Spring Boot microservice providing RESTful APIs for user profile and bi
 |---|---|
 | Language | Kotlin 2.2.20 (JVM 21) |
 | Framework | Spring Boot 4.0.0-RC1 |
-| API | Smithy Java Server (Netty) |
+| Web | Spring WebFlux (Reactive) |
+| API Models | Smithy Client Models (input/output shapes) |
+| Auth | Spring Security OAuth2 Resource Server (JWT / Clerk) |
 | Database | MongoDB (Kotlin coroutine driver) |
 | Build | Gradle (Kotlin DSL) |
 
@@ -23,6 +25,7 @@ A Kotlin/Spring Boot microservice providing RESTful APIs for user profile and bi
 - **JDK 21+**
 - **Gradle 8+** (or use the included `./gradlew` wrapper)
 - **MongoDB** — local instance or [MongoDB Atlas](https://www.mongodb.com/atlas)
+- **Clerk** — a Clerk application for JWT issuance and JWKS endpoint
 - **mise** (optional) — toolchain version management via `mise.toml`
 
 ---
@@ -57,12 +60,32 @@ The service starts at `http://localhost:8080`.
 
 ---
 
+## Authentication
+
+This service acts as an **OAuth2 Resource Server** that validates JWTs issued by [Clerk](https://clerk.com/).
+
+### How it works
+
+1. **JWT verification** — Every incoming request must include a valid `Authorization: Bearer <token>` header. Spring Security verifies the token signature and expiry against Clerk's JWKS endpoint.
+2. **Role extraction** — The service reads `metadata.role` from the Clerk session token claims and maps it to Spring Security authorities using the `ROLE_*` prefix convention.
+3. **Authorization** — All endpoints require an authenticated user (`anyExchange().authenticated()`).
+
+### Auth failure responses
+
+| Scenario | Response |
+|---|---|
+| Missing or invalid token | `401 Unauthorized` |
+
+> For more details on extending session tokens with metadata, see the [Clerk docs](https://clerk.com/docs/guides/users/extending#metadata-in-the-session-token).
+
+---
+
 ## Code Quality
 
 This project uses static analysis tools to maintain code quality and consistency:
 
 ### Detekt
-[Detekt](https://detekt.dev/) is a static analysis tool for Kotlin that helps identify code smells, complexity issues, and potential bugs. It's configured with comprehensive rules covering:
+[Detekt](https://detekt.dev/) is a static analysis tool for Kotlin that helps identify code smells, complexity issues, and potential bugs on every call to build. It's configured with comprehensive rules covering:
 
 - **Complexity analysis** - Detects overly complex functions and classes
 - **Naming conventions** - Enforces consistent naming patterns
@@ -80,6 +103,11 @@ Run the linters to check code quality:
 ./gradlew detekt
 ```
 
+To quickly format your code it is recommended to enter the following:
+```shell
+./gradlew detekt --auto-correct
+```
+
 The linters are configured to:
 - Auto-correct formatting issues (ktlint)
 - Generate multiple report formats (HTML, SARIF, Markdown)
@@ -94,7 +122,7 @@ Configuration files:
 
 ## API
 
-All endpoints accept and return JSON.
+All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <token>`) and accept/return JSON.
 
 ### Profiles
 
@@ -135,20 +163,40 @@ All endpoints accept and return JSON.
 
 ---
 
+## Development
+
+### Reactive stack (WebFlux)
+
+The service was migrated from Spring MVC to **Spring WebFlux** to eliminate blocking I/O on request handlers. Controllers are written as Kotlin `suspend` functions, which the framework bridges into Reactor `Mono`/`Flux` via `kotlinx-coroutines-reactor`. This keeps the runtime non-blocking end-to-end — from the Netty event loop through to the MongoDB Kotlin coroutine driver.
+
+### Exception handling
+
+A global [`@RestControllerAdvice`](src/main/kotlin/com/quri/management/errors/GlobalExceptionHandler.kt) intercepts all exceptions before they reach the client. The policy is simple:
+
+- **Never expose internal details** — Clients always receive a generic message (`"An unexpected error occurred"`).
+- **Log intelligently** — 4xx errors are logged at `WARN` without a stack trace; 5xx errors are logged at `ERROR` with the full stack trace for debugging.
+- **Smithy-modeled exceptions** — `ValidationException`, `ResourceNotFoundException`, and `InternalFailureException` are mapped to `400`, `404`, and `500` respectively.
+
+### Smithy model usage
+
+Rather than using Smithy's Java server codegen (which targets blocking Netty handlers), this project consumes **Smithy client models** from [`QuriModels`](https://github.com/lizarazukevin/QuriModels) for request/response shapes. The controller structure (one class per operation, explicit input/output builders) is intentionally maintained so that if Smithy releases a non-blocking Kotlin server-stub codegen in the future, migration will be straightforward.
+
+---
+
 ## Project Status
 
 This service is under active development. Known limitations:
 
-- **Blocking handlers** — API handlers currently use `runBlocking` as a workaround until async Smithy codegen for Kotlin is available. This may impact throughput under load.
 - **No test suite** — Tests are disabled in the build config and planned for a future milestone.
-- **Basic error handling** — Edge cases and input validation are not fully covered yet.
+- **Input validation** — Edge cases and input validation are not fully covered yet.
 
 ### Roadmap
 
-- [ ] Migrate to async Smithy operations
+- [x] Migrate to async/reactive operations (WebFlux)
+- [x] Add auth layer (Clerk JWT resource server)
+- [x] Add global exception handling
 - [ ] Add a proper test suite (unit + integration)
 - [ ] Docker support
-- [ ] Auth layer
 - [ ] OpenAPI/Swagger docs
 - [ ] Monitoring and metrics
 

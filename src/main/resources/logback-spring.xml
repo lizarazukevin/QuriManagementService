@@ -4,7 +4,7 @@
     <!-- Restores Spring Boot's %highlight, %cyan, and %clr color converters -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <!-- Imports from application.properties -->
+    <!-- Imports from application.yml -->
     <springProperty scope="context" name="appName" source="spring.application.name"/>
 
     <!-- ==========================================

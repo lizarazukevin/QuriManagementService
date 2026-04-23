@@ -1,33 +1,33 @@
 package com.quri.management.handlers.profiles
 
+import com.quri.client.model.GetProfileInput
+import com.quri.client.model.GetProfileOutput
 import com.quri.management.services.ProfileService
-import com.quri.server.model.GetProfileInput
-import com.quri.server.model.GetProfileOutput
-import com.quri.server.service.GetProfileOperation
-import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Component
-import software.amazon.smithy.java.server.RequestContext
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * Handles the [GetProfile] operation.
  *
- * TODO: Migrate to GetProfileOperationAsync once Kotlin server codegen is available.
- * runBlocking is a temporary workaround — it blocks the Smithy worker thread.
- *
  * @see ProfileService.getProfileFromId
  */
-@Component
-class GetProfile(private val profileService: ProfileService) : GetProfileOperation {
-    override fun getProfile(
-        input: GetProfileInput,
-        context: RequestContext?,
-    ): GetProfileOutput {
-        val foundProfile = runBlocking {
-            profileService.getProfileFromId(input)
-        }
+@RestController
+@RequestMapping("/profiles/{profileId}")
+class GetProfile(private val profileService: ProfileService) {
+    @GetMapping
+    suspend fun getProfile(@PathVariable profileId: String): GetProfileOutput {
+        val input = getProfileInput(profileId)
+        val foundProfile = profileService.getProfileFromId(input)
 
         return GetProfileOutput.builder()
             .profile(foundProfile)
             .build()
     }
+
+    private fun getProfileInput(profileId: String): GetProfileInput =
+        GetProfileInput.builder()
+            .profileId(profileId)
+            .build()
 }
