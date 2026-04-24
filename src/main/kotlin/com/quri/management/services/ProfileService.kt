@@ -1,12 +1,12 @@
 package com.quri.management.services
 
+import com.quri.client.model.CreateProfileInput
+import com.quri.client.model.DeleteProfileInput
+import com.quri.client.model.GetProfileInput
+import com.quri.client.model.InternalFailureException
+import com.quri.client.model.Profile
+import com.quri.client.model.ResourceNotFoundException
 import com.quri.management.db.mongo.collections.ProfileCollection
-import com.quri.server.model.CreateProfileInput
-import com.quri.server.model.DeleteProfileInput
-import com.quri.server.model.GetProfileInput
-import com.quri.server.model.InternalError
-import com.quri.server.model.Profile
-import com.quri.server.model.ResourceNotFoundException
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 
@@ -26,7 +26,7 @@ class ProfileService(private val profileCollection: ProfileCollection) {
     suspend fun getProfileFromId(input: GetProfileInput): Profile =
         profileCollection.findById(ObjectId(input.profileId))
             ?: throw ResourceNotFoundException.builder()
-                .message("Profile with ID '${input.profileId}' not found")
+                .message("Profile with id ${input.profileId} not found")
                 .build()
 
     /**
@@ -34,11 +34,11 @@ class ProfileService(private val profileCollection: ProfileCollection) {
      *
      * @param input contains the user's personal info
      * @return the persisted [Profile] with its generated ID
-     * @throws InternalError if the insert did not return a generated ID
+     * @throws InternalFailureException if the insert did not return a generated ID
      */
     suspend fun createProfile(input: CreateProfileInput): Profile =
         profileCollection.create(input)
-            ?: throw InternalError.builder()
+            ?: throw InternalFailureException.builder()
                 .message("Failed to create profile")
                 .build()
 
@@ -65,6 +65,6 @@ class ProfileService(private val profileCollection: ProfileCollection) {
     suspend fun deleteProfile(input: DeleteProfileInput): String =
         profileCollection.deleteById(ObjectId(input.profileId))?.toString()
             ?: throw ResourceNotFoundException.builder()
-                .message("Profile with ID '${input.profileId}' not found")
+                .message("Profile with id ${input.profileId} not found")
                 .build()
 }

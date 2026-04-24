@@ -1,32 +1,32 @@
 package com.quri.management.handlers.bills
 
+import com.quri.client.model.DeleteBillInput
+import com.quri.client.model.DeleteBillOutput
 import com.quri.management.services.BillService
-import com.quri.server.model.DeleteBillInput
-import com.quri.server.model.DeleteBillOutput
-import com.quri.server.service.DeleteBillOperation
-import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Component
-import software.amazon.smithy.java.server.RequestContext
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * Handles the [DeleteBill] operation.
  *
- * TODO: Migrate to DeleteBillOperationAsync once Kotlin server codegen is available.
- * runBlocking is a temporary workaround — it blocks the Smithy worker thread.
- *
  * @see BillService.deleteBill
  */
-@Component
-class DeleteBill(private val billService: BillService) : DeleteBillOperation {
-    override fun deleteBill(
-        input: DeleteBillInput,
-        context: RequestContext?,
-    ): DeleteBillOutput {
-        val deletedBillId = runBlocking {
-            billService.deleteBill(input)
-        }
+@RestController
+@RequestMapping("/bills/{billId}")
+class DeleteBill(private val billService: BillService) {
+    @DeleteMapping
+    suspend fun deleteBill(@PathVariable billId: String): DeleteBillOutput {
+        val input = deleteBillInput(billId)
+        val deletedBillId = billService.deleteBill(input)
         return DeleteBillOutput.builder()
             .billId(deletedBillId)
             .build()
     }
+
+    private fun deleteBillInput(billId: String): DeleteBillInput =
+        DeleteBillInput.builder()
+            .billId(billId)
+            .build()
 }

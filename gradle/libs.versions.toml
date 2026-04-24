@@ -1,19 +1,79 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Version Catalog
+# Centralizes all dependency versions for the Quri Management Service.
+#
+# Rules:
+#   - Spring Boot dependencies must NOT specify a version — the BOM manages them.
+#   - Kotlin stdlib/test versions are inherited from the Kotlin plugin version.
+#   - Group related versions together with a comment header.
+# ─────────────────────────────────────────────────────────────────────────────
+
 [versions]
-quri-models-version = "0.1.0"
-mongodb-version = "5.6.4"
-smithy-java-version = "0.0.3"
-logstash-logback-version = "7.4"
+
+# ── Build Plugins ─────────────────────────────────────────────────────────────
+spring-boot            = "4.0.5"
+spring-dependency      = "1.1.7"
+kotlin                 = "2.2.20"
+detekt                 = "2.0.0-alpha.1"
+
+# ── Internal Packages ─────────────────────────────────────────────────────────
+quri-models            = "0.1.0"
+
+# ── Smithy ────────────────────────────────────────────────────────────────────
+# server-core and server-netty are stable at 1.1.0.
+# java-server-codegen remains at 0.0.3 (developer preview — not used at runtime).
+# waiting on kotlin server codgen: https://github.com/smithy-lang/smithy-kotlin/issues/1011
+# Track: https://github.com/smithy-lang/smithy-java/releases
+smithy-java            = "1.1.0"
+
+# ── Database ──────────────────────────────────────────────────────────────────
+mongodb                = "5.6.4"
+
+# ── Observability ─────────────────────────────────────────────────────────────
+logstash-logback       = "9.0"
+
+# ── Kotlin Ecosystem ──────────────────────────────────────────────────────────
+# reactor integration required for suspend functions in WebFlux controllers.
+kotlinx-coroutines     = "1.10.2"
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+[plugins]
+kotlin-jvm         = { id = "org.jetbrains.kotlin.jvm",            version.ref = "kotlin"            }
+kotlin-spring      = { id = "org.jetbrains.kotlin.plugin.spring",  version.ref = "kotlin"            }
+spring-boot        = { id = "org.springframework.boot",            version.ref = "spring-boot"       }
+spring-dependency  = { id = "io.spring.dependency-management",     version.ref = "spring-dependency" }
+detekt             = { id = "dev.detekt",                          version.ref = "detekt"            }
+
+# ─────────────────────────────────────────────────────────────────────────────
 
 [libraries]
-# Smithy server
-quri-models = { module = "com.quri:quri-models", version.ref = "quri-models-version" }
-smithy-java-aws-server-restjson = { module = "software.amazon.smithy.java:aws-server-restjson", version.ref = "smithy-java-version" }
-smithy-java-server-core = { module = "software.amazon.smithy.java:server-core", version.ref = "smithy-java-version" }
-smithy-java-server-netty = { module = "software.amazon.smithy.java:server-netty", version.ref = "smithy-java-version" }
 
-# Database
-mongodb-bson-kotlinx = { module = "org.mongodb:bson-kotlinx", version.ref = "mongodb-version" }
-mongodb-driver-kotlin-coroutine = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb-version" }
+# ── Internal ──────────────────────────────────────────────────────────────────
+quri-models = { module = "com.quri:quri-models", version.ref = "quri-models" }
 
-# Logger
-logstash-logback-encoder = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logstash-logback-version" }
+# ── Smithy (runtime types only — codegen runs at build time via QuriModels) ───
+smithy-java-core = { module = "software.amazon.smithy.java:core", version.ref = "smithy-java" }
+
+# ── Spring (versions omitted — managed by Spring Boot BOM) ───────────────────
+spring-boot-starter                    = { module = "org.springframework.boot:spring-boot-starter"                    }
+spring-boot-starter-oauth2-resource-server = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server" }
+spring-boot-starter-security           = { module = "org.springframework.boot:spring-boot-starter-security"           }
+spring-boot-starter-test               = { module = "org.springframework.boot:spring-boot-starter-test"               }
+spring-boot-starter-webflux            = { module = "org.springframework.boot:spring-boot-starter-webflux"            }
+
+# ── Kotlin ────────────────────────────────────────────────────────────────────
+# kotlinx-coroutines-reactor bridges suspend functions into Reactor's Mono/Flux,
+# required for WebFlux to invoke suspend controller methods correctly.
+kotlin-test                = { module = "org.jetbrains.kotlin:kotlin-test",                 version.ref = "kotlin"             }
+kotlinx-coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "kotlinx-coroutines" }
+
+# ── Database ──────────────────────────────────────────────────────────────────
+mongodb-bson-kotlinx            = { module = "org.mongodb:bson-kotlinx",                   version.ref = "mongodb" }
+mongodb-driver-kotlin-coroutine = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb" }
+
+# ── Observability ─────────────────────────────────────────────────────────────
+logstash-logback-encoder = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logstash-logback" }
+
+# ── Code Quality ──────────────────────────────────────────────────────────────
+detekt-rules-ktlint-wrapper = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }

@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: quri-management-service
+  profiles:
+    active: local
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwks-uri: https://dashing-herring-71.clerk.accounts.dev/.well-known/jwks.json
+
+smithy:
+  server:
+    port: 8080

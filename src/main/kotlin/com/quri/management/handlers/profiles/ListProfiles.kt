@@ -1,39 +1,51 @@
 package com.quri.management.handlers.profiles
 
+import com.quri.client.model.ListProfilesInput
+import com.quri.client.model.ListProfilesOutput
 import com.quri.management.services.ProfileService
-import com.quri.server.model.ListProfilesInput
-import com.quri.server.model.ListProfilesOutput
-import com.quri.server.service.ListProfilesOperation
-import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Component
-import software.amazon.smithy.java.server.RequestContext
-
-const val DEFAULT_PROFILE_PAGE_SIZE = 20
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * Handles the [ListProfiles] operation.
  *
- * TODO: Migrate to ListProfilesOperationAsync once Kotlin server codegen is available.
- * runBlocking is a temporary workaround — it blocks the Smithy worker thread.
- *
  * @see ProfileService.listProfiles
  */
-@Component
-class ListProfiles(private val profilesService: ProfileService) : ListProfilesOperation {
-    override fun listProfiles(
-        input: ListProfilesInput,
-        context: RequestContext?,
+@RestController
+@RequestMapping("/profiles")
+class ListProfiles(private val profileService: ProfileService) {
+    @GetMapping
+    suspend fun listProfiles(
+        @RequestParam maxResults: Int?,
+        @RequestParam nextToken: String?,
     ): ListProfilesOutput {
-        val (profiles, newToken) = runBlocking {
-            profilesService.listProfiles(
-                pageSize = input.maxResults ?: DEFAULT_PROFILE_PAGE_SIZE,
-                nextToken = input.nextToken,
-            )
-        }
+        val input = listProfilesInput(maxResults, nextToken)
+        val (profiles, newToken) = profileService.listProfiles(
+            pageSize = input.maxResults,
+            nextToken = input.nextToken,
+        )
 
         return ListProfilesOutput.builder()
             .profiles(profiles)
             .nextToken(newToken)
             .build()
+    }
+
+    private fun listProfilesInput(
+        maxResults: Int?,
+        nextToken: String?,
+    ): ListProfilesInput {
+        val pageSize = (maxResults ?: DEFAULT_PROFILE_PAGE_SIZE).coerceIn(1, MAX_PROFILE_PAGE_SIZE)
+        return ListProfilesInput.builder()
+            .maxResults(pageSize)
+            .nextToken(nextToken)
+            .build()
+    }
+
+    companion object {
+        private const val DEFAULT_PROFILE_PAGE_SIZE = 20
+        private const val MAX_PROFILE_PAGE_SIZE = 100
     }
 }

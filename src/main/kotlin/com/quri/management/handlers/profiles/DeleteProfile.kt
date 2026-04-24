@@ -1,33 +1,33 @@
 package com.quri.management.handlers.profiles
 
+import com.quri.client.model.DeleteProfileInput
+import com.quri.client.model.DeleteProfileOutput
 import com.quri.management.services.ProfileService
-import com.quri.server.model.DeleteProfileInput
-import com.quri.server.model.DeleteProfileOutput
-import com.quri.server.service.DeleteProfileOperation
-import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Component
-import software.amazon.smithy.java.server.RequestContext
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * Handles the [DeleteProfile] operation.
  *
- * TODO: Migrate to DeleteProfileOperationAsync once Kotlin server codegen is available.
- * runBlocking is a temporary workaround — it blocks the Smithy worker thread.
- *
  * @see ProfileService.deleteProfile
  */
-@Component
-class DeleteProfile(private val profileService: ProfileService) : DeleteProfileOperation {
-    override fun deleteProfile(
-        input: DeleteProfileInput,
-        context: RequestContext?,
-    ): DeleteProfileOutput {
-        val deletedProfileId = runBlocking {
-            profileService.deleteProfile(input)
-        }
+@RestController
+@RequestMapping("/profiles/{profileId}")
+class DeleteProfile(private val profileService: ProfileService) {
+    @DeleteMapping
+    suspend fun deleteProfile(@PathVariable profileId: String): DeleteProfileOutput {
+        val input = deleteProfileInput(profileId)
+        val deletedProfileId = profileService.deleteProfile(input)
 
         return DeleteProfileOutput.builder()
             .profileId(deletedProfileId)
             .build()
     }
+
+    private fun deleteProfileInput(profileId: String): DeleteProfileInput =
+        DeleteProfileInput.builder()
+            .profileId(profileId)
+            .build()
 }
