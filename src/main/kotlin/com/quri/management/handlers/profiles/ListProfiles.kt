@@ -21,7 +21,12 @@ class ListProfiles(private val profileService: ProfileService) {
         @RequestParam maxResults: Int?,
         @RequestParam nextToken: String?,
     ): ListProfilesOutput {
-        val input = listProfilesInput(maxResults, nextToken)
+        val pageSize = (maxResults ?: DEFAULT_PROFILE_PAGE_SIZE).coerceIn(1, MAX_PROFILE_PAGE_SIZE)
+        val input = ListProfilesInput.builder()
+            .maxResults(pageSize)
+            .nextToken(nextToken)
+            .build()
+
         val (profiles, newToken) = profileService.listProfiles(
             pageSize = input.maxResults,
             nextToken = input.nextToken,
@@ -30,17 +35,6 @@ class ListProfiles(private val profileService: ProfileService) {
         return ListProfilesOutput.builder()
             .profiles(profiles)
             .nextToken(newToken)
-            .build()
-    }
-
-    private fun listProfilesInput(
-        maxResults: Int?,
-        nextToken: String?,
-    ): ListProfilesInput {
-        val pageSize = (maxResults ?: DEFAULT_PROFILE_PAGE_SIZE).coerceIn(1, MAX_PROFILE_PAGE_SIZE)
-        return ListProfilesInput.builder()
-            .maxResults(pageSize)
-            .nextToken(nextToken)
             .build()
     }
 

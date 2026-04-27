@@ -33,11 +33,12 @@ class ProfileService(private val profileCollection: ProfileCollection) {
      * Creates a new profile.
      *
      * @param input contains the user's personal info
+     * @param ownerId the owning entity
      * @return the persisted [Profile] with its generated ID
      * @throws InternalFailureException if the insert did not return a generated ID
      */
-    suspend fun createProfile(input: CreateProfileInput): Profile =
-        profileCollection.create(input)
+    suspend fun createProfile(input: CreateProfileInput, ownerId: String): Profile =
+        profileCollection.create(input, ownerId)
             ?: throw InternalFailureException.builder()
                 .message("Failed to create profile")
                 .build()

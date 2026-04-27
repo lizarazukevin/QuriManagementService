@@ -18,16 +18,14 @@ import org.springframework.web.bind.annotation.RestController
 class GetProfile(private val profileService: ProfileService) {
     @GetMapping
     suspend fun getProfile(@PathVariable profileId: String): GetProfileOutput {
-        val input = getProfileInput(profileId)
+        val input = GetProfileInput.builder()
+            .profileId(profileId)
+            .build()
+
         val foundProfile = profileService.getProfileFromId(input)
 
         return GetProfileOutput.builder()
             .profile(foundProfile)
             .build()
     }
-
-    private fun getProfileInput(profileId: String): GetProfileInput =
-        GetProfileInput.builder()
-            .profileId(profileId)
-            .build()
 }

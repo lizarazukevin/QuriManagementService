@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.server.ServerWebInputException
 
 /**
  * Global exception handler for all controllers across the application.
@@ -41,6 +42,14 @@ class GlobalExceptionHandler {
     fun handleInternalFailure(ex: InternalFailureException): ResponseEntity<ErrorResponse> {
         logger.warn("Internal failure: {}", ex.message)
         return error(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred")
+    }
+
+    // ── Server input exceptions ──────────────────────────────────────────────
+
+    @ExceptionHandler(ServerWebInputException::class)
+    fun handleWebInput(ex: ServerWebInputException): ResponseEntity<ErrorResponse> {
+        logger.warn("Malformed request body: {}", ex.cause?.message)
+        return error(HttpStatus.BAD_REQUEST, "Malformed request body")
     }
 
     // ── Catch-all ─────────────────────────────────────────────────────────────
