@@ -43,13 +43,15 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
      * Persists a new bill document and returns it alongside its generated ID.
      *
      * @param input the [CreateBillInput] containing total and balance
+     * @param ownerId the owning entity
      * @return the persisted [Bill] with [Bill.id] populated, or `null` if
      * the insert did not return a generated ID
      */
-    suspend fun create(input: CreateBillInput): Bill? {
+    suspend fun create(input: CreateBillInput, ownerId: String): Bill? {
         val doc = BillDocument(
             total = MonetaryAmountDocument(input.total.amount, input.total.currency),
             balance = MonetaryAmountDocument(input.balance.amount, input.balance.currency),
+            ownerId = ownerId,
         )
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
@@ -101,6 +103,7 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
                     .currency(balance.currencyCode)
                     .build(),
             )
+            .ownerId(ownerId)
             .createdAt(createdAt)
             .updatedAt(updatedAt)
             .build()

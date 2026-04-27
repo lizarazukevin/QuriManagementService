@@ -12,6 +12,7 @@ import java.time.Instant
  * @param lastName user's last name
  * @param email user's email address
  * @param phoneNumber user's phone number
+ * @param ownerId owning authority
  */
 data class ProfileDocument(
     @BsonId val id: ObjectId = ObjectId(),
@@ -20,6 +21,7 @@ data class ProfileDocument(
     val lastName: String,
     val email: String,
     val phoneNumber: String?,
+    val ownerId: String,
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now(),
 )

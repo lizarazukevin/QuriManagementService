@@ -43,16 +43,18 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
      * Persists a new profile document and returns it alongside its generated ID.
      *
      * @param input the [CreateProfileInput] containing personal user info
+     * @param ownerId the owning entity
      * @return the persisted [Profile] with [Profile.id] populated, or `null` if
      * the insert did not return a generated ID
      */
-    suspend fun create(input: CreateProfileInput): Profile? {
+    suspend fun create(input: CreateProfileInput, ownerId: String): Profile? {
         val doc = ProfileDocument(
             username = input.username,
             firstName = input.firstName,
             lastName = input.lastName,
             email = input.email,
             phoneNumber = input.phoneNumber,
+            ownerId = ownerId,
         )
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
@@ -99,6 +101,7 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
             .lastName(lastName)
             .email(email)
             .phoneNumber(phoneNumber)
+            .ownerId(ownerId)
             .createdAt(createdAt)
             .updatedAt(updatedAt)
             .build()

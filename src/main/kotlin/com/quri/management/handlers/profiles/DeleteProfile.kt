@@ -18,16 +18,14 @@ import org.springframework.web.bind.annotation.RestController
 class DeleteProfile(private val profileService: ProfileService) {
     @DeleteMapping
     suspend fun deleteProfile(@PathVariable profileId: String): DeleteProfileOutput {
-        val input = deleteProfileInput(profileId)
+        val input = DeleteProfileInput.builder()
+            .profileId(profileId)
+            .build()
+
         val deletedProfileId = profileService.deleteProfile(input)
 
         return DeleteProfileOutput.builder()
             .profileId(deletedProfileId)
             .build()
     }
-
-    private fun deleteProfileInput(profileId: String): DeleteProfileInput =
-        DeleteProfileInput.builder()
-            .profileId(profileId)
-            .build()
 }

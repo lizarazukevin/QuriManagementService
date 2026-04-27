@@ -18,15 +18,14 @@ import org.springframework.web.bind.annotation.RestController
 class DeleteBill(private val billService: BillService) {
     @DeleteMapping
     suspend fun deleteBill(@PathVariable billId: String): DeleteBillOutput {
-        val input = deleteBillInput(billId)
+        val input = DeleteBillInput.builder()
+            .billId(billId)
+            .build()
+
         val deletedBillId = billService.deleteBill(input)
+
         return DeleteBillOutput.builder()
             .billId(deletedBillId)
             .build()
     }
-
-    private fun deleteBillInput(billId: String): DeleteBillInput =
-        DeleteBillInput.builder()
-            .billId(billId)
-            .build()
 }

@@ -18,16 +18,14 @@ import org.springframework.web.bind.annotation.RestController
 class GetBill(private val billService: BillService) {
     @GetMapping
     suspend fun getBill(@PathVariable billId: String): GetBillOutput {
-        val input = getBillInput(billId)
+        val input = GetBillInput.builder()
+            .billId(billId)
+            .build()
+
         val billFound = billService.getBillFromId(input)
 
         return GetBillOutput.builder()
             .bill(billFound)
             .build()
     }
-
-    private fun getBillInput(billId: String): GetBillInput =
-        GetBillInput.builder()
-            .billId(billId)
-            .build()
 }

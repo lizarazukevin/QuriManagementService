@@ -21,7 +21,12 @@ class ListBills(private val billService: BillService) {
         @RequestParam maxResults: Int?,
         @RequestParam nextToken: String?,
     ): ListBillsOutput {
-        val input = listBillsInput(maxResults, nextToken)
+        val pageSize = (maxResults ?: DEFAULT_BILLS_PAGE_SIZE).coerceIn(1, MAX_BILLS_PAGE_SIZE)
+        val input = ListBillsInput.builder()
+            .maxResults(pageSize)
+            .nextToken(nextToken)
+            .build()
+
         val (bills, newToken) = billService.listBills(
             pageSize = input.maxResults,
             nextToken = input.nextToken,
@@ -30,17 +35,6 @@ class ListBills(private val billService: BillService) {
         return ListBillsOutput.builder()
             .bills(bills)
             .nextToken(newToken)
-            .build()
-    }
-
-    private fun listBillsInput(
-        maxResults: Int?,
-        nextToken: String?,
-    ): ListBillsInput {
-        val pageSize = (maxResults ?: DEFAULT_BILLS_PAGE_SIZE).coerceIn(1, MAX_BILLS_PAGE_SIZE)
-        return ListBillsInput.builder()
-            .maxResults(pageSize)
-            .nextToken(nextToken)
             .build()
     }
 
