@@ -47,7 +47,10 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
      * @return the persisted [Profile] with [Profile.id] populated, or `null` if
      * the insert did not return a generated ID
      */
-    suspend fun create(input: CreateProfileInput, ownerId: String): Profile? {
+    suspend fun create(
+        input: CreateProfileInput,
+        ownerId: String,
+    ): Profile? {
         val doc = ProfileDocument(
             username = input.username,
             firstName = input.firstName,
