@@ -47,7 +47,10 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
      * @return the persisted [Bill] with [Bill.id] populated, or `null` if
      * the insert did not return a generated ID
      */
-    suspend fun create(input: CreateBillInput, ownerId: String): Bill? {
+    suspend fun create(
+        input: CreateBillInput,
+        ownerId: String,
+    ): Bill? {
         val doc = BillDocument(
             total = MonetaryAmountDocument(input.total.amount, input.total.currency),
             balance = MonetaryAmountDocument(input.balance.amount, input.balance.currency),

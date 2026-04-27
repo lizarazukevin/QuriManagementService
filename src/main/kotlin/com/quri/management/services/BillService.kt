@@ -36,7 +36,10 @@ class BillService(private val billCollection: BillCollection) {
      * @return the persisted [Bill] with its generated ID
      * @throws InternalFailureException if the insert did not return a generated ID
      */
-    suspend fun createBill(input: CreateBillInput, ownerId: String): Bill =
+    suspend fun createBill(
+        input: CreateBillInput,
+        ownerId: String,
+    ): Bill =
         billCollection.create(input, ownerId)
             ?: throw InternalFailureException.builder()
                 .message("Failed to create bill")

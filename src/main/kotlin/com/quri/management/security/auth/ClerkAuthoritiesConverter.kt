@@ -36,8 +36,9 @@ class ClerkAuthoritiesConverter : Converter<Jwt, Collection<GrantedAuthority>> {
             ?.get(ROLE_CLAIM) as? String
 
     companion object {
-        private const val METADATA_CLAIM = "metadata"
-        private const val ROLE_CLAIM = "role"
-        private const val ROLE_PREFIX = "ROLE_"
+        const val METADATA_CLAIM = "metadata"
+        const val ROLE_CLAIM = "role"
+        const val ROLE_PREFIX = "ROLE_"
+        const val DEFAULT_ROLE = "guest"
     }
 }
