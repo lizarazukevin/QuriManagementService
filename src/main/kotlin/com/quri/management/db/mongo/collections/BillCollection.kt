@@ -5,14 +5,13 @@ import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.quri.client.model.Bill
 import com.quri.client.model.CreateBillInput
-import com.quri.client.model.MonetaryAmount
 import com.quri.management.db.mongo.MongoSchema.Collections.BILLS
 import com.quri.management.db.mongo.documents.BillDocument
-import com.quri.management.db.mongo.documents.MonetaryAmountDocument
 import com.quri.management.db.mongo.paginate
 import kotlinx.coroutines.flow.firstOrNull
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 /**
  * Data access layer for the bills collection in MongoDB.
@@ -42,7 +41,7 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
     /**
      * Persists a new bill document and returns it alongside its generated ID.
      *
-     * @param input the [CreateBillInput] containing total and balance
+     * @param input the [CreateBillInput] to create an empty bill
      * @param ownerId the owning entity
      * @return the persisted [Bill] with [Bill.id] populated, or `null` if
      * the insert did not return a generated ID
@@ -51,17 +50,21 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
         input: CreateBillInput,
         ownerId: String,
     ): Bill? {
+        val currTime = Instant.now()
         val doc = BillDocument(
-            total = MonetaryAmountDocument(input.total.amount, input.total.currency),
-            balance = MonetaryAmountDocument(input.balance.amount, input.balance.currency),
-            ownerId = ownerId,
+            name = input.name,
+            status = input.status.value,
+            hidden = input.isHidden,
+            description = input.description,
+            createdBy = ownerId,
+            createdAt = currTime,
+            updatedBy = ownerId,
+            updatedAt = currTime,
         )
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
         return doc.toSmithyModel().toBuilder()
             .id(generatedId)
-            .createdAt(doc.createdAt)
-            .updatedAt(doc.updatedAt)
             .build()
     }
 
@@ -90,24 +93,4 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
         val result = collection.deleteOne(eq("_id", id))
         return id.takeIf { result.deletedCount == 1L }
     }
-
-    private fun BillDocument.toSmithyModel(): Bill =
-        Bill.builder()
-            .id(id.toString())
-            .total(
-                MonetaryAmount.builder()
-                    .amount(total.amount)
-                    .currency(total.currencyCode)
-                    .build(),
-            )
-            .balance(
-                MonetaryAmount.builder()
-                    .amount(balance.amount)
-                    .currency(balance.currencyCode)
-                    .build(),
-            )
-            .ownerId(ownerId)
-            .createdAt(createdAt)
-            .updatedAt(updatedAt)
-            .build()
 }

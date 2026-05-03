@@ -12,7 +12,9 @@ object MongoSchema {
     }
 
     object Collections {
+        const val ACCESS = "access"
         const val BILLS = "bills"
         const val PROFILES = "profiles"
+        const val RECEIPTS = "receipts"
     }
 }

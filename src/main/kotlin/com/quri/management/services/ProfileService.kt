@@ -21,7 +21,7 @@ class ProfileService(private val profileCollection: ProfileCollection) {
      *
      * @param input contains the profile ID to look up
      * @return the matching [Profile]
-     * @throws ResourceNotFoundException if no profile exists with the given ID
+     * @throws ResourceNotFoundException if no profile exists with the ID provided
      */
     suspend fun getProfileFromId(input: GetProfileInput): Profile =
         profileCollection.findById(ObjectId(input.profileId))
@@ -34,7 +34,7 @@ class ProfileService(private val profileCollection: ProfileCollection) {
      *
      * @param input contains the user's personal info
      * @param ownerId the owning entity
-     * @return the persisted [Profile] with its generated ID
+     * @return the persisted [Profile] with its db-generated ID
      * @throws InternalFailureException if the insert did not return a generated ID
      */
     suspend fun createProfile(
@@ -51,7 +51,6 @@ class ProfileService(private val profileCollection: ProfileCollection) {
      *
      * @param pageSize is the maximum results per page
      * @param nextToken is the bookmarked ID the next paginated list starts from
-     *
      * @return list of all [Profile] records and nullable pagination token
      */
     suspend fun listProfiles(
@@ -64,7 +63,7 @@ class ProfileService(private val profileCollection: ProfileCollection) {
      *
      * @param input contains the profile ID to delete
      * @return the deleted profile ID as a [String]
-     * @throws ResourceNotFoundException if no profile exists with the given ID
+     * @throws ResourceNotFoundException if no profile exists with the ID provided
      */
     suspend fun deleteProfile(input: DeleteProfileInput): String =
         profileCollection.deleteById(ObjectId(input.profileId))?.toString()

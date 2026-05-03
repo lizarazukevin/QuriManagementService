@@ -163,6 +163,31 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 
 ---
 
+## Architecture
+
+### Request Flow & Smithy Relationship
+
+This service follows a strict 3-layer boundary pattern when working with Smithy models:
+
+| Layer | Location | Responsibility |
+|---|---|---|
+| **HTTP Layer** | `/api` | All handler, input request, output response and error handling lives here. This is the only layer that sees JSON and HTTP concerns. |
+| **DTO / Serialization Layer** | `/shared/models` | Reusable domain objects that contain all serialization logic, validation and conversion between API types and Smithy models. |
+| **Service Layer** | `/services` | Pure business logic that only operates on Smithy model types. No JSON, no HTTP, no framework concerns. |
+
+✅ **When you modify a Smithy file in QuriModels:**
+1. Update the corresponding shared model in `/shared/models`
+2. Add/update validation rules directly on the data class
+3. Update input/output DTOs in `/api/inputs` or `/api/outputs` if needed
+4. Service layer and database layer will work unchanged
+
+Every request follows this exact flow:
+```
+HTTP Request → Input DTO → convert to Smithy Model → Service → Smithy Model → convert to Output DTO → HTTP Response
+```
+
+---
+
 ## Development
 
 ### Reactive stack (WebFlux)

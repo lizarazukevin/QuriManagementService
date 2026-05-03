@@ -1,5 +1,6 @@
 package com.quri.management.db.mongo.documents
 
+import com.quri.client.model.Profile
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.time.Instant
@@ -7,12 +8,7 @@ import java.time.Instant
 /**
  * Persistence document for a user profile in MongoDB.
  *
- * @param username unique identifier chosen by the user
- * @param firstName user's first name
- * @param lastName user's last name
- * @param email user's email address
- * @param phoneNumber user's phone number
- * @param ownerId owning authority
+ * @see Profile
  */
 data class ProfileDocument(
     @BsonId val id: ObjectId = ObjectId(),
@@ -20,8 +16,25 @@ data class ProfileDocument(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val phoneNumber: String?,
-    val ownerId: String,
-    val createdAt: Instant = Instant.now(),
-    val updatedAt: Instant = Instant.now(),
-)
+
+    val phoneNumber: String? = null,
+
+    val createdBy: String,
+    val createdAt: Instant,
+    val updatedBy: String,
+    val updatedAt: Instant,
+) {
+    fun toSmithyModel(): Profile =
+        Profile.builder()
+            .id(id.toString())
+            .username(username)
+            .firstName(firstName)
+            .lastName(lastName)
+            .email(email)
+            .phoneNumber(phoneNumber)
+            .createdBy(createdBy)
+            .createdAt(createdAt)
+            .updatedBy(updatedBy)
+            .updatedAt(updatedAt)
+            .build()
+}
