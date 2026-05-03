@@ -20,7 +20,7 @@ class BillService(private val billCollection: BillCollection) {
      *
      * @param input contains the bill ID to look up
      * @return the matching [Bill]
-     * @throws ResourceNotFoundException if no bill exists with the given ID
+     * @throws ResourceNotFoundException if no bill exists with the ID provided
      */
     suspend fun getBillFromId(input: GetBillInput): Bill =
         billCollection.findById(ObjectId(input.billId))
@@ -31,9 +31,9 @@ class BillService(private val billCollection: BillCollection) {
     /**
      * Creates a new bill.
      *
-     * @param input contains the total and balance for the new bill
+     * @param input minimal to create empty bill
      * @param ownerId the owning entity
-     * @return the persisted [Bill] with its generated ID
+     * @return the persisted [Bill] with db-generated ID
      * @throws InternalFailureException if the insert did not return a generated ID
      */
     suspend fun createBill(
@@ -50,7 +50,6 @@ class BillService(private val billCollection: BillCollection) {
      *
      * @param pageSize is the maximum results per page
      * @param nextToken is the bookmarked ID the next paginated list starts from
-     *
      * @return list of all [Bill] records and nullable pagination token
      */
     suspend fun listBills(
@@ -62,12 +61,12 @@ class BillService(private val billCollection: BillCollection) {
      * Deletes a bill by its ID.
      *
      * @param input contains the bill ID to delete
-     * @return the deleted bill ID as a [String]
-     * @throws ResourceNotFoundException if no bill exists with the given ID
+     * @return the deleted bill ID
+     * @throws ResourceNotFoundException if no bill exists with the ID provided
      */
     suspend fun deleteBill(input: DeleteBillInput): String =
         billCollection.deleteById(ObjectId(input.billId))?.toString()
             ?: throw ResourceNotFoundException.builder()
-                .message("Bill with ID '${input.billId}' not found")
+                .message("Bill with ID `${input.billId}` not found")
                 .build()
 }

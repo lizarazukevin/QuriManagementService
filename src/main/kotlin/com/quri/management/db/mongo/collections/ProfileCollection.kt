@@ -11,6 +11,7 @@ import com.quri.management.db.mongo.paginate
 import kotlinx.coroutines.flow.firstOrNull
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 /**
  * Data access layer for the profiles collection in MongoDB.
@@ -42,7 +43,7 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
     /**
      * Persists a new profile document and returns it alongside its generated ID.
      *
-     * @param input the [CreateProfileInput] containing personal user info
+     * @param input the [CreateProfileInput] containing mutable user information
      * @param ownerId the owning entity
      * @return the persisted [Profile] with [Profile.id] populated, or `null` if
      * the insert did not return a generated ID
@@ -51,20 +52,22 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
         input: CreateProfileInput,
         ownerId: String,
     ): Profile? {
+        val currTime = Instant.now()
         val doc = ProfileDocument(
             username = input.username,
             firstName = input.firstName,
             lastName = input.lastName,
             email = input.email,
             phoneNumber = input.phoneNumber,
-            ownerId = ownerId,
+            createdBy = ownerId,
+            createdAt = currTime,
+            updatedBy = ownerId,
+            updatedAt = currTime,
         )
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
         return doc.toSmithyModel().toBuilder()
             .id(generatedId)
-            .createdAt(doc.createdAt)
-            .updatedAt(doc.updatedAt)
             .build()
     }
 
@@ -95,17 +98,4 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
         val result = collection.deleteOne(eq("_id", id))
         return id.takeIf { result.deletedCount == 1L }
     }
-
-    private fun ProfileDocument.toSmithyModel(): Profile =
-        Profile.builder()
-            .id(id.toString())
-            .username(username)
-            .firstName(firstName)
-            .lastName(lastName)
-            .email(email)
-            .phoneNumber(phoneNumber)
-            .ownerId(ownerId)
-            .createdAt(createdAt)
-            .updatedAt(updatedAt)
-            .build()
 }
