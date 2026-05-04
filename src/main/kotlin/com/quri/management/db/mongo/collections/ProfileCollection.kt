@@ -58,6 +58,7 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
             firstName = input.firstName,
             lastName = input.lastName,
             email = input.email,
+            middleName = input.middleName,
             phoneNumber = input.phoneNumber,
             createdBy = ownerId,
             createdAt = currTime,

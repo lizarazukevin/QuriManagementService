@@ -1,8 +1,8 @@
 package com.quri.management.api.handlers.profiles
 
-import com.quri.client.model.CreateProfileInput
 import com.quri.client.model.CreateProfileOutput
 import com.quri.management.api.inputs.profiles.CreateProfileInputRequest
+import com.quri.management.api.outputs.profiles.ProfileResponse
 import com.quri.management.api.security.identity.UserIdentity
 import com.quri.management.services.ProfileService
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,25 +17,17 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping("/profiles")
-class CreateProfile(
-    private val profileService: ProfileService,
-    private val userIdentity: UserIdentity,
-    identity: UserIdentity,
-) {
+class CreateProfile(private val profileService: ProfileService, private val userIdentity: UserIdentity) {
     @PostMapping
-    suspend fun createProfile(@RequestBody request: CreateProfileInputRequest): CreateProfileOutput {
-        val input = CreateProfileInput.builder()
-            .username(request.username)
-            .firstName(request.firstName)
-            .lastName(request.lastName)
-            .email(request.email)
-            .phoneNumber(request.phoneNumber)
-            .build()
+    suspend fun createProfile(@RequestBody request: CreateProfileInputRequest): ProfileResponse {
+        val input = request.toSmithyInput()
 
         val createdProfile = profileService.createProfile(input, userIdentity.userId())
 
-        return CreateProfileOutput.builder()
+        val output = CreateProfileOutput.builder()
             .profile(createdProfile)
             .build()
+
+        return ProfileResponse.from(output)
     }
 }

@@ -26,7 +26,7 @@ class ProfileService(private val profileCollection: ProfileCollection) {
     suspend fun getProfileFromId(input: GetProfileInput): Profile =
         profileCollection.findById(ObjectId(input.profileId))
             ?: throw ResourceNotFoundException.builder()
-                .message("Profile with id ${input.profileId} not found")
+                .message("Profile with ID `${input.profileId}` not found")
                 .build()
 
     /**
@@ -68,6 +68,6 @@ class ProfileService(private val profileCollection: ProfileCollection) {
     suspend fun deleteProfile(input: DeleteProfileInput): String =
         profileCollection.deleteById(ObjectId(input.profileId))?.toString()
             ?: throw ResourceNotFoundException.builder()
-                .message("Profile with id ${input.profileId} not found")
+                .message("Profile with ID `${input.profileId}` not found")
                 .build()
 }
