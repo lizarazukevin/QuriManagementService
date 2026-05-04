@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * Handles the list receipts operation.
+ */
 @RestController
 @RequestMapping("/receipts")
 class ListReceipts(private val receiptService: ReceiptService) {

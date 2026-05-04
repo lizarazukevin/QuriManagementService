@@ -2,6 +2,7 @@ package com.quri.management.api.handlers.profiles
 
 import com.quri.client.model.ListProfilesInput
 import com.quri.client.model.ListProfilesOutput
+import com.quri.management.api.outputs.profiles.ListProfilesResponse
 import com.quri.management.services.ProfileService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -9,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 /**
- * Handles the [ListProfiles] operation.
- *
- * @see ProfileService.listProfiles
+ * Handles the list profiles operation.
  */
 @RestController
 @RequestMapping("/profiles")
@@ -20,7 +19,7 @@ class ListProfiles(private val profileService: ProfileService) {
     suspend fun listProfiles(
         @RequestParam maxResults: Int?,
         @RequestParam nextToken: String?,
-    ): ListProfilesOutput {
+    ): ListProfilesResponse {
         val pageSize = (maxResults ?: DEFAULT_PROFILE_PAGE_SIZE).coerceIn(1, MAX_PROFILE_PAGE_SIZE)
         val input = ListProfilesInput.builder()
             .maxResults(pageSize)
@@ -32,10 +31,12 @@ class ListProfiles(private val profileService: ProfileService) {
             nextToken = input.nextToken,
         )
 
-        return ListProfilesOutput.builder()
+        val output = ListProfilesOutput.builder()
             .profiles(profiles)
             .nextToken(newToken)
             .build()
+
+        return ListProfilesResponse.from(output)
     }
 
     companion object {
