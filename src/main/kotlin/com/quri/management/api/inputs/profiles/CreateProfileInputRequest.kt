@@ -19,29 +19,28 @@ data class CreateProfileInputRequest(
         require(
             username.isNotBlank() &&
                 username.length in MIN_USERNAME_LENGTH..MAX_USERNAME_LENGTH,
-        ) { "username is invalid" }
+        ) { "username must be $MIN_USERNAME_LENGTH-$MAX_USERNAME_LENGTH characters" }
         require(
             firstName.isNotBlank() &&
-                firstName.length <= MAX_NAME_LENGTH,
-        ) { "firstName is invalid" }
+            firstName.length in MIN_NAME_LENGTH..MAX_NAME_LENGTH,
+        ) { "firstName must be $MIN_NAME_LENGTH-$MAX_NAME_LENGTH characters" }
         require(
             lastName.isNotBlank() &&
-                lastName.length <= MAX_NAME_LENGTH,
-        ) { "lastName is invalid" }
+            lastName.length in MIN_NAME_LENGTH..MAX_NAME_LENGTH,
+        ) { "lastName must be $MIN_NAME_LENGTH-$MAX_NAME_LENGTH characters" }
         require(
-            email.isNotBlank() &&
                 email.matches(Regex("""^[^@\s]+@[^@\s]+\.[^@\s]+$""")),
-        ) { "email is invalid" }
+        ) { "email shape is invalid" }
 
         middleName?.let {
             require(
                 it.isNotBlank() &&
-                        middleName.length <= MAX_NAME_LENGTH
-            ) { "middleName is invalid" }
+                it.length in MIN_NAME_LENGTH..MAX_NAME_LENGTH,
+            ) { "middleName must be $MIN_NAME_LENGTH-$MAX_NAME_LENGTH characters" }
         }
         phoneNumber?.let {
             require(it.matches(Regex("""^[+0-9()\-\s]{10,20}$"""))) {
-                "phoneNumber is invalid"
+                "phoneNumber shape is invalid"
             }
         }
     }
@@ -59,6 +58,7 @@ data class CreateProfileInputRequest(
     companion object {
         private const val MIN_USERNAME_LENGTH = 3
         private const val MAX_USERNAME_LENGTH = 30
+        private const val MIN_NAME_LENGTH = 1
         private const val MAX_NAME_LENGTH = 50
     }
 }

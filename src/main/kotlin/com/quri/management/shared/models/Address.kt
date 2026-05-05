@@ -26,8 +26,12 @@ data class Address(
         require(streetAddress.isNotBlank()) { "streetAddress must not be blank" }
         require(city.isNotBlank()) { "city must not be blank" }
         require(state.isNotBlank()) { "state must not be blank" }
-        require(postalCode.isNotBlank()) { "postalCode must not be blank" }
-        require(country.matches(Regex("^[A-Z]{2}$"))) { "country must be a valid ISO 3166-1 alpha-2 code e.g. US" }
+        require(
+            postalCode.matches(Regex("""^[0-9]{5}(-[0-9]{4})?$""")),
+        ) { "postalCode must be a valid US zip code e.g. 20001 or 20001-1234" }
+        require(country.matches(Regex("""^[A-Z]{2}$"""))) { "country must be a valid ISO 3166-1 alpha-2 code e.g. US" }
+
+        unit?.let { require(it.isNotBlank()) { "unit must not be blank" } }
     }
 
     fun toSmithyModel(): SmithyAddress =

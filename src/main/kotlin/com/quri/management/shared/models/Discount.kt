@@ -12,21 +12,22 @@ import com.quri.client.model.Discount as SmithyDiscount
  */
 data class Discount(
     @JsonProperty("type") val type: String,
-    @JsonProperty("saving") val saving: MonetaryAmount? = null,
+    @JsonProperty("value") val value: MonetaryAmount? = null,
     @JsonProperty("rate") val rate: BigDecimal? = null,
 ) {
     init {
-        require(saving != null || rate != null) { "discount must have either amount or rate" }
-        require(saving == null || rate == null) { "discount cannot have both amount and rate" }
-        rate?.let { require(it >= BigDecimal.ZERO && it <= BigDecimal.ONE) { "discount rate must be between 0 and 1" } }
-        saving?.let { require(it.amount >= BigDecimal.ZERO) { "discount amount must be greater than zero" } }
         DiscountType.from(type)
+
+        require(value != null || rate != null) { "discount must have either amount or rate" }
+        require(value == null || rate == null) { "discount cannot have both amount and rate" }
+        value?.let { require(it.amount >= BigDecimal.ZERO) { "discount amount must be greater than zero" } }
+        rate?.let { require(it in BigDecimal.ZERO..BigDecimal.ONE) { "discount rate must be between 0 and 1" } }
     }
 
     fun toSmithyModel(): SmithyDiscount =
         SmithyDiscount.builder()
             .typeMember(DiscountType.from(type))
-            .saving(saving?.toSmithyModel())
+            .value(value?.toSmithyModel())
             .rate(rate)
             .build()
 
@@ -34,7 +35,7 @@ data class Discount(
         fun from(model: SmithyDiscount) =
             Discount(
                 type = model.type.value,
-                saving = model.saving?.let { MonetaryAmount.from(it) },
+                value = model.value?.let { MonetaryAmount.from(it) },
                 rate = model.rate,
             )
     }

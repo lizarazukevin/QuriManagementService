@@ -13,11 +13,14 @@ data class Item(
     @JsonProperty("units") val units: Int,
     @JsonProperty("unitCost") val unitCost: MonetaryAmount,
     @JsonProperty("liable") val liable: List<Liable>? = emptyList(),
-    @JsonProperty("discounts") val discounts: List<Discount>? = null,
+    @JsonProperty("discounts") val discounts: List<Discount>? = emptyList(),
 ) {
     init {
-        require(name.isNotBlank()) { "item name must not be blank" }
-        require(units >= 1) { "units must be at least 1" }
+        require(
+            name.isNotBlank() &&
+            name.length in MIN_ITEM_NAME_LENGTH..MAX_ITEM_NAME_LENGTH,
+        ) { "item name must $MIN_ITEM_NAME_LENGTH-$MAX_ITEM_NAME_LENGTH characters" }
+        require(units >= MIN_UNIT_COUNT) { "units must be at least $MIN_UNIT_COUNT" }
     }
 
     fun toSmithyModel(): SmithyItem =
@@ -30,13 +33,17 @@ data class Item(
             .build()
 
     companion object {
+        private const val MIN_ITEM_NAME_LENGTH = 1
+        private const val MAX_ITEM_NAME_LENGTH = 150
+        private const val MIN_UNIT_COUNT = 1
+
         fun from(model: SmithyItem) =
             Item(
                 name = model.name,
                 units = model.units,
                 unitCost = MonetaryAmount.from(model.unitCost),
-                liable = model.liable.map { Liable.from(it) },
-                discounts = model.discounts.map { Discount.from(it) },
+                liable = model.liable?.map { Liable.from(it) },
+                discounts = model.discounts?.map { Discount.from(it) },
             )
     }
 }
