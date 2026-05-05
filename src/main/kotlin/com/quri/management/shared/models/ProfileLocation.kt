@@ -13,6 +13,12 @@ data class ProfileLocation(
     @JsonProperty("state") val state: String,
     @JsonProperty("country") val country: String,
 ) {
+    init {
+        require(city.isNotBlank()) { "city should not be blank" }
+        require(state.isNotBlank()) { "state should not be blank" }
+        require(country.isNotBlank()) { "country should not be blank" }
+    }
+
     fun toSmithyModel(): SmithyProfileLocation =
         SmithyProfileLocation.builder()
             .city(city)

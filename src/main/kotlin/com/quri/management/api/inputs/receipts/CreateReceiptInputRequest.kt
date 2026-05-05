@@ -29,11 +29,23 @@ data class CreateReceiptInputRequest(
     @JsonProperty("urls") val urls: List<String>? = null,
 ) {
     init {
-        require(vendorName.isNotBlank()) { "vendorName must not be blank" }
+        require(
+            vendorName.isNotBlank() &&
+                vendorName.length in MIN_VENDOR_NAME_LENGTH..MAX_VENDOR_NAME_LENGTH,
+        ) { "vendorName must be $MIN_VENDOR_NAME_LENGTH-$MAX_VENDOR_NAME_LENGTH characters" }
         require(items.isNotEmpty()) { "items must not be empty" }
-        tax?.let { require(it >= BigDecimal.ZERO && it <= BigDecimal.ONE) { "tax must be between 0 and 1" } }
-        tip?.let { require(it >= BigDecimal.ZERO && it <= BigDecimal.ONE) { "tip must be between 0 and 1" } }
+        require(occurredAt <= Instant.now()) { "occurredAt cannot be in the future" }
         PaymentMethod.from(paymentMethod)
+
+        tax?.let { require(it in BigDecimal.ZERO..BigDecimal.ONE) { "tax must be between 0 and 1" } }
+        tip?.let { require(it in BigDecimal.ZERO..BigDecimal.ONE) { "tip must be between 0 and 1" } }
+        photoId?.let { require(it.isNotBlank()) { "photoId cannot be blank" } }
+        urls?.let { list ->
+            require(list.isNotEmpty()) { "urls must not be empty" }
+            require(
+                list.all { it.isNotBlank() && it.length in MIN_URL_LENGTH..MAX_URL_LENGTH },
+            ) { "url member must be $MIN_URL_LENGTH-$MAX_URL_LENGTH characters" }
+        }
     }
 
     fun toSmithyInput(): CreateReceiptInput =
@@ -51,4 +63,11 @@ data class CreateReceiptInputRequest(
             .photoId(photoId)
             .urls(urls)
             .build()
+
+    companion object {
+        private const val MIN_VENDOR_NAME_LENGTH = 3
+        private const val MAX_VENDOR_NAME_LENGTH = 150
+        private const val MIN_URL_LENGTH = 1
+        private const val MAX_URL_LENGTH = 2048
+    }
 }

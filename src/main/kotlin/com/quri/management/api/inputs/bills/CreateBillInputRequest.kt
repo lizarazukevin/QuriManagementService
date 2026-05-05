@@ -15,19 +15,30 @@ data class CreateBillInputRequest(
     @JsonProperty("description") val description: String? = null,
 ) {
     init {
-        require(name.isNotBlank()) { "name must not be blank" }
-        status?.let {
-            require(it == BillStatus.DRAFT.value || it == BillStatus.PUBLISHED.value) {
-                "status on creation must be DRAFT or PUBLISHED"
-            }
+        require(
+            name.isNotBlank() &&
+            name.length in MIN_BILL_NAME_LENGTH..MAX_BILL_NAME_LENGTH,
+        ) { "name must be $MIN_BILL_NAME_LENGTH-$MAX_BILL_NAME_LENGTH characters" }
+
+        status?.let { BillStatus.from(it) }
+        description?.let {
+            require(
+                it.isNotBlank() && it.length <= MAX_DESCRIPTION_LENGTH,
+            ) { "description exceeds $MAX_DESCRIPTION_LENGTH characters" }
         }
     }
 
     fun toSmithyInput(): CreateBillInput =
         CreateBillInput.builder()
             .name(name)
-            .status(BillStatus.from(status) ?: BillStatus.DRAFT)
+            .status(status?.let { BillStatus.from(it) } ?: BillStatus.DRAFT)
             .hidden(hidden ?: false)
             .description(description)
             .build()
+
+    companion object {
+        private const val MIN_BILL_NAME_LENGTH = 1
+        private const val MAX_BILL_NAME_LENGTH = 32
+        private const val MAX_DESCRIPTION_LENGTH = 150
+    }
 }
