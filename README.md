@@ -172,19 +172,31 @@ This service follows a strict 3-layer boundary pattern when working with Smithy 
 | Layer | Location | Responsibility |
 |---|---|---|
 | **HTTP Layer** | `/api` | All handler, input request, output response and error handling lives here. This is the only layer that sees JSON and HTTP concerns. |
-| **DTO / Serialization Layer** | `/shared/models` | Reusable domain objects that contain all serialization logic, validation and conversion between API types and Smithy models. |
 | **Service Layer** | `/services` | Pure business logic that only operates on Smithy model types. No JSON, no HTTP, no framework concerns. |
+| **Database Layer** | `/db` | MongoDB persistence, directly storing and retrieving Smithy model types via custom codecs. |
 
 ✅ **When you modify a Smithy file in QuriModels:**
-1. Update the corresponding shared model in `/shared/models`
-2. Add/update validation rules directly on the data class
-3. Update input/output DTOs in `/api/inputs` or `/api/outputs` if needed
-4. Service layer and database layer will work unchanged
+1. Add/update mixins in `SmithyJacksonConfig.kt` if required for API serialization
+2. Add/update Mongo codec in `/db/mongo/codecs/` if the model is stored in database
+3. Service layer will work unchanged
 
 Every request follows this exact flow:
 ```
-HTTP Request → Input DTO → convert to Smithy Model → Service → Smithy Model → convert to Output DTO → HTTP Response
+HTTP Request → Jackson (Smithy configured) → Smithy Model → Service → Smithy Model → Jackson → HTTP Response
 ```
+
+### Smithy Serialization
+
+This service uses a fully customized Jackson configuration to natively serialize and deserialize Smithy generated models without any intermediate DTO layer:
+
+- Custom Jackson mixins for every Smithy structure and builder class
+- Dedicated deserializers for Smithy enum types
+- Proper handling of builder patterns, nullability, and optional fields
+- Removed Kotlin Jackson module dependency as it conflicts with Smithy's immutable model design
+
+All serialization logic is contained in `SmithyJacksonConfig.kt`
+
+> SpringBoot versions 4+ ship with Jackson 3, leveraging [`JsonMapperBuilderCustomizer`](https://spring.io/blog/2025/10/07/introducing-jackson-3-support-in-spring)
 
 ---
 
@@ -204,7 +216,20 @@ A global [`@RestControllerAdvice`](src/main/kotlin/com/quri/management/errors/Gl
 
 ### Smithy model usage
 
-Rather than using Smithy's Java server codegen (which targets blocking Netty handlers), this project consumes **Smithy client models** from [`QuriModels`](https://github.com/lizarazukevin/QuriModels) for request/response shapes. The controller structure (one class per operation, explicit input/output builders) is intentionally maintained so that if Smithy releases a non-blocking Kotlin server-stub codegen in the future, migration will be straightforward.
+Rather than using Smithy's Java server codegen (which targets blocking Netty handlers), this project consumes **Smithy client models** from [`QuriModels`](https://github.com/lizarazukevin/QuriModels) for request/response shapes, database entities, and all business logic.
+
+The entire stack now operates natively on Smithy model types:
+✅ Jackson is fully configured to serialize/deserialize Smithy objects directly from HTTP requests/responses
+✅ MongoDB custom codecs convert Smithy models directly to/from BSON documents
+✅ Service layer works exclusively with Smithy types
+
+The controller structure (one class per operation, explicit input/output builders) is intentionally maintained so that if Smithy releases a non-blocking Kotlin server-stub codegen in the future, migration will be straightforward.
+
+### MongoDB Smithy Codecs
+
+Custom [MongoDB Codec](https://www.mongodb.com/docs/drivers/java/sync/current/data-formats/codecs/) implementations are provided for all embedded Smithy structured types (e.g.`MonetaryAmountCodec`)
+
+These codecs are registered directly in the Mongo client registry and eliminate manual mapping code between database documents and domain models. They handle proper null handling, defaults, and builder construction for Smithy immutable types.
 
 ---
 
@@ -220,6 +245,8 @@ This service is under active development. Known limitations:
 - [x] Migrate to async/reactive operations (WebFlux)
 - [x] Add auth layer (Clerk JWT resource server)
 - [x] Add global exception handling
+- [x] Native Smithy Jackson serialization
+- [x] MongoDB Smithy Codecs for direct object persistence
 - [ ] Add a proper test suite (unit + integration)
 - [ ] Docker support
 - [ ] OpenAPI/Swagger docs

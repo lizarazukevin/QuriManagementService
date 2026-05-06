@@ -2,7 +2,6 @@ package com.quri.management.api.handlers.receipts
 
 import com.quri.client.model.ListReceiptsInput
 import com.quri.client.model.ListReceiptsOutput
-import com.quri.management.api.outputs.receipts.ListReceiptsResponse
 import com.quri.management.services.ReceiptService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,7 +18,7 @@ class ListReceipts(private val receiptService: ReceiptService) {
     suspend fun listReceipts(
         @RequestParam maxResults: Int?,
         @RequestParam nextToken: String?,
-    ): ListReceiptsResponse {
+    ): ListReceiptsOutput {
         val pageSize = (maxResults ?: DEFAULT_RECEIPTS_PAGE_SIZE).coerceIn(1, MAX_RECEIPTS_PAGE_SIZE)
         val input = ListReceiptsInput.builder()
             .maxResults(pageSize)
@@ -31,12 +30,10 @@ class ListReceipts(private val receiptService: ReceiptService) {
             nextToken = input.nextToken,
         )
 
-        val output = ListReceiptsOutput.builder()
+        return ListReceiptsOutput.builder()
             .receipts(receipts)
             .nextToken(newToken)
             .build()
-
-        return ListReceiptsResponse.from(output)
     }
 
     companion object {

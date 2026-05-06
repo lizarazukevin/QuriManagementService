@@ -1,8 +1,7 @@
 package com.quri.management.api.handlers.receipts
 
+import com.quri.client.model.CreateReceiptInput
 import com.quri.client.model.CreateReceiptOutput
-import com.quri.management.api.inputs.receipts.CreateReceiptInputRequest
-import com.quri.management.api.outputs.receipts.ReceiptResponse
 import com.quri.management.api.security.identity.UserIdentity
 import com.quri.management.services.ReceiptService
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,15 +16,11 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/receipts")
 class CreateReceipt(private val receiptService: ReceiptService, private val userIdentity: UserIdentity) {
     @PostMapping
-    suspend fun createReceipt(@RequestBody request: CreateReceiptInputRequest): ReceiptResponse {
-        val input = request.toSmithyInput()
+    suspend fun createReceipt(@RequestBody input: CreateReceiptInput): CreateReceiptOutput {
+        val receipt = receiptService.createReceipt(input, userIdentity.userId())
 
-        val created = receiptService.createReceipt(input, userIdentity.userId())
-
-        val output = CreateReceiptOutput.builder()
-            .receipt(created)
+        return CreateReceiptOutput.builder()
+            .receipt(receipt)
             .build()
-
-        return ReceiptResponse.from(output)
     }
 }

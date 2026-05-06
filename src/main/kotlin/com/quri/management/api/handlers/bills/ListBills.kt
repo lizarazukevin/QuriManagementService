@@ -2,7 +2,6 @@ package com.quri.management.api.handlers.bills
 
 import com.quri.client.model.ListBillsInput
 import com.quri.client.model.ListBillsOutput
-import com.quri.management.api.outputs.bills.ListBillsResponse
 import com.quri.management.services.BillService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,7 +18,7 @@ class ListBills(private val billService: BillService) {
     suspend fun listBills(
         @RequestParam maxResults: Int?,
         @RequestParam nextToken: String?,
-    ): ListBillsResponse {
+    ): ListBillsOutput {
         val pageSize = (maxResults ?: DEFAULT_BILLS_PAGE_SIZE).coerceIn(1, MAX_BILLS_PAGE_SIZE)
         val input = ListBillsInput.builder()
             .maxResults(pageSize)
@@ -31,12 +30,10 @@ class ListBills(private val billService: BillService) {
             nextToken = input.nextToken,
         )
 
-        val output = ListBillsOutput.builder()
+        return ListBillsOutput.builder()
             .bills(bills)
             .nextToken(newToken)
             .build()
-
-        return ListBillsResponse.from(output)
     }
 
     companion object {

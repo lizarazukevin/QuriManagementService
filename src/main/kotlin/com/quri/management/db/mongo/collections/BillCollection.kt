@@ -11,7 +11,6 @@ import com.quri.management.db.mongo.paginate
 import kotlinx.coroutines.flow.firstOrNull
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 /**
  * Data access layer for the bills collection in MongoDB.
@@ -19,7 +18,7 @@ import java.time.Instant
  * Handles all CRUD operations against the [BillDocument] collection and maps
  * persistence documents to Smithy-generated [Bill] models at the boundary.
  * No Smithy types leak into the persistence layer — mapping is handled internally
- * via [BillDocument.toSmithyModel].
+ * via [BillDocument.toApi].
  *
  * @param dataStoreDatabase the MongoDB database instance injected by Spring
  */
@@ -34,9 +33,7 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
      * @param id the [ObjectId] of the bill to retrieve
      * @return the matching [Bill], or `null` if not found
      */
-    suspend fun findById(id: ObjectId): Bill? =
-        collection.find(eq("_id", id))
-            .firstOrNull()?.toSmithyModel()
+    suspend fun findById(id: ObjectId): Bill? = collection.find(eq("_id", id)).firstOrNull()?.toApi()
 
     /**
      * Persists a new bill document and returns it alongside its generated ID.
@@ -50,22 +47,10 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
         input: CreateBillInput,
         ownerId: String,
     ): Bill? {
-        val currTime = Instant.now()
-        val doc = BillDocument(
-            name = input.name,
-            status = input.status.value,
-            hidden = input.isHidden,
-            description = input.description,
-            createdBy = ownerId,
-            createdAt = currTime,
-            updatedBy = ownerId,
-            updatedAt = currTime,
-        )
+        val doc = BillDocument.from(input, ownerId)
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
-        return doc.toSmithyModel().toBuilder()
-            .id(generatedId)
-            .build()
+        return doc.toApi(generatedId)
     }
 
     /**
@@ -81,7 +66,7 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
         nextToken: String?,
     ): Pair<List<Bill>, String?> =
         paginate(collection, pageSize, nextToken) { it.id }
-            .let { (docs, token) -> docs.map { it.toSmithyModel() } to token }
+            .let { (docs, token) -> docs.map { it.toApi() } to token }
 
     /**
      * Deletes a bill by its [ObjectId]

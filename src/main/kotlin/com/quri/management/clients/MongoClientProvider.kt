@@ -1,6 +1,16 @@
 package com.quri.management.clients
 
+import com.mongodb.ConnectionString
+import com.mongodb.MongoClientSettings
 import com.mongodb.kotlin.client.coroutine.MongoClient
+import com.quri.management.db.mongo.codecs.AddressCodec
+import com.quri.management.db.mongo.codecs.DiscountCodec
+import com.quri.management.db.mongo.codecs.FeeCodec
+import com.quri.management.db.mongo.codecs.ItemCodec
+import com.quri.management.db.mongo.codecs.LiableCodec
+import com.quri.management.db.mongo.codecs.MonetaryAmountCodec
+import com.quri.management.db.mongo.codecs.ProfileLocationCodec
+import org.bson.codecs.configuration.CodecRegistries
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -12,6 +22,9 @@ import org.springframework.context.annotation.Configuration
  * - `MONGO_PASSWORD` — database password
  * - `MONGO_CLUSTER` — Atlas cluster hostname (e.g. `cluster0.abc12.mongodb.net`)
  * - `MONGO_APP_NAME` — application name shown in Atlas monitoring
+ *
+ * Codec registry settings included to make serialization of embedded JSON structures
+ * simpler going from Document to Smithy model and vice versa.
  *
  * For local development, set these in your IDE's run configuration environment variables.
  * For production, inject via your secrets manager (e.g. AWS Secrets Manager, Vault).
@@ -28,7 +41,29 @@ class MongoClientProvider {
 
         val uri = "mongodb+srv://$username:$password@$cluster/?appName=$appName"
 
-        return MongoClient.create(uri)
+        // codec registry to serialize/deserialize embedded structured JSON in documents to Smithy model
+        val monetaryAmountCodec = MonetaryAmountCodec()
+        val liableCodec = LiableCodec()
+        val discountCodec = DiscountCodec(monetaryAmountCodec)
+
+        val codecRegistry = CodecRegistries.fromRegistries(
+            CodecRegistries.fromCodecs(
+                AddressCodec(),
+                discountCodec,
+                FeeCodec(monetaryAmountCodec),
+                ItemCodec(monetaryAmountCodec, liableCodec, discountCodec),
+                monetaryAmountCodec,
+                ProfileLocationCodec(),
+            ),
+            MongoClientSettings.getDefaultCodecRegistry(),
+        )
+
+        val settings = MongoClientSettings.builder()
+            .applyConnectionString(ConnectionString(uri))
+            .codecRegistry(codecRegistry)
+            .build()
+
+        return MongoClient.create(settings)
     }
 
     /**

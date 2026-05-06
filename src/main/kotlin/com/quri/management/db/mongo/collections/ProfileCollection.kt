@@ -11,7 +11,6 @@ import com.quri.management.db.mongo.paginate
 import kotlinx.coroutines.flow.firstOrNull
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 /**
  * Data access layer for the profiles collection in MongoDB.
@@ -19,7 +18,7 @@ import java.time.Instant
  * Handles all CRUD operations against the [ProfileDocument] collection and maps
  * persistence documents to Smithy-generated [Profile] models at the boundary.
  * No Smithy types leak into the persistence layer — mapping is handled internally
- *  * via [ProfileDocument.toSmithyModel].
+ *  * via [ProfileDocument.toApi].
  *
  *  @param dataStoreDatabase the MongoDB database instance injected by Spring
  */
@@ -34,11 +33,7 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
      * @param id the [ObjectId] of the profile to retrieve
      * @return the matching [Profile], or `null` if not found
      */
-    suspend fun findById(id: ObjectId): Profile? =
-        collection
-            .find(eq("_id", id))
-            .firstOrNull()
-            ?.toSmithyModel()
+    suspend fun findById(id: ObjectId): Profile? = collection.find(eq("_id", id)).firstOrNull()?.toApi()
 
     /**
      * Persists a new profile document and returns it alongside its generated ID.
@@ -52,24 +47,10 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
         input: CreateProfileInput,
         ownerId: String,
     ): Profile? {
-        val currTime = Instant.now()
-        val doc = ProfileDocument(
-            username = input.username,
-            firstName = input.firstName,
-            lastName = input.lastName,
-            email = input.email,
-            middleName = input.middleName,
-            phoneNumber = input.phoneNumber,
-            createdBy = ownerId,
-            createdAt = currTime,
-            updatedBy = ownerId,
-            updatedAt = currTime,
-        )
+        val doc = ProfileDocument.from(input, ownerId)
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
-        return doc.toSmithyModel().toBuilder()
-            .id(generatedId)
-            .build()
+        return doc.toApi(generatedId)
     }
 
     /**
@@ -85,9 +66,7 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
         nextToken: String?,
     ): Pair<List<Profile>, String?> =
         paginate(collection, pageSize, nextToken) { it.id }
-            .let { (docs, token) ->
-                docs.map { it.toSmithyModel() } to token
-            }
+            .let { (docs, token) -> docs.map { it.toApi() } to token }
 
     /**
      * Deletes a profile by its [ObjectId].
