@@ -1,8 +1,7 @@
 package com.quri.management.api.handlers.bills
 
+import com.quri.client.model.CreateBillInput
 import com.quri.client.model.CreateBillOutput
-import com.quri.management.api.inputs.bills.CreateBillInputRequest
-import com.quri.management.api.outputs.bills.BillResponse
 import com.quri.management.api.security.identity.UserIdentity
 import com.quri.management.services.BillService
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,15 +16,11 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/bills")
 class CreateBill(private val billService: BillService, private val userIdentity: UserIdentity) {
     @PostMapping
-    suspend fun createBill(@RequestBody request: CreateBillInputRequest): BillResponse {
-        val input = request.toSmithyInput()
+    suspend fun createBill(@RequestBody input: CreateBillInput): CreateBillOutput {
+        val bill = billService.createBill(input, userIdentity.userId())
 
-        val created = billService.createBill(input, userIdentity.userId())
-
-        val output = CreateBillOutput.builder()
-            .bill(created)
+        return CreateBillOutput.builder()
+            .bill(bill)
             .build()
-
-        return BillResponse.from(output)
     }
 }

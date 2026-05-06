@@ -9,14 +9,9 @@ import com.quri.client.model.Receipt
 import com.quri.management.db.mongo.MongoSchema.Collections.RECEIPTS
 import com.quri.management.db.mongo.documents.ReceiptDocument
 import com.quri.management.db.mongo.paginate
-import com.quri.management.shared.models.Address
-import com.quri.management.shared.models.Fee
-import com.quri.management.shared.models.Item
-import com.quri.management.shared.models.MonetaryAmount
 import kotlinx.coroutines.flow.firstOrNull
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 /**
  * Data access layer for the receipts collection in MongoDB.
@@ -24,7 +19,7 @@ import java.time.Instant
  * Handles all CRUD operations against the [ReceiptDocument] collection and maps
  * persistence documents to Smithy-generated [Receipt] models at the boundary.
  * No smithy types leak into the persistence layer — mapping is handled internally
- * via [ReceiptDocument.toSmithyModel]
+ * via [ReceiptDocument.toApi]
  *
  * All operations rely on the existence of a parent [Bill].
  *
@@ -41,9 +36,7 @@ class ReceiptCollection(dataStoreDatabase: MongoDatabase) {
      * @param id the [ObjectId] of the receipt to retrieve
      * @return the matching [Receipt], or `null` if not found
      */
-    suspend fun findById(id: ObjectId): Receipt? =
-        collection.find(eq("_id", id))
-            .firstOrNull()?.toSmithyModel()
+    suspend fun findById(id: ObjectId): Receipt? = collection.find(eq("_id", id)).firstOrNull()?.toApi()
 
     /**
      * Persists a new receipt document and returns it alongside its generated ID.
@@ -57,30 +50,10 @@ class ReceiptCollection(dataStoreDatabase: MongoDatabase) {
         input: CreateReceiptInput,
         ownerId: String,
     ): Receipt? {
-        val currTime = Instant.now()
-        val doc = ReceiptDocument(
-            vendorName = input.vendorName,
-            items = input.items.map { Item.from(it) },
-            occurredAt = input.occurredAt,
-            paymentMethod = input.paymentMethod.value,
-            subtotal = input.subtotal.let { MonetaryAmount.from(it) },
-            tax = input.tax,
-            tip = input.tip,
-            totalSavings = input.totalSavings?.let { MonetaryAmount.from(it) },
-            fees = input.fees?.map { Fee.from(it) },
-            address = input.address?.let { Address.from(it) },
-            photoId = input.photoId,
-            urls = input.urls,
-            createdBy = ownerId,
-            createdAt = currTime,
-            updatedBy = ownerId,
-            updatedAt = currTime,
-        )
+        val doc = ReceiptDocument.from(input, ownerId)
         val result = collection.insertOne(doc)
         val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
-        return doc.toSmithyModel().toBuilder()
-            .id(generatedId)
-            .build()
+        return doc.toApi(generatedId)
     }
 
     /**
@@ -96,7 +69,7 @@ class ReceiptCollection(dataStoreDatabase: MongoDatabase) {
         nextToken: String?,
     ): Pair<List<Receipt>, String?> =
         paginate(collection, pageSize, nextToken) { it.id }
-            .let { (docs, token) -> docs.map { it.toSmithyModel() } to token }
+            .let { (docs, token) -> docs.map { it.toApi() } to token }
 
     /**
      * Deletes a receipt by its [ObjectId]

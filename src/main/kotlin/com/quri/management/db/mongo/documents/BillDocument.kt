@@ -2,7 +2,8 @@ package com.quri.management.db.mongo.documents
 
 import com.quri.client.model.Bill
 import com.quri.client.model.BillStatus
-import com.quri.management.shared.models.MonetaryAmount
+import com.quri.client.model.CreateBillInput
+import com.quri.client.model.MonetaryAmount
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.time.Instant
@@ -27,18 +28,37 @@ data class BillDocument(
     val updatedBy: String,
     val updatedAt: Instant,
 ) {
-    fun toSmithyModel(): Bill =
+    fun toApi(generatedId: String? = null): Bill =
         Bill.builder()
-            .id(id.toString())
+            .id(generatedId ?: id.toString())
             .name(name)
             .status(BillStatus.from(status))
             .hidden(hidden)
             .description(description)
-            .balance(balance?.toSmithyModel())
+            .balance(balance)
             .receipts(receipts?.map { it.toString() })
             .createdBy(createdBy)
             .createdAt(createdAt)
             .updatedBy(updatedBy)
             .updatedAt(updatedAt)
             .build()
+
+    companion object {
+        fun from(
+            input: CreateBillInput,
+            ownerId: String,
+        ): BillDocument {
+            val now = Instant.now()
+            return BillDocument(
+                name = input.name,
+                status = input.status.value,
+                hidden = input.isHidden,
+                description = input.description,
+                createdBy = ownerId,
+                createdAt = now,
+                updatedBy = ownerId,
+                updatedAt = now,
+            )
+        }
+    }
 }

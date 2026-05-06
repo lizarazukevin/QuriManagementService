@@ -1,8 +1,9 @@
 package com.quri.management.db.mongo.documents
 
+import com.quri.client.model.CreateProfileInput
 import com.quri.client.model.Gender
 import com.quri.client.model.Profile
-import com.quri.management.shared.models.ProfileLocation
+import com.quri.client.model.ProfileLocation
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.time.Instant
@@ -33,9 +34,9 @@ data class ProfileDocument(
     val updatedBy: String,
     val updatedAt: Instant,
 ) {
-    fun toSmithyModel(): Profile =
+    fun toApi(generatedId: String? = null): Profile =
         Profile.builder()
-            .id(id.toString())
+            .id(generatedId ?: id.toString())
             .username(username)
             .firstName(firstName)
             .lastName(lastName)
@@ -47,10 +48,31 @@ data class ProfileDocument(
             .bio(bio)
             .gender(gender?.let { Gender.from(it) })
             .dateOfBirth(dateOfBirth)
-            .location(location?.toSmithyModel())
+            .location(location)
             .createdBy(createdBy)
             .createdAt(createdAt)
             .updatedBy(updatedBy)
             .updatedAt(updatedAt)
             .build()
+
+    companion object {
+        fun from(
+            input: CreateProfileInput,
+            ownerId: String,
+        ): ProfileDocument {
+            val now = Instant.now()
+            return ProfileDocument(
+                username = input.username,
+                firstName = input.firstName,
+                lastName = input.lastName,
+                email = input.email,
+                middleName = input.middleName,
+                phoneNumber = input.phoneNumber,
+                createdBy = ownerId,
+                createdAt = now,
+                updatedBy = ownerId,
+                updatedAt = now,
+            )
+        }
+    }
 }
