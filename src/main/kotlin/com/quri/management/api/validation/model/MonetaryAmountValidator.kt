@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class MonetaryAmountValidator : Validator<MonetaryAmount> {
-    override fun validate(
+    override suspend fun validate(
         field: String,
         input: MonetaryAmount,
     ) {

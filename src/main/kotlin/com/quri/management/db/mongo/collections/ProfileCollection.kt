@@ -9,6 +9,7 @@ import com.quri.management.db.mongo.MongoSchema.Collections.PROFILES
 import com.quri.management.db.mongo.documents.ProfileDocument
 import com.quri.management.db.mongo.paginate
 import kotlinx.coroutines.flow.firstOrNull
+import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
 
@@ -78,4 +79,12 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
         val result = collection.deleteOne(eq("_id", id))
         return id.takeIf { result.deletedCount == 1L }
     }
+
+    /**
+     * Determines if an entry in the collection exists with the given criteria.
+     *
+     * @param filter the query filter to match against (e.g., `eq("email", value)`)
+     * @return true if at least one document matches the filter, false otherwise
+     */
+    suspend fun exists(filter: Bson): Boolean = collection.find(filter).limit(1).firstOrNull() != null
 }

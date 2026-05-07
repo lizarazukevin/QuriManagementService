@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class LiableValidator : Validator<Liable> {
-    override fun validate(
+    override suspend fun validate(
         field: String,
         input: Liable,
     ) {

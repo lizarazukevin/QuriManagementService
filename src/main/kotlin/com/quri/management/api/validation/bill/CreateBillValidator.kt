@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class CreateBillValidator : Validator<CreateBillInput> {
-    override fun validate(
+    override suspend fun validate(
         field: String,
         input: CreateBillInput,
     ) {

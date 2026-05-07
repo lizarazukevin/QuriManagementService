@@ -12,7 +12,7 @@ class ItemValidator(
     private val liableValidator: LiableValidator,
     private val discountValidator: DiscountValidator,
 ) : Validator<Item> {
-    override fun validate(
+    override suspend fun validate(
         field: String,
         input: Item,
     ) {

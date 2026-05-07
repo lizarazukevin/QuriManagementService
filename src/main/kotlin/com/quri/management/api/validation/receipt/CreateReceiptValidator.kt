@@ -18,7 +18,7 @@ class CreateReceiptValidator(
     private val addressValidator: AddressValidator,
     private val itemValidator: ItemValidator,
 ) : Validator<CreateReceiptInput> {
-    override fun validate(
+    override suspend fun validate(
         field: String,
         input: CreateReceiptInput,
     ) {
