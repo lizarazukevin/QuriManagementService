@@ -6,6 +6,7 @@ import com.quri.client.model.GetProfileInput
 import com.quri.client.model.InternalFailureException
 import com.quri.client.model.Profile
 import com.quri.client.model.ResourceNotFoundException
+import com.quri.management.api.validation.profile.CreateProfileValidator
 import com.quri.management.db.mongo.collections.ProfileCollection
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Service
  * Business logic layer for profile operations.
  */
 @Service
-class ProfileService(private val profileCollection: ProfileCollection) {
+class ProfileService(
+    private val profileCollection: ProfileCollection,
+    private val createProfileValidator: CreateProfileValidator,
+) {
 
     /**
      * Retrieves a profile by its ID.
@@ -40,11 +44,13 @@ class ProfileService(private val profileCollection: ProfileCollection) {
     suspend fun createProfile(
         input: CreateProfileInput,
         ownerId: String,
-    ): Profile =
-        profileCollection.create(input, ownerId)
+    ): Profile {
+        createProfileValidator.validate("createProfile", input)
+        return profileCollection.create(input, ownerId)
             ?: throw InternalFailureException.builder()
                 .message("Failed to create profile")
                 .build()
+    }
 
     /**
      * Returns a paginated list of profiles.

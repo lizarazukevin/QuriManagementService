@@ -6,6 +6,7 @@ import com.quri.client.model.GetReceiptInput
 import com.quri.client.model.InternalFailureException
 import com.quri.client.model.Receipt
 import com.quri.client.model.ResourceNotFoundException
+import com.quri.management.api.validation.receipt.CreateReceiptValidator
 import com.quri.management.db.mongo.collections.ReceiptCollection
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Service
  * Business logic layer for receipt operations.
  */
 @Service
-class ReceiptService(private val receiptCollection: ReceiptCollection) {
+class ReceiptService(
+    private val receiptCollection: ReceiptCollection,
+    private val createReceiptValidator: CreateReceiptValidator,
+) {
     /**
      * Retrieves a receipt by its ID.
      *
@@ -38,11 +42,13 @@ class ReceiptService(private val receiptCollection: ReceiptCollection) {
     suspend fun createReceipt(
         input: CreateReceiptInput,
         ownerId: String,
-    ): Receipt =
-        receiptCollection.create(input, ownerId)
+    ): Receipt {
+        createReceiptValidator.validate("createReceipt", input)
+        return receiptCollection.create(input, ownerId)
             ?: throw InternalFailureException.builder()
                 .message("Failed to create receipt")
                 .build()
+    }
 
     /**
      * Returns a paginated list of receipts.

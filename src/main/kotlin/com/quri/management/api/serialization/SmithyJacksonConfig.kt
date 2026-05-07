@@ -14,6 +14,7 @@ import com.quri.client.model.Liable
 import com.quri.client.model.MonetaryAmount
 import com.quri.client.model.PaymentMethod
 import com.quri.client.model.ProfileLocation
+import com.quri.client.model.ValidationException
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -119,9 +120,7 @@ class BillStatusSerializer : StdSerializer<BillStatus>(BillStatus::class.java) {
         gen: JsonGenerator,
         ctxt: SerializationContext,
     ) {
-        gen.writeString(
-            value.value,
-        )
+        gen.writeString(value.value)
     }
 }
 
@@ -132,7 +131,17 @@ class BillStatusDeserializer : StdDeserializer<BillStatus>(BillStatus::class.jav
     override fun deserialize(
         p: JsonParser,
         ctxt: DeserializationContext,
-    ): BillStatus = BillStatus.from(p.valueAsString)
+    ): BillStatus {
+        val raw = p.valueAsString
+        return try {
+            BillStatus.from(p.valueAsString)
+        } catch (e: IllegalArgumentException) {
+            throw ValidationException.builder()
+                .message("Unknown BillStatus: '$raw'")
+                .withCause(e)
+                .build()
+        }
+    }
 }
 
 /**
@@ -144,9 +153,7 @@ class PaymentMethodSerializer : StdSerializer<PaymentMethod>(PaymentMethod::clas
         gen: JsonGenerator,
         ctxt: SerializationContext,
     ) {
-        gen.writeString(
-            value.value,
-        )
+        gen.writeString(value.value)
     }
 }
 
@@ -157,10 +164,17 @@ class PaymentMethodDeserializer : StdDeserializer<PaymentMethod>(PaymentMethod::
     override fun deserialize(
         p: JsonParser,
         ctxt: DeserializationContext,
-    ): PaymentMethod =
-        PaymentMethod.from(
-            p.valueAsString,
-        )
+    ): PaymentMethod {
+        val raw = p.valueAsString
+        return try {
+            PaymentMethod.from(p.valueAsString)
+        } catch (e: IllegalArgumentException) {
+            throw ValidationException.builder()
+                .message("Unknown PaymentMethod: '$raw'")
+                .withCause(e)
+                .build()
+        }
+    }
 }
 
 /**
@@ -172,9 +186,7 @@ class DiscountTypeSerializer : StdSerializer<DiscountType>(DiscountType::class.j
         gen: JsonGenerator,
         ctxt: SerializationContext,
     ) {
-        gen.writeString(
-            value.value,
-        )
+        gen.writeString(value.value)
     }
 }
 
@@ -185,10 +197,17 @@ class DiscountTypeDeserializer : StdDeserializer<DiscountType>(DiscountType::cla
     override fun deserialize(
         p: JsonParser,
         ctxt: DeserializationContext,
-    ): DiscountType =
-        DiscountType.from(
-            p.valueAsString,
-        )
+    ): DiscountType {
+        val raw = p.valueAsString
+        return try {
+            DiscountType.from(p.valueAsString)
+        } catch (e: IllegalArgumentException) {
+            throw ValidationException.builder()
+                .message("Unknown DiscountType: '$raw'")
+                .withCause(e)
+                .build()
+        }
+    }
 }
 
 /**
@@ -200,9 +219,7 @@ class GenderSerializer : StdSerializer<Gender>(Gender::class.java) {
         gen: JsonGenerator,
         ctxt: SerializationContext,
     ) {
-        gen.writeString(
-            value.value,
-        )
+        gen.writeString(value.value)
     }
 }
 
