@@ -48,8 +48,12 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ServerWebInputException::class)
     fun handleWebInput(ex: ServerWebInputException): ResponseEntity<ErrorResponse> {
-        logger.warn("Malformed request body: {}", ex.cause?.message)
-        return error(HttpStatus.BAD_REQUEST, "Malformed request body")
+        val message = findValidationMessage(ex.cause)
+            ?: ex.cause?.message
+            ?: "Malformed request body"
+
+        logger.warn("Malformed request body: {}", message)
+        return error(HttpStatus.BAD_REQUEST, message)
     }
 
     // ── Catch-all ─────────────────────────────────────────────────────────────
@@ -67,6 +71,15 @@ class GlobalExceptionHandler {
         ResponseEntity
             .status(status)
             .body(ErrorResponse(status.value(), message))
+
+    private fun findValidationMessage(cause: Throwable?): String? {
+        var current = cause
+        while (current != null) {
+            if (current is ValidationException) return current.message
+            current = current.cause
+        }
+        return null
+    }
 
     companion object {
         private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)

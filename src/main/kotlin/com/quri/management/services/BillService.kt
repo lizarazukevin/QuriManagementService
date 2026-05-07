@@ -6,6 +6,7 @@ import com.quri.client.model.DeleteBillInput
 import com.quri.client.model.GetBillInput
 import com.quri.client.model.InternalFailureException
 import com.quri.client.model.ResourceNotFoundException
+import com.quri.management.api.validation.bill.CreateBillValidator
 import com.quri.management.db.mongo.collections.BillCollection
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service
  * Business logic layer for bill operations.
  */
 @Service
-class BillService(private val billCollection: BillCollection) {
+class BillService(private val billCollection: BillCollection, private val createBillValidator: CreateBillValidator) {
     /**
      * Retrieves a bill by its ID.
      *
@@ -39,11 +40,13 @@ class BillService(private val billCollection: BillCollection) {
     suspend fun createBill(
         input: CreateBillInput,
         ownerId: String,
-    ): Bill =
-        billCollection.create(input, ownerId)
+    ): Bill {
+        createBillValidator.validate("createBill", input)
+        return billCollection.create(input, ownerId)
             ?: throw InternalFailureException.builder()
                 .message("Failed to create bill")
                 .build()
+    }
 
     /**
      * Returns a paginated list of bills.
