@@ -10,7 +10,7 @@ import com.quri.client.model.ValidationException
  * for use in error messages.
  */
 fun interface Validator<T> {
-    fun validate(
+    suspend fun validate(
         field: String,
         input: T,
     )

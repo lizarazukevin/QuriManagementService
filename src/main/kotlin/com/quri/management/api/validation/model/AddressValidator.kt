@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class AddressValidator : Validator<Address> {
-    override fun validate(
+    override suspend fun validate(
         field: String,
         input: Address,
     ) {
