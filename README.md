@@ -39,16 +39,9 @@ git clone https://github.com/lizarazukevin/QuriManagementService.git
 cd QuriManagementService
 ```
 
-### 2. Configure environment variables
+### 2. Configure environment
 
-The service reads MongoDB credentials from the environment:
-
-```bash
-export MONGO_USERNAME="your_username"
-export MONGO_PASSWORD="your_password"
-export MONGO_CLUSTER="your-cluster.mongodb.net"
-export MONGO_APP_NAME="quri-management-service"
-```
+Set `MONGO_USERNAME`, `MONGO_PASSWORD`, `MONGO_CLUSTER`, and `MONGO_APP_NAME` as environment variables.
 
 ### 3. Build and run
 
@@ -82,41 +75,14 @@ This service acts as an **OAuth2 Resource Server** that validates JWTs issued by
 
 ## Code Quality
 
-This project uses static analysis tools to maintain code quality and consistency:
+[Detekt](https://detekt.dev/) and [ktlint](https://pinterest.github.io/ktlint/) enforce code style and catch potential bugs on every build.
 
-### Detekt
-[Detekt](https://detekt.dev/) is a static analysis tool for Kotlin that helps identify code smells, complexity issues, and potential bugs on every call to build. It's configured with comprehensive rules covering:
-
-- **Complexity analysis** - Detects overly complex functions and classes
-- **Naming conventions** - Enforces consistent naming patterns
-- **Performance optimizations** - Identifies potential performance issues
-- **Potential bugs** - Catches common programming mistakes
-- **Style enforcement** - Maintains consistent code formatting
-
-### ktlint
-[ktlint](https://pinterest.github.io/ktlint/) is a Kotlin code formatter that enforces the official Kotlin coding style. It automatically formats code to ensure consistency across the project.
-
-### Usage
-
-Run the linters to check code quality:
 ```bash
-./gradlew detekt
+./gradlew detekt            # check
+./gradlew detekt --auto-correct  # auto-format
 ```
 
-To quickly format your code it is recommended to enter the following:
-```shell
-./gradlew detekt --auto-correct
-```
-
-The linters are configured to:
-- Auto-correct formatting issues (ktlint)
-- Generate multiple report formats (HTML, SARIF, Markdown)
-- Integrate with your IDE for real-time feedback
-- Work with CI/CD pipelines
-
-Configuration files:
-- Main config: `config/detekt/detekt.yml`
-- Rules are based on IntelliJ IDEA style with custom project-specific settings
+Configuration: `config/detekt/detekt.yml`
 
 ---
 
@@ -146,12 +112,13 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 
 ### Bills
 
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/bills` | Create a bill |
-| `GET` | `/bills/{id}` | Get a bill |
-| `GET` | `/bills` | List all bills |
-| `DELETE` | `/bills/{id}` | Delete a bill |
+| Method   | Path | Description             |
+|----------|---|-------------------------|
+| `POST`   | `/bills` | Create a bill           |
+| `PATCH`  | `/bills` | Partially update a bill |
+| `GET`    | `/bills/{id}` | Get a bill              |
+| `GET`    | `/bills` | List all bills          |
+| `DELETE` | `/bills/{id}` | Delete a bill           |
 
 **Create bill request body:**
 ```json
@@ -175,28 +142,19 @@ This service follows a strict 3-layer boundary pattern when working with Smithy 
 | **Service Layer** | `/services` | Pure business logic that only operates on Smithy model types. No JSON, no HTTP, no framework concerns. |
 | **Database Layer** | `/db` | MongoDB persistence, directly storing and retrieving Smithy model types via custom codecs. |
 
-✅ **When you modify a Smithy file in QuriModels:**
-1. Add/update mixins in `SmithyJacksonConfig.kt` if required for API serialization
-2. Add/update Mongo codec in `/db/mongo/codecs/` if the model is stored in database
-3. Service layer will work unchanged
-
 Every request follows this exact flow:
+
 ```
 HTTP Request → Jackson (Smithy configured) → Smithy Model → Service → Smithy Model → Jackson → HTTP Response
 ```
 
+When adding a new Smithy model, wire it through serialization (`SmithyJacksonConfig.kt`), codecs (`/db/mongo/codecs/`), and the service layer as needed.
+
 ### Smithy Serialization
 
-This service uses a fully customized Jackson configuration to natively serialize and deserialize Smithy generated models without any intermediate DTO layer:
+Jackson is fully configured with custom mixins and deserializers to serialize/deserialize Smithy models directly from HTTP requests/responses — no intermediate DTO layer. See `SmithyJacksonConfig.kt`.
 
-- Custom Jackson mixins for every Smithy structure and builder class
-- Dedicated deserializers for Smithy enum types
-- Proper handling of builder patterns, nullability, and optional fields
-- Removed Kotlin Jackson module dependency as it conflicts with Smithy's immutable model design
-
-All serialization logic is contained in `SmithyJacksonConfig.kt`
-
-> SpringBoot versions 4+ ship with Jackson 3, leveraging [`JsonMapperBuilderCustomizer`](https://spring.io/blog/2025/10/07/introducing-jackson-3-support-in-spring)
+> SpringBoot 4+ ships with Jackson 3, leveraging [`JsonMapperBuilderCustomizer`](https://spring.io/blog/2025/10/07/introducing-jackson-3-support-in-spring)
 
 ---
 
@@ -204,32 +162,26 @@ All serialization logic is contained in `SmithyJacksonConfig.kt`
 
 ### Reactive stack (WebFlux)
 
-The service was migrated from Spring MVC to **Spring WebFlux** to eliminate blocking I/O on request handlers. Controllers are written as Kotlin `suspend` functions, which the framework bridges into Reactor `Mono`/`Flux` via `kotlinx-coroutines-reactor`. This keeps the runtime non-blocking end-to-end — from the Netty event loop through to the MongoDB Kotlin coroutine driver.
+The service uses Spring WebFlux with Kotlin `suspend` functions bridged into Reactor via `kotlinx-coroutines-reactor`. This keeps the runtime non-blocking end-to-end — from the Netty event loop through to the MongoDB Kotlin coroutine driver.
 
 ### Exception handling
 
-A global [`@RestControllerAdvice`](src/main/kotlin/com/quri/management/errors/GlobalExceptionHandler.kt) intercepts all exceptions before they reach the client. The policy is simple:
+A global [`@RestControllerAdvice`](src/main/kotlin/com/quri/management/errors/GlobalExceptionHandler.kt) intercepts all exceptions:
 
-- **Never expose internal details** — Clients always receive a generic message (`"An unexpected error occurred"`).
-- **Log intelligently** — 4xx errors are logged at `WARN` without a stack trace; 5xx errors are logged at `ERROR` with the full stack trace for debugging.
-- **Smithy-modeled exceptions** — `ValidationException`, `ResourceNotFoundException`, and `InternalFailureException` are mapped to `400`, `404`, and `500` respectively.
+- **4xx** errors are logged at `WARN` without a stack trace
+- **5xx** errors are logged at `ERROR` with the full stack trace
+- Clients always receive a generic error message — internal details are never exposed
+- Smithy-modeled exceptions (`ValidationException`, `ResourceNotFoundException`, `InternalFailureException`) map to `400`, `404`, and `500` respectively
 
 ### Smithy model usage
 
-Rather than using Smithy's Java server codegen (which targets blocking Netty handlers), this project consumes **Smithy client models** from [`QuriModels`](https://github.com/lizarazukevin/QuriModels) for request/response shapes, database entities, and all business logic.
+Rather than using Smithy's Java server codegen (which targets blocking Netty handlers), this project consumes **Smithy client models** from [`QuriModels`](https://github.com/lizarazukevin/QuriModels) for request/response shapes, database entities, and all business logic. The entire stack — Jackson serialization, MongoDB codecs, and the service layer — operates natively on Smithy types.
 
-The entire stack now operates natively on Smithy model types:
-✅ Jackson is fully configured to serialize/deserialize Smithy objects directly from HTTP requests/responses
-✅ MongoDB custom codecs convert Smithy models directly to/from BSON documents
-✅ Service layer works exclusively with Smithy types
-
-The controller structure (one class per operation, explicit input/output builders) is intentionally maintained so that if Smithy releases a non-blocking Kotlin server-stub codegen in the future, migration will be straightforward.
+The controller structure (one class per operation, explicit input/output builders) is maintained so that if Smithy releases a non-blocking Kotlin server-stub codegen in the future, migration will be straightforward.
 
 ### MongoDB Smithy Codecs
 
-Custom [MongoDB Codec](https://www.mongodb.com/docs/drivers/java/sync/current/data-formats/codecs/) implementations are provided for all embedded Smithy structured types (e.g.`MonetaryAmountCodec`)
-
-These codecs are registered directly in the Mongo client registry and eliminate manual mapping code between database documents and domain models. They handle proper null handling, defaults, and builder construction for Smithy immutable types.
+Custom [MongoDB Codec](https://www.mongodb.com/docs/drivers/java/sync/current/data-formats/codecs/) implementations are provided for all embedded Smithy structured types (e.g. `MonetaryAmountCodec`). These are registered directly in the Mongo client registry, eliminating manual mapping code between database documents and domain models.
 
 ---
 
@@ -262,22 +214,12 @@ This service is under active development. Known limitations:
 
 Please follow existing code style and architecture conventions. Update docs alongside code changes.
 
-> Sign your commits by creating SSH keys and adding them to your account: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
-```shell
-ssh-add ~/.ssh/id_ed25519
-git config --global gpg.format ssh
-git config --global user.signingkey ~/.ssh/id_ed25519.pub
-git config --global commit.gpgsign true
-```
-
-> When adding new ssh to github, make sure the key type is _**signing**_
-
-Add new ssh to allowlist to view signatures:
-```shell
-echo "your_email@example.com namespaces=\"git\" $(cat ~/.ssh/id_ed25519.pub)" >> ~/.ssh/allowed_signers
-git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
-```
-
+> Sign your commits via SSH. See [GitHub docs](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) for setup, and configure signing via:
+> ```shell
+> git config --global gpg.format ssh
+> git config --global user.signingkey ~/.ssh/id_ed25519.pub
+> git config --global commit.gpgsign true
+> ```
 
 ---
 

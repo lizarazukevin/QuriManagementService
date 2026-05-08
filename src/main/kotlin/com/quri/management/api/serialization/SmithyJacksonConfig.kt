@@ -14,6 +14,7 @@ import com.quri.client.model.Liable
 import com.quri.client.model.MonetaryAmount
 import com.quri.client.model.PaymentMethod
 import com.quri.client.model.ProfileLocation
+import com.quri.client.model.UpdateBillInput
 import com.quri.client.model.ValidationException
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
@@ -83,6 +84,9 @@ class SmithyJacksonConfig {
 
             builder.addMixIn(CreateReceiptInput::class.java, CreateReceiptInputMixin::class.java)
             builder.addMixIn(CreateReceiptInput.Builder::class.java, CreateReceiptInputBuilderMixin::class.java)
+
+            builder.addMixIn(UpdateBillInput::class.java, UpdateBillInputMixin::class.java)
+            builder.addMixIn(UpdateBillInput.Builder::class.java, UpdateBillInputBuilderMixin::class.java)
 
             builder.addMixIn(Address::class.java, AddressMixin::class.java)
             builder.addMixIn(Address.Builder::class.java, AddressBuilderMixin::class.java)
@@ -249,6 +253,9 @@ abstract class CreateProfileInputMixin
 @JsonDeserialize(builder = CreateReceiptInput.Builder::class)
 abstract class CreateReceiptInputMixin
 
+@JsonDeserialize(builder = UpdateBillInput.Builder::class)
+abstract class UpdateBillInputMixin
+
 @JsonPOJOBuilder(withPrefix = "")
 abstract class CreateProfileInputBuilderMixin
 
@@ -257,6 +264,9 @@ abstract class CreateBillInputBuilderMixin
 
 @JsonPOJOBuilder(withPrefix = "")
 abstract class CreateReceiptInputBuilderMixin
+
+@JsonPOJOBuilder(withPrefix = "")
+abstract class UpdateBillInputBuilderMixin
 
 // Nested
 @JsonDeserialize(builder = Address.Builder::class)

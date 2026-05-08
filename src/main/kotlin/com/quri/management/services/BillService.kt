@@ -6,7 +6,9 @@ import com.quri.client.model.DeleteBillInput
 import com.quri.client.model.GetBillInput
 import com.quri.client.model.InternalFailureException
 import com.quri.client.model.ResourceNotFoundException
+import com.quri.client.model.UpdateBillInput
 import com.quri.management.api.validation.bill.CreateBillValidator
+import com.quri.management.api.validation.bill.UpdateBillValidator
 import com.quri.management.db.mongo.collections.BillCollection
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
@@ -15,7 +17,11 @@ import org.springframework.stereotype.Service
  * Business logic layer for bill operations.
  */
 @Service
-class BillService(private val billCollection: BillCollection, private val createBillValidator: CreateBillValidator) {
+class BillService(
+    private val billCollection: BillCollection,
+    private val createBillValidator: CreateBillValidator,
+    private val updateBillValidator: UpdateBillValidator,
+) {
     /**
      * Retrieves a bill by its ID.
      *
@@ -72,4 +78,23 @@ class BillService(private val billCollection: BillCollection, private val create
             ?: throw ResourceNotFoundException.builder()
                 .message("Bill with ID `${input.billId}` not found")
                 .build()
+
+    /**
+     * Updates a bill with user changes.
+     *
+     * @param input contents to update bill
+     * @param userId actor behind update
+     * @return [Bill] after update
+     * @throws ResourceNotFoundException if no bill exists with the ID provided
+     */
+    suspend fun updateBill(
+        input: UpdateBillInput,
+        userId: String,
+    ): Bill {
+        updateBillValidator.validate("updateBill", input)
+        return billCollection.update(input, userId)
+            ?: throw ResourceNotFoundException.builder()
+                .message("Bill with ID `${input.billId}` not found")
+                .build()
+    }
 }
