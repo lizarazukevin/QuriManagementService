@@ -128,6 +128,46 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 }
 ```
 
+### Receipts
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/receipts` | Create a receipt |
+| `GET` | `/receipts` | List all receipts (supports `maxResults` and `nextToken` pagination) |
+| `GET` | `/receipts/{receiptId}` | Get a receipt |
+| `DELETE` | `/receipts/{receiptId}` | Delete a receipt |
+
+**Create receipt request body:**
+```json
+{
+  "vendorName": "Trader Joe's",
+  "items": [
+    {
+      "name": "Organic Milk",
+      "quantity": 1,
+      "unitPrice": { "amount": "5.99", "currencyCode": "USD" },
+      "totalPrice": { "amount": "5.99", "currencyCode": "USD" }
+    }
+  ],
+  "occurredAt": "2026-05-08T16:00:00Z",
+  "paymentMethod": "CREDIT",
+  "subtotal": { "amount": "45.67", "currencyCode": "USD" },
+  "tax": 0.08,
+  "tip": 0.15,
+  "totalSavings": { "amount": "3.50", "currencyCode": "USD" },
+  "fees": [
+    { "name": "Service fee", "amount": { "amount": "2.00", "currencyCode": "USD" } }
+  ],
+  "address": {
+    "street": "123 Main St",
+    "city": "San Francisco",
+    "state": "CA",
+    "zip": "94105"
+  },
+  "urls": ["https://receipts.example.com/photo.jpg"]
+}
+```
+
 ---
 
 ## Architecture
