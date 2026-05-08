@@ -112,13 +112,13 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 
 ### Bills
 
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/bills` | Create a bill |
-| `PUT` | `/bills` | Update a bill |
-| `GET` | `/bills/{id}` | Get a bill |
-| `GET` | `/bills` | List all bills |
-| `DELETE` | `/bills/{id}` | Delete a bill |
+| Method   | Path | Description             |
+|----------|---|-------------------------|
+| `POST`   | `/bills` | Create a bill           |
+| `PATCH`  | `/bills` | Partially update a bill |
+| `GET`    | `/bills/{id}` | Get a bill              |
+| `GET`    | `/bills` | List all bills          |
+| `DELETE` | `/bills/{id}` | Delete a bill           |
 
 **Create bill request body:**
 ```json
