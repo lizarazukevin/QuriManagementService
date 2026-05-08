@@ -1,16 +1,23 @@
 package com.quri.management.db.mongo.collections
 
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.FindOneAndUpdateOptions
+import com.mongodb.client.model.ReturnDocument
+import com.mongodb.client.model.Updates.combine
+import com.mongodb.client.model.Updates.set
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.quri.client.model.Bill
 import com.quri.client.model.CreateBillInput
+import com.quri.client.model.UpdateBillInput
 import com.quri.management.db.mongo.MongoSchema.Collections.BILLS
 import com.quri.management.db.mongo.documents.BillDocument
 import com.quri.management.db.mongo.paginate
 import kotlinx.coroutines.flow.firstOrNull
+import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 /**
  * Data access layer for the bills collection in MongoDB.
@@ -23,7 +30,7 @@ import org.springframework.stereotype.Component
  * @param dataStoreDatabase the MongoDB database instance injected by Spring
  */
 @Component
-class BillCollection(dataStoreDatabase: MongoDatabase) {
+class BillCollection(private val dataStoreDatabase: MongoDatabase) {
     private val collection: MongoCollection<BillDocument> =
         dataStoreDatabase.getCollection(BILLS, BillDocument::class.java)
 
@@ -58,7 +65,6 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
      *
      * @param pageSize is the maximum results per page
      * @param nextToken is the bookmarked ID the next paginated list starts from
-     *
      * @return list of all [Bill] documents mapped to Smithy models and nullable pagination token
      */
     suspend fun listAll(
@@ -77,5 +83,47 @@ class BillCollection(dataStoreDatabase: MongoDatabase) {
     suspend fun deleteById(id: ObjectId): ObjectId? {
         val result = collection.deleteOne(eq("_id", id))
         return id.takeIf { result.deletedCount == 1L }
+    }
+
+    /**
+     * Updates a bill by its [ObjectId].
+     *
+     * Combines a list of conditional updates to a single update,
+     * auditing the actor behind this modification.
+     *
+     * @param input the [UpdateBillInput] contents for updating a bill
+     * @param userId actor behind update
+     * @return updated [Bill] document, `null` if update did not go through
+     */
+    suspend fun update(
+        input: UpdateBillInput,
+        userId: String,
+    ): Bill? {
+        val filter = eq("_id", ObjectId(input.billId))
+        val updates = buildUpdates(input, userId)
+        val options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+        return collection.findOneAndUpdate(filter, combine(updates), options)?.toApi()
+    }
+
+    private fun buildUpdates(
+        input: UpdateBillInput,
+        userId: String,
+    ): List<Bson> {
+        val updates = mutableListOf<Bson>()
+
+        input.name?.let { updates.add(set("name", it)) }
+        input.status?.let { updates.add(set("status", it.value)) }
+        input.isHidden?.let { updates.add(set("hidden", it)) }
+        input.description?.let { updates.add(set("description", it)) }
+        input.balance?.let { updates.add(set("balance", it)) }
+        input.receipts?.takeIf { it.isNotEmpty() }?.let {
+            // Smithy returns empty list if null
+            val objectIds = it.map { id -> ObjectId(id) }
+            updates.add(set("receipts", objectIds))
+        }
+
+        updates.add(set("updatedBy", userId))
+        updates.add(set("updatedAt", Instant.now()))
+        return updates
     }
 }
