@@ -6,7 +6,9 @@ import com.quri.client.model.GetProfileInput
 import com.quri.client.model.InternalFailureException
 import com.quri.client.model.Profile
 import com.quri.client.model.ResourceNotFoundException
+import com.quri.client.model.UpdateProfileInput
 import com.quri.management.api.validation.profile.CreateProfileValidator
+import com.quri.management.api.validation.profile.UpdateProfileValidator
 import com.quri.management.db.mongo.collections.ProfileCollection
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service
 class ProfileService(
     private val profileCollection: ProfileCollection,
     private val createProfileValidator: CreateProfileValidator,
+    private val updateProfileValidator: UpdateProfileValidator,
 ) {
 
     /**
@@ -76,4 +79,23 @@ class ProfileService(
             ?: throw ResourceNotFoundException.builder()
                 .message("Profile with ID `${input.profileId}` not found")
                 .build()
+
+    /**
+     * Updates a profile with user selected user changes.
+     *
+     * @param input contents to update profile
+     * @param userId actor behind update
+     * @return [Profile] after update
+     * @throws ResourceNotFoundException if no profile exists with the ID provided
+     */
+    suspend fun updateProfile(
+        input: UpdateProfileInput,
+        userId: String,
+    ): Profile {
+        updateProfileValidator.validate("updateProfile", input)
+        return profileCollection.update(input, userId)
+            ?: throw ResourceNotFoundException.builder()
+                .message("Profile with ID `${input.profileId}` not found")
+                .build()
+    }
 }

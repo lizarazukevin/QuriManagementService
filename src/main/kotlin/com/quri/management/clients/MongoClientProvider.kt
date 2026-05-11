@@ -9,7 +9,7 @@ import com.quri.management.db.mongo.codecs.FeeCodec
 import com.quri.management.db.mongo.codecs.ItemCodec
 import com.quri.management.db.mongo.codecs.LiableCodec
 import com.quri.management.db.mongo.codecs.MonetaryAmountCodec
-import com.quri.management.db.mongo.codecs.ProfileLocationCodec
+import com.quri.management.db.mongo.codecs.UserLocationCodec
 import org.bson.codecs.configuration.CodecRegistries
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -53,7 +53,7 @@ class MongoClientProvider {
                 FeeCodec(monetaryAmountCodec),
                 ItemCodec(monetaryAmountCodec, liableCodec, discountCodec),
                 monetaryAmountCodec,
-                ProfileLocationCodec(),
+                UserLocationCodec(),
             ),
             MongoClientSettings.getDefaultCodecRegistry(),
         )

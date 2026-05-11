@@ -95,6 +95,7 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 | Method | Path | Description |
 |---|---|---|
 | `POST` | `/profiles` | Create a profile |
+| `PATCH` | `/profiles` | Partially update a profile | 
 | `GET` | `/profiles/{id}` | Get a profile |
 | `GET` | `/profiles` | List all profiles |
 | `DELETE` | `/profiles/{id}` | Delete a profile |
