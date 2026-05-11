@@ -1,5 +1,6 @@
 package com.quri.management.api.validation
 
+import org.bson.types.ObjectId
 import java.math.BigDecimal
 import java.time.Instant
 
@@ -76,4 +77,17 @@ fun Instant?.validateTimestamp(field: String): Instant? {
     val value = validateRequired(field)
     require(value < Instant.now()) { "$field must not occur in the future" }
     return this
+}
+
+/**
+ * Validates a list of [ObjectId]s for objects referencing Mongo documents.
+ */
+fun List<String>?.validateObjectIdList(field: String): List<ObjectId> {
+    val value = validateRequired(field)
+    value.forEachIndexed { index, id ->
+        require(ObjectId.isValid(id)) {
+            "$field[$index] is not a valid ObjectId: $id"
+        }
+    }
+    return value.map(::ObjectId)
 }

@@ -13,8 +13,9 @@ import com.quri.client.model.Item
 import com.quri.client.model.Liable
 import com.quri.client.model.MonetaryAmount
 import com.quri.client.model.PaymentMethod
-import com.quri.client.model.ProfileLocation
 import com.quri.client.model.UpdateBillInput
+import com.quri.client.model.UpdateProfileInput
+import com.quri.client.model.UserLocation
 import com.quri.client.model.ValidationException
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
@@ -88,6 +89,9 @@ class SmithyJacksonConfig {
             builder.addMixIn(UpdateBillInput::class.java, UpdateBillInputMixin::class.java)
             builder.addMixIn(UpdateBillInput.Builder::class.java, UpdateBillInputBuilderMixin::class.java)
 
+            builder.addMixIn(UpdateProfileInput::class.java, UpdateProfileInputMixin::class.java)
+            builder.addMixIn(UpdateProfileInput.Builder::class.java, UpdateProfileInputBuilderMixin::class.java)
+
             builder.addMixIn(Address::class.java, AddressMixin::class.java)
             builder.addMixIn(Address.Builder::class.java, AddressBuilderMixin::class.java)
 
@@ -106,8 +110,8 @@ class SmithyJacksonConfig {
             builder.addMixIn(MonetaryAmount::class.java, MonetaryAmountMixin::class.java)
             builder.addMixIn(MonetaryAmount.Builder::class.java, MonetaryAmountBuilderMixin::class.java)
 
-            builder.addMixIn(ProfileLocation::class.java, ProfileLocationMixin::class.java)
-            builder.addMixIn(ProfileLocation.Builder::class.java, ProfileLocationBuilderMixin::class.java)
+            builder.addMixIn(UserLocation::class.java, ProfileLocationMixin::class.java)
+            builder.addMixIn(UserLocation.Builder::class.java, ProfileLocationBuilderMixin::class.java)
         }
 }
 
@@ -256,6 +260,9 @@ abstract class CreateReceiptInputMixin
 @JsonDeserialize(builder = UpdateBillInput.Builder::class)
 abstract class UpdateBillInputMixin
 
+@JsonDeserialize(builder = UpdateProfileInput.Builder::class)
+abstract class UpdateProfileInputMixin
+
 @JsonPOJOBuilder(withPrefix = "")
 abstract class CreateProfileInputBuilderMixin
 
@@ -267,6 +274,9 @@ abstract class CreateReceiptInputBuilderMixin
 
 @JsonPOJOBuilder(withPrefix = "")
 abstract class UpdateBillInputBuilderMixin
+
+@JsonPOJOBuilder(withPrefix = "")
+abstract class UpdateProfileInputBuilderMixin
 
 // Nested
 @JsonDeserialize(builder = Address.Builder::class)
@@ -287,7 +297,7 @@ abstract class LiableMixin
 @JsonDeserialize(builder = MonetaryAmount.Builder::class)
 abstract class MonetaryAmountMixin
 
-@JsonDeserialize(builder = ProfileLocation.Builder::class)
+@JsonDeserialize(builder = UserLocation.Builder::class)
 abstract class ProfileLocationMixin
 
 @JsonPOJOBuilder(withPrefix = "")

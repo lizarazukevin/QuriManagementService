@@ -3,7 +3,7 @@ package com.quri.management.db.mongo.documents
 import com.quri.client.model.CreateProfileInput
 import com.quri.client.model.Gender
 import com.quri.client.model.Profile
-import com.quri.client.model.ProfileLocation
+import com.quri.client.model.UserLocation
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.time.Instant
@@ -20,14 +20,14 @@ data class ProfileDocument(
     val lastName: String,
     val email: String,
 
-    val following: List<String>? = emptyList(),
-    val followers: List<String>? = emptyList(),
+    val following: List<ObjectId>? = emptyList(),
+    val followers: List<ObjectId>? = emptyList(),
     val middleName: String? = null,
     val phoneNumber: String? = null,
     val bio: String? = null,
     val gender: String? = null,
     val dateOfBirth: Instant? = null,
-    val location: ProfileLocation? = null,
+    val location: UserLocation? = null,
 
     val createdBy: String,
     val createdAt: Instant,
@@ -41,8 +41,8 @@ data class ProfileDocument(
             .firstName(firstName)
             .lastName(lastName)
             .email(email)
-            .following(following)
-            .followers(followers)
+            .following(following?.map(ObjectId::toHexString))
+            .followers(followers?.map(ObjectId::toHexString))
             .middleName(middleName)
             .phoneNumber(phoneNumber)
             .bio(bio)
@@ -66,6 +66,7 @@ data class ProfileDocument(
                 firstName = input.firstName,
                 lastName = input.lastName,
                 email = input.email,
+                dateOfBirth = input.dateOfBirth,
                 middleName = input.middleName,
                 phoneNumber = input.phoneNumber,
                 createdBy = ownerId,

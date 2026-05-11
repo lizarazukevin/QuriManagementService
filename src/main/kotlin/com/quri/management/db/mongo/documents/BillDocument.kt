@@ -36,7 +36,7 @@ data class BillDocument(
             .hidden(hidden)
             .description(description)
             .balance(balance)
-            .receipts(receipts?.map { it.toString() })
+            .receipts(receipts?.map(ObjectId::toHexString))
             .createdBy(createdBy)
             .createdAt(createdAt)
             .updatedBy(updatedBy)
