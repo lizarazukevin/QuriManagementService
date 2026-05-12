@@ -232,6 +232,7 @@ This service is under active development. Known limitations:
 
 - **No test suite** — Tests are disabled in the build config and planned for a future milestone.
 - **Input validation** — Edge cases and input validation are not fully covered yet.
+- **Local development only** - Personal domain for this project does not currently exist, all development work must be done locally, fetching cookies from the frontend.
 
 ### Roadmap
 
