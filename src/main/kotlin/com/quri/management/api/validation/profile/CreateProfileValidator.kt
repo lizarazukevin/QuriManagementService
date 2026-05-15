@@ -4,28 +4,29 @@ import com.mongodb.client.model.Filters.eq
 import com.quri.client.model.CreateProfileInput
 import com.quri.client.model.ValidationException
 import com.quri.management.api.validation.Validator
-import com.quri.management.api.validation.profile.ProfileValidation.validateDateOfBirth
-import com.quri.management.api.validation.profile.ProfileValidation.validateEmail
-import com.quri.management.api.validation.profile.ProfileValidation.validateName
-import com.quri.management.api.validation.profile.ProfileValidation.validatePhoneNumber
-import com.quri.management.api.validation.profile.ProfileValidation.validateUsername
 import com.quri.management.db.mongo.collections.ProfileCollection
 import com.quri.management.db.mongo.documents.ProfileDocument
 import org.springframework.stereotype.Component
 
 @Component
-class CreateProfileValidator(private val profileCollection: ProfileCollection) : Validator<CreateProfileInput> {
+class CreateProfileValidator(
+    private val profileCollection: ProfileCollection,
+    private val profileFieldsValidator: ProfileFieldsValidator,
+) : Validator<CreateProfileInput> {
     override suspend fun validate(
         field: String,
         input: CreateProfileInput,
     ) {
-        input.username?.let { validateUsername(field, it) }
-        input.firstName?.let { validateName("$field.first", it) }
-        input.lastName?.let { validateName("$field.last", it) }
-        input.email?.let { validateEmail(field, it) }
-        input.dateOfBirth?.let { validateDateOfBirth(field, it) }
-        input.middleName?.let { validateName("$field.middle", it) }
-        input.phoneNumber?.let { validatePhoneNumber(field, it) }
+        profileFieldsValidator.validate(
+            field = field,
+            username = input.username,
+            firstName = input.firstName,
+            lastName = input.lastName,
+            email = input.email,
+            dateOfBirth = input.dateOfBirth,
+            middleName = input.middleName,
+            phoneNumber = input.phoneNumber,
+        )
 
         require(!profileCollection.exists(eq(ProfileDocument::email.name, input.email))) {
             throw ValidationException.builder()

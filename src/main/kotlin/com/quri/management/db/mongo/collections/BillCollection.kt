@@ -116,10 +116,8 @@ class BillCollection(private val dataStoreDatabase: MongoDatabase) {
         input.isHidden?.let { updates.add(set("hidden", it)) }
         input.description?.let { updates.add(set("description", it)) }
         input.balance?.let { updates.add(set("balance", it)) }
-        input.receipts?.takeIf { it.isNotEmpty() }?.let {
-            // Smithy returns empty list if null
-            val objectIds = it.map { id -> ObjectId(id) }
-            updates.add(set("receipts", objectIds))
+        if (input.hasReceipts()) {
+            updates.add(set("receipts", input.receipts.map(::ObjectId)))
         }
 
         updates.add(set("updatedBy", userId))

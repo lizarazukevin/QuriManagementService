@@ -1,11 +1,15 @@
 package com.quri.management.db.mongo.collections
 
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.FindOneAndReplaceOptions
+import com.mongodb.client.model.ReturnDocument
+import com.mongodb.client.model.Updates.set
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.quri.client.model.Bill
 import com.quri.client.model.CreateReceiptInput
 import com.quri.client.model.Receipt
+import com.quri.client.model.UpdateReceiptInput
 import com.quri.management.db.mongo.MongoSchema.Collections.RECEIPTS
 import com.quri.management.db.mongo.documents.ReceiptDocument
 import com.quri.management.db.mongo.paginate
@@ -80,5 +84,25 @@ class ReceiptCollection(dataStoreDatabase: MongoDatabase) {
     suspend fun deleteById(id: ObjectId): ObjectId? {
         val result = collection.deleteOne(eq("_id", id))
         return id.takeIf { result.deletedCount == 1L }
+    }
+
+    /**
+     * Updates a receipt by its [ObjectId].
+     *
+     * Combines a list of conditional updates and audits the modification.
+     *
+     * @param input the [UpdateReceiptInput] contents for updating a receipt
+     * @param userId actor behind update
+     * @return update [Receipt] document, `null` if update was not successful.
+     */
+    suspend fun update(
+        input: UpdateReceiptInput,
+        userId: String,
+    ): Receipt? {
+        val filter = eq("_id", ObjectId(input.receiptId))
+        val original = collection.find(filter).firstOrNull() ?: return null
+        val replacement = ReceiptDocument.from(input, original, userId)
+        val options = FindOneAndReplaceOptions().returnDocument(ReturnDocument.AFTER)
+        return collection.findOneAndReplace(filter, replacement, options)?.toApi()
     }
 }
