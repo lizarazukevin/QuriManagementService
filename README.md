@@ -92,13 +92,13 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 
 ### Profiles
 
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/profiles` | Create a profile |
-| `PATCH` | `/profiles` | Partially update a profile | 
-| `GET` | `/profiles/{id}` | Get a profile |
-| `GET` | `/profiles` | List all profiles |
-| `DELETE` | `/profiles/{id}` | Delete a profile |
+| Method | Path                    | Description |
+|---|-------------------------|---|
+| `POST` | `/profiles`             | Create a profile |
+| `PATCH` | `/profiles/{profileId}` | Partially update a profile | 
+| `GET` | `/profiles/{id}`        | Get a profile |
+| `GET` | `/profiles`             | List all profiles |
+| `DELETE` | `/profiles/{id}`        | Delete a profile |
 
 **Create profile request body:**
 ```json
@@ -113,13 +113,13 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 
 ### Bills
 
-| Method   | Path | Description             |
-|----------|---|-------------------------|
-| `POST`   | `/bills` | Create a bill           |
-| `PATCH`  | `/bills` | Partially update a bill |
-| `GET`    | `/bills/{id}` | Get a bill              |
-| `GET`    | `/bills` | List all bills          |
-| `DELETE` | `/bills/{id}` | Delete a bill           |
+| Method   | Path              | Description             |
+|----------|-------------------|-------------------------|
+| `POST`   | `/bills`          | Create a bill           |
+| `PATCH`  | `/bills/{billId}` | Partially update a bill |
+| `GET`    | `/bills/{id}`     | Get a bill              |
+| `GET`    | `/bills`          | List all bills          |
+| `DELETE` | `/bills/{id}`     | Delete a bill           |
 
 **Create bill request body:**
 ```json
