@@ -7,6 +7,7 @@ import com.quri.client.model.Item
 import com.quri.client.model.MonetaryAmount
 import com.quri.client.model.PaymentMethod
 import com.quri.client.model.Receipt
+import com.quri.client.model.UpdateReceiptInput
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.math.BigDecimal
@@ -81,6 +82,33 @@ data class ReceiptDocument(
                 createdBy = ownerId,
                 createdAt = now,
                 updatedBy = ownerId,
+                updatedAt = now,
+            )
+        }
+
+        fun from(
+            input: UpdateReceiptInput,
+            original: ReceiptDocument,
+            userId: String,
+        ): ReceiptDocument {
+            val now = Instant.now()
+            return ReceiptDocument(
+                id = original.id,
+                vendorName = input.vendorName,
+                items = input.items,
+                occurredAt = input.occurredAt,
+                paymentMethod = input.paymentMethod.value,
+                subtotal = input.subtotal,
+                tax = input.tax,
+                tip = input.tip,
+                totalSavings = input.totalSavings,
+                fees = input.fees,
+                address = input.address,
+                photoId = input.photoId,
+                urls = input.urls,
+                createdBy = original.createdBy,
+                createdAt = original.createdAt,
+                updatedBy = userId,
                 updatedAt = now,
             )
         }

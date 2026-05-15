@@ -1,6 +1,7 @@
 package com.quri.management.api.validation.model
 
 import com.quri.client.model.Discount
+import com.quri.client.model.ValidationException
 import com.quri.management.api.validation.Validator
 import com.quri.management.api.validation.validateRate
 import org.springframework.stereotype.Component
@@ -14,7 +15,16 @@ class DiscountValidator(private val monetaryAmountValidator: MonetaryAmountValid
         input.value?.let { monetaryAmountValidator.validate("$field.value", it) }
         input.rate?.validateRate("$field.rate")
 
-        require(input.value != null || input.rate != null) { "discount must have either amount or rate" }
-        require(input.value == null || input.rate == null) { "discount cannot have both amount and rate" }
+        require(input.value != null || input.rate != null) {
+            throw ValidationException.builder()
+                .message("discount must have either amount or rate")
+                .build()
+        }
+
+        require(input.value == null || input.rate == null) {
+            throw ValidationException.builder()
+                .message("discount cannot have both amount and rate")
+                .build()
+        }
     }
 }

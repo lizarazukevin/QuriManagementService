@@ -1,15 +1,16 @@
 package com.quri.management.api.validation.receipt
 
-import com.quri.client.model.CreateReceiptInput
+import com.quri.client.model.UpdateReceiptInput
 import com.quri.management.api.validation.Validator
 import org.springframework.stereotype.Component
 
 @Component
-class CreateReceiptValidator(private val receiptFieldsValidator: ReceiptFieldsValidator) :
-    Validator<CreateReceiptInput> {
+class UpdateReceiptValidator(private val receiptFieldsValidator: ReceiptFieldsValidator) :
+    Validator<UpdateReceiptInput> {
+
     override suspend fun validate(
         field: String,
-        input: CreateReceiptInput,
+        input: UpdateReceiptInput,
     ) {
         receiptFieldsValidator.validate(
             field = field,

@@ -6,7 +6,9 @@ import com.quri.client.model.GetReceiptInput
 import com.quri.client.model.InternalFailureException
 import com.quri.client.model.Receipt
 import com.quri.client.model.ResourceNotFoundException
+import com.quri.client.model.UpdateReceiptInput
 import com.quri.management.api.validation.receipt.CreateReceiptValidator
+import com.quri.management.api.validation.receipt.UpdateReceiptValidator
 import com.quri.management.db.mongo.collections.ReceiptCollection
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service
 class ReceiptService(
     private val receiptCollection: ReceiptCollection,
     private val createReceiptValidator: CreateReceiptValidator,
+    private val updateReceiptValidator: UpdateReceiptValidator,
 ) {
     /**
      * Retrieves a receipt by its ID.
@@ -74,4 +77,23 @@ class ReceiptService(
             ?: throw ResourceNotFoundException.builder()
                 .message("Receipt with ID `${input.receiptId}` not found")
                 .build()
+
+    /**
+     * Updates a receipt with user changes.
+     *
+     * @param input contents to update receipt
+     * @param userId actor behind update
+     * @return [Receipt] after update
+     * @throws ResourceNotFoundException if no receipt exists with the ID provided
+     */
+    suspend fun updateReceipt(
+        input: UpdateReceiptInput,
+        userId: String,
+    ): Receipt {
+        updateReceiptValidator.validate("updateReceipt", input)
+        return receiptCollection.update(input, userId)
+            ?: throw ResourceNotFoundException.builder()
+                .message("Receipt with ID `${input.receiptId}` not found")
+                .build()
+    }
 }

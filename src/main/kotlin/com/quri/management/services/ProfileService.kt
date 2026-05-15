@@ -81,7 +81,7 @@ class ProfileService(
                 .build()
 
     /**
-     * Updates a profile with user selected user changes.
+     * Updates a profile with user changes.
      *
      * @param input contents to update profile
      * @param userId actor behind update

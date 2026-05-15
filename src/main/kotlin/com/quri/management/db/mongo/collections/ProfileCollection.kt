@@ -127,13 +127,11 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
         input.middleName?.let { updates.add(set("middleName", it)) }
         input.phoneNumber?.let { updates.add(set("phoneNumber", it)) }
         input.bio?.let { updates.add(set("bio", it)) }
-        input.following?.takeIf { it.isNotEmpty() }?.let {
-            val objectIds = it.map { id -> ObjectId(id) }
-            updates.add(set("following", objectIds))
+        if (input.hasFollowing()) {
+            updates.add(set("following", input.following.map(::ObjectId)))
         }
-        input.followers?.takeIf { it.isNotEmpty() }?.let {
-            val objectIds = it.map { id -> ObjectId(id) }
-            updates.add(set("followers", objectIds))
+        if (input.hasFollowers()) {
+            updates.add(set("followers", input.followers.map(::ObjectId)))
         }
         input.gender?.let { updates.add(set("gender", it.value)) }
         input.location?.let { updates.add(set("location", it)) }

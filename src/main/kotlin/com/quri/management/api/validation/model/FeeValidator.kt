@@ -1,6 +1,7 @@
 package com.quri.management.api.validation.model
 
 import com.quri.client.model.Fee
+import com.quri.client.model.ValidationException
 import com.quri.management.api.validation.Validator
 import com.quri.management.api.validation.validateLength
 import com.quri.management.api.validation.validateRate
@@ -16,8 +17,16 @@ class FeeValidator(private val monetaryAmountValidator: MonetaryAmountValidator)
         input.value?.let { monetaryAmountValidator.validate("$field.value", it) }
         input.rate?.validateRate("$field.rate")
 
-        require(input.value != null || input.rate != null) { "fee must have either amount or rate" }
-        require(input.value == null || input.rate == null) { "fee cannot have both amount and rate" }
+        require(input.value != null || input.rate != null) {
+            throw ValidationException.builder()
+                .message("fee must have either amount or rate")
+                .build()
+        }
+        require(input.value == null || input.rate == null) {
+            throw ValidationException.builder()
+                .message("fee cannot have both amount and rate")
+                .build()
+        }
     }
 
     companion object {

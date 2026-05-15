@@ -134,6 +134,7 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 | Method | Path | Description |
 |---|---|---|
 | `POST` | `/receipts` | Create a receipt |
+| `PUT` | `/receipts/{receiptId}` | Update a receipt |
 | `GET` | `/receipts` | List all receipts (supports `maxResults` and `nextToken` pagination) |
 | `GET` | `/receipts/{receiptId}` | Get a receipt |
 | `DELETE` | `/receipts/{receiptId}` | Delete a receipt |
