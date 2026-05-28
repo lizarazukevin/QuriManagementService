@@ -35,6 +35,9 @@ logstash-logback       = "9.0"
 # ── Kotlin Ecosystem ──────────────────────────────────────────────────────────
 # reactor integration required for suspend functions in WebFlux controllers.
 kotlinx-coroutines     = "1.10.2"
+kotest                 = "6.1.9"
+mockk                  = "1.14.9"
+kover                  = "0.9.8"
 
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -44,6 +47,7 @@ kotlin-spring      = { id = "org.jetbrains.kotlin.plugin.spring",  version.ref =
 spring-boot        = { id = "org.springframework.boot",            version.ref = "spring-boot"       }
 spring-dependency  = { id = "io.spring.dependency-management",     version.ref = "spring-dependency" }
 detekt             = { id = "dev.detekt",                          version.ref = "detekt"            }
+kover              = { id = "org.jetbrains.kotlinx.kover",         version.ref = "kover"             }
 
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -65,11 +69,16 @@ spring-boot-starter-webflux            = { module = "org.springframework.boot:sp
 # ── Kotlin ────────────────────────────────────────────────────────────────────
 # kotlinx-coroutines-reactor bridges suspend functions into Reactor's Mono/Flux,
 # required for WebFlux to invoke suspend controller methods correctly.
-kotlin-test                = { module = "org.jetbrains.kotlin:kotlin-test",                 version.ref = "kotlin"             }
 kotlinx-coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "kotlinx-coroutines" }
 
+# ── Testing ───────────────────────────────────────────────────────────────────
+kotest-runner-junit5   = { module = "io.kotest:kotest-runner-junit5",   version.ref = "kotest" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-property        = { module = "io.kotest:kotest-property",        version.ref = "kotest" }
+mockk                  = { module = "io.mockk:mockk",                   version.ref = "mockk"  }
+
 # ── Database ──────────────────────────────────────────────────────────────────
-mongodb-bson-kotlinx            = { module = "org.mongodb:bson-kotlinx",                   version.ref = "mongodb" }
+mongodb-bson-kotlinx            = { module = "org.mongodb:bson-kotlinx",                    version.ref = "mongodb" }
 mongodb-driver-kotlin-coroutine = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb" }
 
 # ── Observability ─────────────────────────────────────────────────────────────
