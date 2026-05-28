@@ -6,6 +6,7 @@ plugins {
 	alias(libs.plugins.kotlin.spring)
 	alias(libs.plugins.spring.boot)
 	alias(libs.plugins.spring.dependency)
+	alias(libs.plugins.kover)
 }
 
 group = "com.quri"
@@ -65,7 +66,14 @@ dependencies {
 
 	// ── Test ──────────────────────────────────────────────────────────────────
 	testImplementation(libs.spring.boot.starter.test)
-	testImplementation(libs.kotlin.test)
+	testImplementation(libs.kotest.runner.junit5)
+	testImplementation(libs.kotest.assertions.core)
+	testImplementation(libs.kotest.property)
+	testImplementation(libs.mockk)
+
+	testImplementation(libs.spring.boot.starter.test) {
+		exclude(module = "mockito-core")
+	}
 
 	// ── Code Quality ──────────────────────────────────────────────────────────
 	// Ref: https://detekt.dev/docs/intro
@@ -90,6 +98,32 @@ tasks.withType<Detekt>().configureEach {
 // ── Test ──────────────────────────────────────────────────────────────────────
 tasks.withType<Test> {
 	useJUnitPlatform()
-	// TODO: Re-enable once integration test infrastructure is in place.
-	enabled = false
+}
+
+// ── Coverage ──────────────────────────────────────────────────────────────────
+kover {
+	reports {
+		total {
+			html {
+				onCheck = false
+			}
+			verify {
+				rule {
+					minBound(60)
+				}
+			}
+		}
+		filters {
+			excludes {
+				classes(
+					// exclude Spring wiring and config from coverage stats
+					"*.QuriManagementServiceApplication*",
+					"*.SecurityConfig*",
+					"*.SmithyJacksonConfig*",
+					"*.MongoClientProvider*",
+					"*.MongoDatabaseProvider*",
+				)
+			}
+		}
+	}
 }
