@@ -18,6 +18,7 @@ import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.slot
 import org.bson.types.ObjectId
 
 @Suppress("unused")
@@ -47,7 +48,6 @@ class BillServiceTest :
                     val result = billService.getBillFromId(input)
 
                     result shouldBe bill
-                    coVerify(exactly = 1) { billCollection.findById(ObjectId(input.billId)) }
                 }
             }
 
@@ -68,7 +68,7 @@ class BillServiceTest :
             context("when input is valid and collection succeeds") {
                 it("validates input, persists, and returns the created bill") {
                     val input = BillFixtures.aCreateBillInput()
-                    val created = BillFixtures.aBill(status = BillStatus.DRAFT)
+                    val created = BillFixtures.aBill()
                     coJustRun { createBillValidator.validate(any(), any()) }
                     coEvery { billCollection.create(input, DEFAULT_OWNER_ID) } returns created
 

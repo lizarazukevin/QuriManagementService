@@ -21,9 +21,6 @@ object BillFixtures {
         name: String = "Test Bill",
         status: BillStatus = BillStatus.DRAFT,
         hidden: Boolean = false,
-        description: String? = null,
-        balance: MonetaryAmount? = null,
-        receipts: List<String>? = null,
         createdAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
         createdBy: String = DEFAULT_USER_ID,
         updatedAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
@@ -38,9 +35,6 @@ object BillFixtures {
             .createdBy(createdBy)
             .updatedAt(updatedAt)
             .updatedBy(updatedBy)
-            .apply { description?.let { description(it) } }
-            .apply { balance?.let { balance(it) } }
-            .apply { receipts?.let { receipts(it) } }
             .build()
 
     fun aCreateBillInput(

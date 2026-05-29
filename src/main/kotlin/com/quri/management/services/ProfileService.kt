@@ -74,8 +74,8 @@ class ProfileService(
      * @return the deleted profile ID as a [String]
      * @throws ResourceNotFoundException if no profile exists with the ID provided
      */
-    suspend fun deleteProfile(input: DeleteProfileInput): String =
-        profileCollection.deleteById(ObjectId(input.profileId))?.toString()
+    suspend fun deleteProfile(input: DeleteProfileInput): ObjectId =
+        profileCollection.deleteById(ObjectId(input.profileId))
             ?: throw ResourceNotFoundException.builder()
                 .message("Profile with ID `${input.profileId}` not found")
                 .build()

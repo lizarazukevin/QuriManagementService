@@ -23,7 +23,7 @@ class DeleteProfile(private val profileService: ProfileService) {
         val deletedProfileId = profileService.deleteProfile(input)
 
         return DeleteProfileOutput.builder()
-            .profileId(deletedProfileId)
+            .profileId(deletedProfileId.toString())
             .build()
     }
 }
