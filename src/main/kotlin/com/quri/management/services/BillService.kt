@@ -73,8 +73,8 @@ class BillService(
      * @return the deleted bill ID
      * @throws ResourceNotFoundException if no bill exists with the ID provided
      */
-    suspend fun deleteBill(input: DeleteBillInput): String =
-        billCollection.deleteById(ObjectId(input.billId))?.toString()
+    suspend fun deleteBill(input: DeleteBillInput): ObjectId =
+        billCollection.deleteById(ObjectId(input.billId))
             ?: throw ResourceNotFoundException.builder()
                 .message("Bill with ID `${input.billId}` not found")
                 .build()

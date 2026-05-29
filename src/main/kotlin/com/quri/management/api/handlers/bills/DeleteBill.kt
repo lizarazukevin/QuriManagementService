@@ -23,7 +23,7 @@ class DeleteBill(private val billService: BillService) {
         val deletedBillId = billService.deleteBill(input)
 
         return DeleteBillOutput.builder()
-            .billId(deletedBillId)
+            .billId(deletedBillId.toString())
             .build()
     }
 }
