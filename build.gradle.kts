@@ -96,7 +96,7 @@ tasks.withType<Detekt>().configureEach {
 }
 
 // ── Test ──────────────────────────────────────────────────────────────────────
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
 	useJUnitPlatform()
 }
 
