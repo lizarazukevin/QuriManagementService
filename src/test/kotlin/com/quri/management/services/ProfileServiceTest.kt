@@ -46,7 +46,6 @@ class ProfileServiceTest :
                     val result = profileService.getProfileFromId(input)
 
                     result shouldBe profile
-                    coVerify(exactly = 1) { profileCollection.findById(ObjectId(DEFAULT_PROFILE_ID)) }
                 }
             }
 

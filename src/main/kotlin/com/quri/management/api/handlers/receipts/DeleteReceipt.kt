@@ -23,7 +23,7 @@ class DeleteReceipt(private val receiptService: ReceiptService) {
         val deletedReceiptId = receiptService.deleteReceipt(input)
 
         return DeleteReceiptOutput.builder()
-            .receiptId(deletedReceiptId)
+            .receiptId(deletedReceiptId.toString())
             .build()
     }
 }

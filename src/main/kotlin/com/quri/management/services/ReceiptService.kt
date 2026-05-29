@@ -72,8 +72,8 @@ class ReceiptService(
      * @return the deleted receipt ID
      * @throws ResourceNotFoundException if no receipt exists with the ID provided
      */
-    suspend fun deleteReceipt(input: DeleteReceiptInput): String =
-        receiptCollection.deleteById(ObjectId(input.receiptId))?.toString()
+    suspend fun deleteReceipt(input: DeleteReceiptInput): ObjectId =
+        receiptCollection.deleteById(ObjectId(input.receiptId))
             ?: throw ResourceNotFoundException.builder()
                 .message("Receipt with ID `${input.receiptId}` not found")
                 .build()
