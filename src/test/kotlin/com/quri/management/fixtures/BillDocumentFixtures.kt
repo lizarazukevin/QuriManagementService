@@ -17,11 +17,9 @@ object BillDocumentFixtures {
         name: String = "Test Bill",
         status: String = "DRAFT",
         hidden: Boolean = false,
-
         description: String? = null,
         balance: MonetaryAmount? = null,
         receipts: List<ObjectId>? = null,
-
         createdBy: String = DEFAULT_OWNER_ID,
         createdAt: Instant = DEFAULT_INSTANT,
         updatedBy: String = DEFAULT_USER_ID,
