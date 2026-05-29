@@ -1,6 +1,5 @@
 package com.quri.management.services
 
-import com.quri.client.model.BillStatus
 import com.quri.client.model.InternalFailureException
 import com.quri.client.model.ResourceNotFoundException
 import com.quri.management.api.validation.bill.CreateBillValidator
@@ -18,7 +17,6 @@ import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.slot
 import org.bson.types.ObjectId
 
 @Suppress("unused")
