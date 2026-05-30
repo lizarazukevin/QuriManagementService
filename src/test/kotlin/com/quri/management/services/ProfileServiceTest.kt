@@ -2,6 +2,7 @@ package com.quri.management.services
 
 import com.quri.client.model.InternalFailureException
 import com.quri.client.model.ResourceNotFoundException
+import com.quri.client.model.ValidationException
 import com.quri.management.api.validation.profile.CreateProfileValidator
 import com.quri.management.api.validation.profile.UpdateProfileValidator
 import com.quri.management.db.mongo.collections.ProfileCollection
@@ -69,12 +70,28 @@ class ProfileServiceTest :
                     val created = ProfileFixtures.aProfile()
                     coJustRun { createProfileValidator.validate(any(), any()) }
                     coEvery { profileCollection.create(input, DEFAULT_OWNER_ID) } returns created
+                    coEvery { profileCollection.exists(any()) } returns false
 
                     val result = profileService.createProfile(input, DEFAULT_OWNER_ID)
 
                     result shouldBe created
                     coVerify(exactly = 1) { createProfileValidator.validate("createProfile", input) }
                     coVerify(exactly = 1) { profileCollection.create(input, DEFAULT_OWNER_ID) }
+                    coVerify(exactly = 1) { profileCollection.exists(any()) }
+                }
+            }
+
+            context("when email is already registered") {
+                it("throws ValidationException before attempting to persist") {
+                    val input = ProfileFixtures.aCreateProfileInput()
+                    coJustRun { createProfileValidator.validate(any(), any()) }
+                    coEvery { profileCollection.exists(any()) } returns true
+
+                    shouldThrow<ValidationException> {
+                        profileService.createProfile(input, DEFAULT_OWNER_ID)
+                    }
+
+                    coVerify(exactly = 0) { profileCollection.create(any(), any()) }
                 }
             }
 
@@ -83,6 +100,7 @@ class ProfileServiceTest :
                     val input = ProfileFixtures.aCreateProfileInput()
                     coJustRun { createProfileValidator.validate(any(), any()) }
                     coEvery { profileCollection.create(any(), any()) } returns null
+                    coEvery { profileCollection.exists(any()) } returns false
 
                     shouldThrow<InternalFailureException> {
                         profileService.createProfile(input, DEFAULT_OWNER_ID)

@@ -1,8 +1,8 @@
 package com.quri.management.api.validation.model
 
 import com.quri.client.model.Fee
-import com.quri.client.model.ValidationException
 import com.quri.management.api.validation.Validator
+import com.quri.management.api.validation.require
 import com.quri.management.api.validation.validateLength
 import com.quri.management.api.validation.validateRate
 import org.springframework.stereotype.Component
@@ -18,14 +18,10 @@ class FeeValidator(private val monetaryAmountValidator: MonetaryAmountValidator)
         input.rate?.validateRate("$field.rate")
 
         require(input.value != null || input.rate != null) {
-            throw ValidationException.builder()
-                .message("fee must have either amount or rate")
-                .build()
+            "fee must have either amount or rate"
         }
         require(input.value == null || input.rate == null) {
-            throw ValidationException.builder()
-                .message("fee cannot have both amount and rate")
-                .build()
+            "fee cannot have both amount and rate"
         }
     }
 

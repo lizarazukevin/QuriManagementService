@@ -1,5 +1,6 @@
 package com.quri.management.services
 
+import com.mongodb.client.model.Filters.eq
 import com.quri.client.model.CreateProfileInput
 import com.quri.client.model.DeleteProfileInput
 import com.quri.client.model.GetProfileInput
@@ -9,7 +10,9 @@ import com.quri.client.model.ResourceNotFoundException
 import com.quri.client.model.UpdateProfileInput
 import com.quri.management.api.validation.profile.CreateProfileValidator
 import com.quri.management.api.validation.profile.UpdateProfileValidator
+import com.quri.management.api.validation.require
 import com.quri.management.db.mongo.collections.ProfileCollection
+import com.quri.management.db.mongo.documents.ProfileDocument
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 
@@ -49,6 +52,11 @@ class ProfileService(
         ownerId: String,
     ): Profile {
         createProfileValidator.validate("createProfile", input)
+
+        require(!profileCollection.exists(eq(ProfileDocument::email.name, input.email))) {
+            "A profile with email '${input.email}' already exists"
+        }
+
         return profileCollection.create(input, ownerId)
             ?: throw InternalFailureException.builder()
                 .message("Failed to create profile")
