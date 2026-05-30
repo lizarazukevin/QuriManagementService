@@ -1,8 +1,8 @@
 package com.quri.management.db.mongo.documents
 
 import com.quri.client.model.PaymentMethod
-import com.quri.management.fixtures.ReceiptDocumentFixtures
-import com.quri.management.fixtures.ReceiptFixtures
+import com.quri.management.fixtures.documents.ReceiptDocumentFixtures
+import com.quri.management.fixtures.models.ReceiptFixtures
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

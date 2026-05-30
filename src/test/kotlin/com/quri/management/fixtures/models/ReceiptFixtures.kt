@@ -1,4 +1,4 @@
-package com.quri.management.fixtures
+package com.quri.management.fixtures.models
 
 import com.quri.client.model.CreateReceiptInput
 import com.quri.client.model.DeleteReceiptInput

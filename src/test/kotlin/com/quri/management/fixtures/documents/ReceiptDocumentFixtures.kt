@@ -1,12 +1,13 @@
-package com.quri.management.fixtures
+package com.quri.management.fixtures.documents
 
 import com.quri.client.model.Address
 import com.quri.client.model.Fee
 import com.quri.client.model.Item
 import com.quri.client.model.MonetaryAmount
 import com.quri.management.db.mongo.documents.ReceiptDocument
-import com.quri.management.fixtures.ReceiptFixtures.DEFAULT_OWNER_ID
-import com.quri.management.fixtures.ReceiptFixtures.DEFAULT_USER_ID
+import com.quri.management.fixtures.models.ReceiptFixtures
+import com.quri.management.fixtures.models.ReceiptFixtures.DEFAULT_OWNER_ID
+import com.quri.management.fixtures.models.ReceiptFixtures.DEFAULT_USER_ID
 import org.bson.types.ObjectId
 import java.math.BigDecimal
 import java.time.Instant

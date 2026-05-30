@@ -1,8 +1,8 @@
 package com.quri.management.db.mongo.documents
 
 import com.quri.client.model.Gender
-import com.quri.management.fixtures.ProfileDocumentFixtures
-import com.quri.management.fixtures.ProfileFixtures
+import com.quri.management.fixtures.documents.ProfileDocumentFixtures
+import com.quri.management.fixtures.models.ProfileFixtures
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

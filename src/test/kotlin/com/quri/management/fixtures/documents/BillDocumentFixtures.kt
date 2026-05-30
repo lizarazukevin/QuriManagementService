@@ -1,4 +1,4 @@
-package com.quri.management.fixtures
+package com.quri.management.fixtures.documents
 
 import com.quri.client.model.MonetaryAmount
 import com.quri.management.db.mongo.documents.BillDocument

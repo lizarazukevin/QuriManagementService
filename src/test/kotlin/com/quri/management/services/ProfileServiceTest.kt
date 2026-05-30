@@ -5,10 +5,10 @@ import com.quri.client.model.ResourceNotFoundException
 import com.quri.management.api.validation.profile.CreateProfileValidator
 import com.quri.management.api.validation.profile.UpdateProfileValidator
 import com.quri.management.db.mongo.collections.ProfileCollection
-import com.quri.management.fixtures.ProfileFixtures
-import com.quri.management.fixtures.ProfileFixtures.DEFAULT_OWNER_ID
-import com.quri.management.fixtures.ProfileFixtures.DEFAULT_PROFILE_ID
-import com.quri.management.fixtures.ProfileFixtures.DEFAULT_USER_ID
+import com.quri.management.fixtures.models.ProfileFixtures
+import com.quri.management.fixtures.models.ProfileFixtures.DEFAULT_OWNER_ID
+import com.quri.management.fixtures.models.ProfileFixtures.DEFAULT_PROFILE_ID
+import com.quri.management.fixtures.models.ProfileFixtures.DEFAULT_USER_ID
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

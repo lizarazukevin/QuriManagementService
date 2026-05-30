@@ -5,10 +5,10 @@ import com.quri.client.model.ResourceNotFoundException
 import com.quri.management.api.validation.bill.CreateBillValidator
 import com.quri.management.api.validation.bill.UpdateBillValidator
 import com.quri.management.db.mongo.collections.BillCollection
-import com.quri.management.fixtures.BillFixtures
-import com.quri.management.fixtures.BillFixtures.DEFAULT_BILL_ID
-import com.quri.management.fixtures.BillFixtures.DEFAULT_OWNER_ID
-import com.quri.management.fixtures.BillFixtures.DEFAULT_USER_ID
+import com.quri.management.fixtures.models.BillFixtures
+import com.quri.management.fixtures.models.BillFixtures.DEFAULT_BILL_ID
+import com.quri.management.fixtures.models.BillFixtures.DEFAULT_OWNER_ID
+import com.quri.management.fixtures.models.BillFixtures.DEFAULT_USER_ID
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

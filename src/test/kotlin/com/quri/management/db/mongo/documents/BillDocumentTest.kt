@@ -1,12 +1,12 @@
 package com.quri.management.db.mongo.documents
 
 import com.quri.client.model.BillStatus
-import com.quri.management.fixtures.BillDocumentFixtures
-import com.quri.management.fixtures.BillDocumentFixtures.DEFAULT_INSTANT
-import com.quri.management.fixtures.BillDocumentFixtures.DEFAULT_OWNER_ID
-import com.quri.management.fixtures.BillDocumentFixtures.DEFAULT_USER_ID
-import com.quri.management.fixtures.BillFixtures
-import com.quri.management.fixtures.ReceiptFixtures
+import com.quri.management.fixtures.documents.BillDocumentFixtures
+import com.quri.management.fixtures.documents.BillDocumentFixtures.DEFAULT_INSTANT
+import com.quri.management.fixtures.documents.BillDocumentFixtures.DEFAULT_OWNER_ID
+import com.quri.management.fixtures.documents.BillDocumentFixtures.DEFAULT_USER_ID
+import com.quri.management.fixtures.models.BillFixtures
+import com.quri.management.fixtures.models.ReceiptFixtures
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

@@ -5,10 +5,10 @@ import com.quri.client.model.ResourceNotFoundException
 import com.quri.management.api.validation.receipt.CreateReceiptValidator
 import com.quri.management.api.validation.receipt.UpdateReceiptValidator
 import com.quri.management.db.mongo.collections.ReceiptCollection
-import com.quri.management.fixtures.ReceiptFixtures
-import com.quri.management.fixtures.ReceiptFixtures.DEFAULT_OWNER_ID
-import com.quri.management.fixtures.ReceiptFixtures.DEFAULT_RECEIPT_ID
-import com.quri.management.fixtures.ReceiptFixtures.DEFAULT_USER_ID
+import com.quri.management.fixtures.models.ReceiptFixtures
+import com.quri.management.fixtures.models.ReceiptFixtures.DEFAULT_OWNER_ID
+import com.quri.management.fixtures.models.ReceiptFixtures.DEFAULT_RECEIPT_ID
+import com.quri.management.fixtures.models.ReceiptFixtures.DEFAULT_USER_ID
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

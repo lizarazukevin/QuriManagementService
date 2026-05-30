@@ -1,4 +1,4 @@
-package com.quri.management.fixtures
+package com.quri.management.fixtures.models
 
 import com.quri.client.model.CreateProfileInput
 import com.quri.client.model.DeleteProfileInput
