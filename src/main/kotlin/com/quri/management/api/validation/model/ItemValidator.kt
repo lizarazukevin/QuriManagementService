@@ -18,13 +18,13 @@ class ItemValidator(
     ) {
         input.name.validateLength("$field.name", MIN_ITEM_NAME_LENGTH, MAX_ITEM_NAME_LENGTH)
         input.units.validateInteger("$field.units", MIN_UNIT_COUNT, MAX_UNIT_COUNT)
-        input.unitCost?.let { monetaryAmountValidator.validate("$field.unitCost", it) }
+        input.unitCost.let { monetaryAmountValidator.validate("$field.unitCost", it) }
 
-        input.liable?.forEachIndexed { index, liable ->
+        input.liable.forEachIndexed { index, liable ->
             liableValidator.validate("$field.liable[$index]", liable)
         }
 
-        input.discounts?.forEachIndexed { index, discount ->
+        input.discounts.forEachIndexed { index, discount ->
             discountValidator.validate("$field.discounts[$index]", discount)
         }
     }
