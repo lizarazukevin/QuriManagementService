@@ -3,6 +3,7 @@ package com.quri.management.api.validators
 import com.quri.client.model.ValidationException
 import com.quri.management.api.validation.validateInteger
 import com.quri.management.api.validation.validateLength
+import com.quri.management.api.validation.validateObjectId
 import com.quri.management.api.validation.validateObjectIdList
 import com.quri.management.api.validation.validatePattern
 import com.quri.management.api.validation.validateRate
@@ -261,6 +262,26 @@ class ConstraintsTest :
                     val value: List<String>? = null
                     shouldThrow<ValidationException> {
                         value.validateObjectIdList("field")
+                    }
+                }
+            }
+        }
+
+        describe("validateObjectId") {
+
+            context("when an object id is a valid ObjectId") {
+                it("returns an object id") {
+                    val id = ObjectId()
+                    val result = id.toString().validateObjectId("field")
+                    result shouldBe id
+                }
+            }
+
+            context("when an object id is not a valid ObjectId") {
+                it("throws ValidationException") {
+                    val id = "fake-id"
+                    shouldThrow<ValidationException> {
+                        id.validateObjectId("field")
                     }
                 }
             }

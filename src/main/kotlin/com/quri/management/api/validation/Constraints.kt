@@ -85,9 +85,18 @@ fun Instant?.validateTimestamp(field: String): Instant? {
 fun List<String>?.validateObjectIdList(field: String): List<ObjectId> {
     val value = validateRequired(field)
     value.forEachIndexed { index, id ->
-        require(ObjectId.isValid(id)) {
-            "$field[$index] is not a valid ObjectId: $id"
-        }
+        id.validateObjectId("$field[$index]")
     }
     return value.map(::ObjectId)
+}
+
+/**
+ * Validate an ObjectId.
+ */
+fun String?.validateObjectId(field: String): ObjectId {
+    val value = validateRequired(field)
+    require(ObjectId.isValid(value)) {
+        "$field is not a valid ObjectId: $value"
+    }
+    return ObjectId(value)
 }

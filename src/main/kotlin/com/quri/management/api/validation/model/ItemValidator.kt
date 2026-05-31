@@ -16,7 +16,7 @@ class ItemValidator(
         field: String,
         input: Item,
     ) {
-        input.name?.validateLength("$field.name", MIN_ITEM_NAME_LENGTH, MAX_ITEM_NAME_LENGTH)
+        input.name.validateLength("$field.name", MIN_ITEM_NAME_LENGTH, MAX_ITEM_NAME_LENGTH)
         input.units.validateInteger("$field.units", MIN_UNIT_COUNT, MAX_UNIT_COUNT)
         input.unitCost?.let { monetaryAmountValidator.validate("$field.unitCost", it) }
 
