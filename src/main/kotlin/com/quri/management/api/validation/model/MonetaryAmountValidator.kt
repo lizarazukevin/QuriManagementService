@@ -11,7 +11,7 @@ class MonetaryAmountValidator : Validator<MonetaryAmount> {
         field: String,
         input: MonetaryAmount,
     ) {
-        input.currency?.validatePattern(
+        input.currency.validatePattern(
             "$field.currency",
             Regex("^[A-Z]{3}$"),
             "must be a valid ISO 4217 currency code e.g. USD",
