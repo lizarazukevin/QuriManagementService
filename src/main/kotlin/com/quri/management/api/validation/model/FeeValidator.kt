@@ -13,7 +13,7 @@ class FeeValidator(private val monetaryAmountValidator: MonetaryAmountValidator)
         field: String,
         input: Fee,
     ) {
-        input.name?.validateLength("$field.name", MIN_FEE_NAME_LENGTH, MAX_FEE_NAME_LENGTH)
+        input.name.validateLength("$field.name", MIN_FEE_NAME_LENGTH, MAX_FEE_NAME_LENGTH)
         input.value?.let { monetaryAmountValidator.validate("$field.value", it) }
         input.rate?.validateRate("$field.rate")
 
