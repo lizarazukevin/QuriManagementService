@@ -3,6 +3,7 @@ package com.quri.management.api.validation.bill
 import com.quri.client.model.BillStatus
 import com.quri.client.model.CreateBillInput
 import com.quri.management.api.validation.Validator
+import com.quri.management.api.validation.require
 import org.springframework.stereotype.Component
 
 @Component
