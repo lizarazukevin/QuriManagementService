@@ -1,4 +1,4 @@
-package com.quri.management.api.handlers.receipts
+package com.quri.management.api.handlers.receipt
 
 import com.quri.client.model.CreateReceiptInput
 import com.quri.client.model.CreateReceiptOutput

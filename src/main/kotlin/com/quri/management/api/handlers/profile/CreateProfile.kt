@@ -1,4 +1,4 @@
-package com.quri.management.api.handlers.profiles
+package com.quri.management.api.handlers.profile
 
 import com.quri.client.model.CreateProfileInput
 import com.quri.client.model.CreateProfileOutput

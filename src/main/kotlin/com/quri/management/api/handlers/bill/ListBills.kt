@@ -1,4 +1,4 @@
-package com.quri.management.api.handlers.bills
+package com.quri.management.api.handlers.bill
 
 import com.quri.client.model.ListBillsInput
 import com.quri.client.model.ListBillsOutput
