@@ -99,7 +99,7 @@ class BillCollection(private val dataStoreDatabase: MongoDatabase) {
         input: UpdateBillInput,
         userId: String,
     ): Bill? {
-        val filter = eq("_id", ObjectId(input.billId))
+        val filter = eq("_id", ObjectId(input.id))
         val updates = buildUpdates(input, userId)
         val options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         return collection.findOneAndUpdate(filter, combine(updates), options)?.toApi()

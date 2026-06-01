@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the profile retrieval operation.
  */
 @RestController
-@RequestMapping("/profiles/{profileId}")
+@RequestMapping("/profiles/{id}")
 class GetProfile(private val profileService: ProfileService) {
     @GetMapping
-    suspend fun getProfile(@PathVariable profileId: String): GetProfileOutput {
+    suspend fun getProfile(@PathVariable id: String): GetProfileOutput {
         val input = GetProfileInput.builder()
-            .profileId(profileId)
+            .id(id)
             .build()
 
         val profile = profileService.getProfileFromId(input)

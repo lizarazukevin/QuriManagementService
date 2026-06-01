@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the profile update operation.
  */
 @RestController
-@RequestMapping("/profiles/{profileId}")
+@RequestMapping("/profiles/{id}")
 class UpdateProfile(private val profileService: ProfileService, private val userIdentity: UserIdentity) {
     @PatchMapping
     suspend fun updateProfile(
-        @PathVariable profileId: String,
+        @PathVariable id: String,
         @RequestBody input: UpdateProfileInput,
     ): UpdateProfileOutput {
         val input = input.toBuilder()
-            .profileId(profileId)
+            .id(id)
             .build()
 
         val profile = profileService.updateProfile(input, userIdentity.userId())

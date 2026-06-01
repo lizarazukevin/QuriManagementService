@@ -12,18 +12,18 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the profile deletion operation.
  */
 @RestController
-@RequestMapping("/profiles/{profileId}")
+@RequestMapping("/profiles/{id}")
 class DeleteProfile(private val profileService: ProfileService) {
     @DeleteMapping
-    suspend fun deleteProfile(@PathVariable profileId: String): DeleteProfileOutput {
+    suspend fun deleteProfile(@PathVariable id: String): DeleteProfileOutput {
         val input = DeleteProfileInput.builder()
-            .profileId(profileId)
+            .id(id)
             .build()
 
         val deletedProfileId = profileService.deleteProfile(input)
 
         return DeleteProfileOutput.builder()
-            .profileId(deletedProfileId.toString())
+            .id(deletedProfileId.toString())
             .build()
     }
 }

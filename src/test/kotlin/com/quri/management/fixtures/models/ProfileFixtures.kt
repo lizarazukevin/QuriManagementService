@@ -73,12 +73,12 @@ object ProfileFixtures {
 
     fun aGetProfileInput(profileId: String = DEFAULT_PROFILE_ID): GetProfileInput =
         GetProfileInput.builder()
-            .profileId(profileId)
+            .id(profileId)
             .build()
 
     fun aDeleteProfileInput(profileId: String = DEFAULT_PROFILE_ID): DeleteProfileInput =
         DeleteProfileInput.builder()
-            .profileId(profileId)
+            .id(profileId)
             .build()
 
     @Suppress("CyclomaticComplexMethod")
@@ -97,7 +97,7 @@ object ProfileFixtures {
         location: UserLocation? = null,
     ): UpdateProfileInput =
         UpdateProfileInput.builder()
-            .profileId(profileId)
+            .id(profileId)
             .apply { username?.let { username(it) } }
             .apply { firstName?.let { firstName(it) } }
             .apply { lastName?.let { lastName(it) } }

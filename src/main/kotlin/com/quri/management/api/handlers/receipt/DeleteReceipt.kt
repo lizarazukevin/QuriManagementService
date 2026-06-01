@@ -12,18 +12,18 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the receipt deletion operation.
  */
 @RestController
-@RequestMapping("/receipts/{receiptId}")
+@RequestMapping("/receipts/{id}")
 class DeleteReceipt(private val receiptService: ReceiptService) {
     @DeleteMapping
-    suspend fun deleteReceipt(@PathVariable receiptId: String): DeleteReceiptOutput {
+    suspend fun deleteReceipt(@PathVariable id: String): DeleteReceiptOutput {
         val input: DeleteReceiptInput = DeleteReceiptInput.builder()
-            .receiptId(receiptId)
+            .id(id)
             .build()
 
         val deletedReceiptId = receiptService.deleteReceipt(input)
 
         return DeleteReceiptOutput.builder()
-            .receiptId(deletedReceiptId.toString())
+            .id(deletedReceiptId.toString())
             .build()
     }
 }

@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the bill update operation.
  */
 @RestController
-@RequestMapping("/bills{billId}")
+@RequestMapping("/bills{id}")
 class UpdateBill(private val billService: BillService, private val userIdentity: UserIdentity) {
     @PatchMapping
     suspend fun updateBill(
-        @PathVariable billId: String,
+        @PathVariable id: String,
         @RequestBody input: UpdateBillInput,
     ): UpdateBillOutput {
         val input = input.toBuilder()
-            .billId(billId)
+            .id(id)
             .build()
 
         val bill = billService.updateBill(input, userIdentity.userId())

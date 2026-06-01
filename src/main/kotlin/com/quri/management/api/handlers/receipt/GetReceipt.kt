@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the receipt retrieval operation.
  */
 @RestController
-@RequestMapping("/receipts/{receiptId}")
+@RequestMapping("/receipts/{id}")
 class GetReceipt(private val receiptService: ReceiptService) {
     @GetMapping
-    suspend fun getReceipt(@PathVariable receiptId: String): GetReceiptOutput {
+    suspend fun getReceipt(@PathVariable id: String): GetReceiptOutput {
         val input = GetReceiptInput.builder()
-            .receiptId(receiptId)
+            .id(id)
             .build()
 
         val receipt = receiptService.getReceiptFromId(input)

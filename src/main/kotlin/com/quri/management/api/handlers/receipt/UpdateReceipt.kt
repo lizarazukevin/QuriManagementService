@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the receipt update operation.
  */
 @RestController
-@RequestMapping("/receipts/{receiptId}")
+@RequestMapping("/receipts/{id}")
 class UpdateReceipt(private val receiptService: ReceiptService, private val userIdentity: UserIdentity) {
     @PutMapping
     suspend fun updateReceipt(
-        @PathVariable receiptId: String,
+        @PathVariable id: String,
         @RequestBody input: UpdateReceiptInput,
     ): UpdateReceiptOutput {
         val input = input.toBuilder()
-            .receiptId(receiptId)
+            .id(id)
             .build()
 
         val receipt = receiptService.updateReceipt(input, userIdentity.userId())

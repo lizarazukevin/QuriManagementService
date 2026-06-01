@@ -99,7 +99,7 @@ class ReceiptCollection(dataStoreDatabase: MongoDatabase) {
         input: UpdateReceiptInput,
         userId: String,
     ): Receipt? {
-        val filter = eq("_id", ObjectId(input.receiptId))
+        val filter = eq("_id", ObjectId(input.id))
         val original = collection.find(filter).firstOrNull() ?: return null
         val replacement = ReceiptDocument.from(input, original, userId)
         val options = FindOneAndReplaceOptions().returnDocument(ReturnDocument.AFTER)

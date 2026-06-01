@@ -108,7 +108,7 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
         input: UpdateProfileInput,
         userId: String,
     ): Profile? {
-        val filter = eq("_id", ObjectId(input.profileId))
+        val filter = eq("_id", ObjectId(input.id))
         val updates = buildUpdates(input, userId)
         val options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         return collection.findOneAndUpdate(filter, combine(updates), options)?.toApi()

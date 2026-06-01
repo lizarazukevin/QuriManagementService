@@ -12,18 +12,18 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the bill deletion operation.
  */
 @RestController
-@RequestMapping("/bills/{billId}")
+@RequestMapping("/bills/{id}")
 class DeleteBill(private val billService: BillService) {
     @DeleteMapping
-    suspend fun deleteBill(@PathVariable billId: String): DeleteBillOutput {
+    suspend fun deleteBill(@PathVariable id: String): DeleteBillOutput {
         val input = DeleteBillInput.builder()
-            .billId(billId)
+            .id(id)
             .build()
 
         val deletedBillId = billService.deleteBill(input)
 
         return DeleteBillOutput.builder()
-            .billId(deletedBillId.toString())
+            .id(deletedBillId.toString())
             .build()
     }
 }

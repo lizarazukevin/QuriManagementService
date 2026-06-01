@@ -30,9 +30,9 @@ class BillService(
      * @throws ResourceNotFoundException if no bill exists with the ID provided
      */
     suspend fun getBillFromId(input: GetBillInput): Bill =
-        billCollection.findById(ObjectId(input.billId))
+        billCollection.findById(ObjectId(input.id))
             ?: throw ResourceNotFoundException.builder()
-                .message("Bill with ID `${input.billId}` not found")
+                .message("Bill with ID `${input.id}` not found")
                 .build()
 
     /**
@@ -74,9 +74,9 @@ class BillService(
      * @throws ResourceNotFoundException if no bill exists with the ID provided
      */
     suspend fun deleteBill(input: DeleteBillInput): ObjectId =
-        billCollection.deleteById(ObjectId(input.billId))
+        billCollection.deleteById(ObjectId(input.id))
             ?: throw ResourceNotFoundException.builder()
-                .message("Bill with ID `${input.billId}` not found")
+                .message("Bill with ID `${input.id}` not found")
                 .build()
 
     /**
@@ -94,7 +94,7 @@ class BillService(
         updateBillValidator.validate("updateBill", input)
         return billCollection.update(input, userId)
             ?: throw ResourceNotFoundException.builder()
-                .message("Bill with ID `${input.billId}` not found")
+                .message("Bill with ID `${input.id}` not found")
                 .build()
     }
 }

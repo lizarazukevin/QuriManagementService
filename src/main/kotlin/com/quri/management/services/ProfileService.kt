@@ -34,9 +34,9 @@ class ProfileService(
      * @throws ResourceNotFoundException if no profile exists with the ID provided
      */
     suspend fun getProfileFromId(input: GetProfileInput): Profile =
-        profileCollection.findById(ObjectId(input.profileId))
+        profileCollection.findById(ObjectId(input.id))
             ?: throw ResourceNotFoundException.builder()
-                .message("Profile with ID `${input.profileId}` not found")
+                .message("Profile with ID `${input.id}` not found")
                 .build()
 
     /**
@@ -83,9 +83,9 @@ class ProfileService(
      * @throws ResourceNotFoundException if no profile exists with the ID provided
      */
     suspend fun deleteProfile(input: DeleteProfileInput): ObjectId =
-        profileCollection.deleteById(ObjectId(input.profileId))
+        profileCollection.deleteById(ObjectId(input.id))
             ?: throw ResourceNotFoundException.builder()
-                .message("Profile with ID `${input.profileId}` not found")
+                .message("Profile with ID `${input.id}` not found")
                 .build()
 
     /**
@@ -103,7 +103,7 @@ class ProfileService(
         updateProfileValidator.validate("updateProfile", input)
         return profileCollection.update(input, userId)
             ?: throw ResourceNotFoundException.builder()
-                .message("Profile with ID `${input.profileId}` not found")
+                .message("Profile with ID `${input.id}` not found")
                 .build()
     }
 }

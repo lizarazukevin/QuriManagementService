@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the bill retrieval operation.
  */
 @RestController
-@RequestMapping("/bills/{billId}")
+@RequestMapping("/bills/{id}")
 class GetBill(private val billService: BillService) {
     @GetMapping
-    suspend fun getBill(@PathVariable billId: String): GetBillOutput {
+    suspend fun getBill(@PathVariable id: String): GetBillOutput {
         val input = GetBillInput.builder()
-            .billId(billId)
+            .id(id)
             .build()
 
         val bill = billService.getBillFromId(input)
