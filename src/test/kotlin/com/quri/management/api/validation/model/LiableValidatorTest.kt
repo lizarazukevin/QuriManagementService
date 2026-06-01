@@ -1,8 +1,7 @@
-package com.quri.management.api.validators.model
+package com.quri.management.api.validation.model
 
 import com.quri.client.model.Liable
 import com.quri.client.model.ValidationException
-import com.quri.management.api.validation.model.LiableValidator
 import com.quri.management.fixtures.models.ProfileFixtures.DEFAULT_PROFILE_ID
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec

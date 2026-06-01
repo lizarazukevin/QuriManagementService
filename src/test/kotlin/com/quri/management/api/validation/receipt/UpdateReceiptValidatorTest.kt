@@ -1,4 +1,4 @@
-package com.quri.management.api.validators.receipt
+package com.quri.management.api.validation.receipt
 
 import com.quri.client.model.PaymentMethod
 import com.quri.management.api.validation.model.AddressFieldsValidator
@@ -8,8 +8,6 @@ import com.quri.management.api.validation.model.FeeValidator
 import com.quri.management.api.validation.model.ItemValidator
 import com.quri.management.api.validation.model.LiableValidator
 import com.quri.management.api.validation.model.MonetaryAmountValidator
-import com.quri.management.api.validation.receipt.ReceiptFieldsValidator
-import com.quri.management.api.validation.receipt.UpdateReceiptValidator
 import com.quri.management.fixtures.models.ReceiptFixtures
 import io.kotest.core.spec.style.DescribeSpec
 import java.math.BigDecimal

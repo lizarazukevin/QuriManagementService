@@ -1,10 +1,8 @@
-package com.quri.management.api.validators.profile
+package com.quri.management.api.validation.profile
 
 import com.quri.client.model.Gender
 import com.quri.management.api.validation.model.AddressFieldsValidator
 import com.quri.management.api.validation.model.UserLocationValidator
-import com.quri.management.api.validation.profile.ProfileFieldsValidator
-import com.quri.management.api.validation.profile.UpdateProfileValidator
 import com.quri.management.fixtures.models.ProfileFixtures
 import com.quri.management.fixtures.models.ProfileFixtures.DEFAULT_PROFILE_ID
 import io.kotest.core.spec.style.DescribeSpec

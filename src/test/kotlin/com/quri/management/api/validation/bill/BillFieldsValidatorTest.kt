@@ -1,7 +1,6 @@
-package com.quri.management.api.validators.bill
+package com.quri.management.api.validation.bill
 
 import com.quri.client.model.MonetaryAmount
-import com.quri.management.api.validation.bill.BillFieldsValidator
 import com.quri.management.api.validation.model.MonetaryAmountValidator
 import io.kotest.core.spec.style.DescribeSpec
 import org.bson.types.ObjectId

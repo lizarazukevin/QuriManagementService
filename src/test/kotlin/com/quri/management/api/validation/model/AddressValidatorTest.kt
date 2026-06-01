@@ -1,7 +1,5 @@
-package com.quri.management.api.validators.model
+package com.quri.management.api.validation.model
 
-import com.quri.management.api.validation.model.AddressFieldsValidator
-import com.quri.management.api.validation.model.AddressValidator
 import com.quri.management.fixtures.models.ReceiptFixtures
 import io.kotest.core.spec.style.DescribeSpec
 

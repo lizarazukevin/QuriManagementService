@@ -1,88 +1,83 @@
-package com.quri.management.api.validators.model
+package com.quri.management.api.validation.model
 
-import com.quri.client.model.Discount
-import com.quri.client.model.DiscountType
+import com.quri.client.model.Fee
 import com.quri.client.model.ValidationException
-import com.quri.management.api.validation.model.DiscountValidator
-import com.quri.management.api.validation.model.MonetaryAmountValidator
 import com.quri.management.fixtures.models.ReceiptFixtures
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import java.math.BigDecimal
 
 @Suppress("unused")
-class DiscountValidatorTest :
+class FeeValidatorTest :
     DescribeSpec({
 
         val monetaryAmountValidator = MonetaryAmountValidator()
-        val validator = DiscountValidator(monetaryAmountValidator)
+        val validator = FeeValidator(monetaryAmountValidator)
 
         describe("validate") {
 
             context("when only value is provided") {
                 it("passes") {
-                    val discount = Discount.builder()
-                        .category(DiscountType.SALE)
+                    val fee = Fee.builder()
+                        .name("Service Fee")
                         .value(ReceiptFixtures.aMonetaryAmount())
                         .build()
-                    validator.validate("field", discount)
+                    validator.validate("field", fee)
                 }
             }
 
             context("when only rate is provided") {
                 it("passes") {
-                    val discount = Discount.builder()
-                        .category(DiscountType.SALE)
+                    val fee = Fee.builder()
+                        .name("Service Fee")
                         .rate(BigDecimal("0.1"))
                         .build()
-                    validator.validate("field", discount)
+                    validator.validate("field", fee)
                 }
             }
 
             context("when both value and rate are provided") {
                 it("throws ValidationException") {
-                    val discount = Discount.builder()
-                        .category(DiscountType.SALE)
+                    val fee = Fee.builder()
+                        .name("Service Fee")
                         .value(ReceiptFixtures.aMonetaryAmount())
                         .rate(BigDecimal("0.1"))
                         .build()
                     shouldThrow<ValidationException> {
-                        validator.validate("field", discount)
+                        validator.validate("field", fee)
                     }
                 }
             }
 
-            context("when both value and rate are not provided") {
+            context("when neither value nor rate is provided") {
                 it("throws ValidationException") {
-                    val discount = Discount.builder()
-                        .category(DiscountType.SALE)
-                        .build()
+                    val fee = Fee.builder().name("Service Fee").build()
                     shouldThrow<ValidationException> {
-                        validator.validate("field", discount)
+                        validator.validate("field", fee)
                     }
                 }
             }
 
-            context("when value has invalid currency") {
+            context("when name exceeds max length") {
                 it("throws ValidationException") {
-                    val discount = Discount.builder()
-                        .category(DiscountType.SALE)
-                        .value(ReceiptFixtures.aMonetaryAmount(currency = "invalid"))
+                    val fee = Fee.builder()
+                        .name("a".repeat(51))
+                        .value(ReceiptFixtures.aMonetaryAmount())
                         .build()
                     shouldThrow<ValidationException> {
-                        validator.validate("field", discount)
+                        validator.validate("field", fee)
                     }
                 }
             }
 
-            context("when rate is out of range") {
+            context("when name length is lower than min length") {
                 it("throws ValidationException") {
-                    val discount = Discount.builder()
-                        .category(DiscountType.SALE)
-                        .rate(BigDecimal("1.5"))
+                    val fee = Fee.builder()
+                        .name("a".repeat(1))
+                        .value(ReceiptFixtures.aMonetaryAmount())
                         .build()
                     shouldThrow<ValidationException> {
-                        validator.validate("field", discount)
+                        validator.validate("field", fee)
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package com.quri.management.api.validators.receipt
+package com.quri.management.api.validation.receipt
 
 import com.quri.client.model.Fee
 import com.quri.client.model.ValidationException
@@ -9,7 +9,6 @@ import com.quri.management.api.validation.model.FeeValidator
 import com.quri.management.api.validation.model.ItemValidator
 import com.quri.management.api.validation.model.LiableValidator
 import com.quri.management.api.validation.model.MonetaryAmountValidator
-import com.quri.management.api.validation.receipt.ReceiptFieldsValidator
 import com.quri.management.fixtures.models.ReceiptFixtures
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec

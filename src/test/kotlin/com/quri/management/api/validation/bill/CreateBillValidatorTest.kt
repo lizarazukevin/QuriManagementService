@@ -1,9 +1,7 @@
-package com.quri.management.api.validators.bill
+package com.quri.management.api.validation.bill
 
 import com.quri.client.model.BillStatus
 import com.quri.client.model.ValidationException
-import com.quri.management.api.validation.bill.BillFieldsValidator
-import com.quri.management.api.validation.bill.CreateBillValidator
 import com.quri.management.api.validation.model.MonetaryAmountValidator
 import com.quri.management.fixtures.models.BillFixtures
 import io.kotest.assertions.throwables.shouldThrow

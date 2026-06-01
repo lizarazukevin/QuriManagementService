@@ -1,9 +1,8 @@
-package com.quri.management.api.validators.profile
+package com.quri.management.api.validation.profile
 
 import com.quri.client.model.ValidationException
 import com.quri.management.api.validation.model.AddressFieldsValidator
 import com.quri.management.api.validation.model.UserLocationValidator
-import com.quri.management.api.validation.profile.ProfileFieldsValidator
 import com.quri.management.fixtures.models.ProfileFixtures
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec

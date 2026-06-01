@@ -1,14 +1,10 @@
-package com.quri.management.api.validators.model
+package com.quri.management.api.validation.model
 
 import com.quri.client.model.Discount
 import com.quri.client.model.DiscountType
 import com.quri.client.model.Item
 import com.quri.client.model.Liable
 import com.quri.client.model.ValidationException
-import com.quri.management.api.validation.model.DiscountValidator
-import com.quri.management.api.validation.model.ItemValidator
-import com.quri.management.api.validation.model.LiableValidator
-import com.quri.management.api.validation.model.MonetaryAmountValidator
 import com.quri.management.fixtures.models.ProfileFixtures.DEFAULT_PROFILE_ID
 import com.quri.management.fixtures.models.ReceiptFixtures
 import io.kotest.assertions.throwables.shouldThrow
