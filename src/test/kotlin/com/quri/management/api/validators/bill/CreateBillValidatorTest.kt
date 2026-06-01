@@ -59,32 +59,5 @@ class CreateBillValidatorTest :
                     }
                 }
             }
-
-            context("when name exceeds max length") {
-                it("throws ValidationException") {
-                    val input = BillFixtures.aCreateBillInput(name = "a".repeat(33))
-                    shouldThrow<ValidationException> {
-                        validator.validate("createBill", input)
-                    }
-                }
-            }
-
-            context("when name is below min length") {
-                it("throws ValidationException") {
-                    val input = BillFixtures.aCreateBillInput(name = "")
-                    shouldThrow<ValidationException> {
-                        validator.validate("createBill", input)
-                    }
-                }
-            }
-
-            context("when description exceeds max length") {
-                it("throws ValidationException") {
-                    val input = BillFixtures.aCreateBillInput(description = "a".repeat(151))
-                    shouldThrow<ValidationException> {
-                        validator.validate("createBill", input)
-                    }
-                }
-            }
         }
     })

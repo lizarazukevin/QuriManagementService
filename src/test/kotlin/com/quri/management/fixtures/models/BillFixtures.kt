@@ -8,6 +8,7 @@ import com.quri.client.model.GetBillInput
 import com.quri.client.model.MonetaryAmount
 import com.quri.client.model.UpdateBillInput
 import org.bson.types.ObjectId
+import java.math.BigDecimal
 import java.time.Instant
 
 object BillFixtures {
@@ -35,6 +36,15 @@ object BillFixtures {
             .createdBy(createdBy)
             .updatedAt(updatedAt)
             .updatedBy(updatedBy)
+            .build()
+
+    fun aMonetaryAmount(
+        amount: BigDecimal = BigDecimal("10.00"),
+        currency: String = "USD",
+    ): MonetaryAmount =
+        MonetaryAmount.builder()
+            .amount(amount)
+            .currency(currency)
             .build()
 
     fun aCreateBillInput(

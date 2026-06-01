@@ -1,5 +1,6 @@
 package com.quri.management.fixtures.models
 
+import com.quri.client.model.Address
 import com.quri.client.model.CreateReceiptInput
 import com.quri.client.model.DeleteReceiptInput
 import com.quri.client.model.Fee
@@ -86,6 +87,21 @@ object ReceiptFixtures {
             .occurredAt(occurredAt)
             .paymentMethod(paymentMethod)
             .subtotal(subtotal)
+            .build()
+
+    fun anAddress(
+        street: String = "123 Main Street",
+        city: String = "Arlington",
+        state: String = "VA",
+        postalCode: String = "20001",
+        country: String = "US",
+    ): Address =
+        Address.builder()
+            .street(street)
+            .city(city)
+            .state(state)
+            .postalCode(postalCode)
+            .country(country)
             .build()
 
     fun aGetReceiptInput(receiptId: String = DEFAULT_RECEIPT_ID): GetReceiptInput =

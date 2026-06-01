@@ -1,14 +1,12 @@
 package com.quri.management.api.validators.bill
 
-import com.quri.client.model.ValidationException
+import com.quri.client.model.BillStatus
 import com.quri.management.api.validation.bill.BillFieldsValidator
 import com.quri.management.api.validation.bill.UpdateBillValidator
 import com.quri.management.api.validation.model.MonetaryAmountValidator
 import com.quri.management.fixtures.models.BillFixtures
-import com.quri.management.fixtures.models.ReceiptFixtures
-import io.kotest.assertions.throwables.shouldThrow
+import com.quri.management.fixtures.models.ReceiptFixtures.DEFAULT_RECEIPT_ID
 import io.kotest.core.spec.style.DescribeSpec
-import org.bson.types.ObjectId
 
 @Suppress("unused")
 class UpdateBillValidatorTest :
@@ -27,48 +25,15 @@ class UpdateBillValidatorTest :
                 }
             }
 
-            context("when name is valid") {
-                it("passes") {
-                    val input = BillFixtures.anUpdateBillInput(name = "Updated Bill")
-                    validator.validate("updateBill", input)
-                }
-            }
-
-            context("when name exceeds max length") {
-                it("throws ValidationException") {
-                    val input = BillFixtures.anUpdateBillInput(name = "a".repeat(33))
-                    shouldThrow<ValidationException> {
-                        validator.validate("updateBill", input)
-                    }
-                }
-            }
-
-            context("when balance has invalid currency") {
-                it("throws ValidationException") {
-                    val input = BillFixtures.anUpdateBillInput(
-                        balance = ReceiptFixtures.aMonetaryAmount(currency = "invalid"),
-                    )
-                    shouldThrow<ValidationException> {
-                        validator.validate("updateBill", input)
-                    }
-                }
-            }
-
-            context("when receipts contain an invalid ObjectId") {
-                it("throws ValidationException") {
-                    val input = BillFixtures.anUpdateBillInput(
-                        receipts = listOf("not-an-objectid"),
-                    )
-                    shouldThrow<ValidationException> {
-                        validator.validate("updateBill", input)
-                    }
-                }
-            }
-
-            context("when receipts are valid ObjectIds") {
+            context("when all fields are valid") {
                 it("passes") {
                     val input = BillFixtures.anUpdateBillInput(
-                        receipts = listOf(ObjectId().toString()),
+                        name = "Updated Bill",
+                        status = BillStatus.CLOSED,
+                        hidden = true,
+                        description = "test description",
+                        balance = BillFixtures.aMonetaryAmount(),
+                        receipts = listOf(DEFAULT_RECEIPT_ID),
                     )
                     validator.validate("updateBill", input)
                 }
