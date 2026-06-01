@@ -7,6 +7,7 @@ plugins {
 	alias(libs.plugins.spring.boot)
 	alias(libs.plugins.spring.dependency)
 	alias(libs.plugins.kover)
+	idea
 }
 
 group = "com.quri"
@@ -25,11 +26,41 @@ kotlin {
 	}
 }
 
+// ── Source Sets ───────────────────────────────────────────────────────────────
+// Creates isolated source set for infra-backed integration tests
+// Inherits code boundaries + testing libraries from standard unit tests
+val integrationSourceSet = sourceSets.create("integration") {
+	kotlin {
+		compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+		runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+	}
+}
+
+// Inherits test implementation and runtime libraries into integration suite
+configurations[integrationSourceSet.implementationConfigurationName]
+	.extendsFrom(configurations.testImplementation.get())
+configurations[integrationSourceSet.runtimeOnlyConfigurationName]
+	.extendsFrom(configurations.testRuntimeOnly.get())
+
+// Forces IntelliJ IDEA to recognize this custom set as a designated test src root
+// a.k.a. turns the folder green
+idea {
+	module {
+		testSources.from(integrationSourceSet.kotlin.srcDirs)
+		testResources.from(integrationSourceSet.resources.srcDirs)
+	}
+}
+
 // ── Detekt (static analysis + ktlint formatting) ──────────────────────────────
 // Ref: https://detekt.dev/docs/2.0.0-alpha.1/intro
 detekt {
 	config.setFrom(file("config/detekt/detekt.yml"))
 	buildUponDefaultConfig = true
+	source.from(
+		sourceSets.main.get().kotlin,
+		sourceSets.test.get().kotlin,
+		integrationSourceSet.kotlin
+	)
 }
 
 repositories {
@@ -65,15 +96,35 @@ dependencies {
 	implementation(libs.logstash.logback.encoder)
 
 	// ── Test ──────────────────────────────────────────────────────────────────
+	testImplementation(libs.spring.boot.starter.test) {
+		exclude(module = "mockito-core")
+	}
 	testImplementation(libs.spring.boot.starter.test)
 	testImplementation(libs.kotest.runner.junit5)
 	testImplementation(libs.kotest.assertions.core)
 	testImplementation(libs.kotest.property)
 	testImplementation(libs.mockk)
 
-	testImplementation(libs.spring.boot.starter.test) {
-		exclude(module = "mockito-core")
-	}
+	// ── Integration Test ──────────────────────────────────────────────────────
+	val integrationImplementation by configurations
+
+	// Support for constructor dependency injection, bridges Kotest's coroutine execution model
+	// with Spring's requirement for JUnit, enabling proper application context + caching
+	// Ref: https://kotest.io/docs/extensions/spring.html
+	integrationImplementation(libs.kotest.extensions.spring)
+
+	// Target and replace a specific Spring bean inside the active application context with MockK mock
+	// Ref: https://github.com/Ninja-Squad/springmockk
+	integrationImplementation(libs.springmockk)
+
+	// Manage services running inside containers, integrates with JUnit to start up containers before
+	// tests run and are practical for writing integration tests against a real backend service (e.g. Mongo, MySQL)
+	// Ref: https://docs.spring.io/spring-boot/reference/testing/testcontainers.html
+	integrationImplementation(libs.spring.boot.testcontainers)
+
+	// Downloads, starts, and stops genuine MongoDB service inside isolated container
+	// Ref: https://testcontainers.com/modules/mongodb/
+	integrationImplementation(libs.testcontainers.mongodb)
 
 	// ── Code Quality ──────────────────────────────────────────────────────────
 	// Ref: https://detekt.dev/docs/intro
@@ -100,17 +151,22 @@ tasks.withType<Test>().configureEach {
 	useJUnitPlatform()
 }
 
+// Registers integration test suite, runs sequentially after local unit tests have passed
+tasks.register<Test>("integration") {
+	description = "Runs integration tests against real infrastructure"
+	group = "verification"
+	testClassesDirs = integrationSourceSet.output.classesDirs
+	classpath = integrationSourceSet.runtimeClasspath
+	shouldRunAfter("test")
+}
+
 // ── Coverage ──────────────────────────────────────────────────────────────────
 kover {
 	reports {
 		total {
-			html {
-				onCheck = false
-			}
+			html { onCheck = false }
 			verify {
-				rule {
-					minBound(60)
-				}
+				rule { minBound(60) }
 			}
 		}
 		filters {
