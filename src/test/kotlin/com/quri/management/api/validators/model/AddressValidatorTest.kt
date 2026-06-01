@@ -15,7 +15,7 @@ class AddressValidatorTest :
         describe("validate") {
 
             context("when inputs are valid") {
-                val input = ReceiptFixtures.anAddress()
+                val input = ReceiptFixtures.aValidAddress()
 
                 it("passes with no optional fields") {
                     validator.validate("field", input)

@@ -89,7 +89,7 @@ object ReceiptFixtures {
             .subtotal(subtotal)
             .build()
 
-    fun anAddress(
+    fun aValidAddress(
         street: String = "123 Main Street",
         city: String = "Arlington",
         state: String = "VA",
