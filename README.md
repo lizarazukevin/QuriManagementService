@@ -92,13 +92,13 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 
 ### Profiles
 
-| Method | Path                    | Description |
-|---|-------------------------|---|
-| `POST` | `/profiles`             | Create a profile |
-| `PATCH` | `/profiles/{profileId}` | Partially update a profile | 
-| `GET` | `/profiles/{id}`        | Get a profile |
-| `GET` | `/profiles`             | List all profiles |
-| `DELETE` | `/profiles/{id}`        | Delete a profile |
+| Method | Path             | Description |
+|---|------------------|---|
+| `POST` | `/profiles`      | Create a profile |
+| `PATCH` | `/profiles/{id}` | Partially update a profile | 
+| `GET` | `/profiles/{id}` | Get a profile |
+| `GET` | `/profiles`      | List all profiles |
+| `DELETE` | `/profiles/{id}` | Delete a profile |
 
 **Create profile request body:**
 ```json
@@ -113,13 +113,13 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 
 ### Bills
 
-| Method   | Path              | Description             |
-|----------|-------------------|-------------------------|
-| `POST`   | `/bills`          | Create a bill           |
-| `PATCH`  | `/bills/{billId}` | Partially update a bill |
-| `GET`    | `/bills/{id}`     | Get a bill              |
-| `GET`    | `/bills`          | List all bills          |
-| `DELETE` | `/bills/{id}`     | Delete a bill           |
+| Method   | Path          | Description             |
+|----------|---------------|-------------------------|
+| `POST`   | `/bills`      | Create a bill           |
+| `PATCH`  | `/bills/{id}` | Partially update a bill |
+| `GET`    | `/bills/{id}` | Get a bill              |
+| `GET`    | `/bills`      | List all bills          |
+| `DELETE` | `/bills/{id}` | Delete a bill           |
 
 **Create bill request body:**
 ```json
@@ -131,13 +131,13 @@ All endpoints require authentication via a Clerk JWT (`Authorization: Bearer <to
 
 ### Receipts
 
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/receipts` | Create a receipt |
-| `PUT` | `/receipts/{receiptId}` | Update a receipt |
-| `GET` | `/receipts` | List all receipts (supports `maxResults` and `nextToken` pagination) |
-| `GET` | `/receipts/{receiptId}` | Get a receipt |
-| `DELETE` | `/receipts/{receiptId}` | Delete a receipt |
+| Method | Path             | Description |
+|---|------------------|---|
+| `POST` | `/receipts`      | Create a receipt |
+| `PUT` | `/receipts/{id}` | Update a receipt |
+| `GET` | `/receipts`      | List all receipts (supports `maxResults` and `nextToken` pagination) |
+| `GET` | `/receipts/{id}` | Get a receipt |
+| `DELETE` | `/receipts/{id}` | Delete a receipt |
 
 **Create receipt request body:**
 ```json
