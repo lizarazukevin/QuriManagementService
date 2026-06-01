@@ -98,7 +98,7 @@ object ReceiptFixtures {
             .receiptId(receiptId)
             .build()
 
-    @Suppress("CyclomaticComplexMethod") // fixture builder — complexity is mechanical field mapping, not logic
+    @Suppress("CyclomaticComplexMethod") // fixture builder: complexity is mechanical field mapping, not logic
     fun anUpdateReceiptInput(
         receiptId: String = DEFAULT_RECEIPT_ID,
         vendorName: String? = null,

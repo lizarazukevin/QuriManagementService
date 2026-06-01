@@ -14,7 +14,7 @@ class AddressFieldsValidatorTest :
         describe("validate") {
 
             context("when all fields are null") {
-                it("passes — all fields are optional") {
+                it("passes, all fields are optional") {
                     validator.validate("field")
                 }
             }

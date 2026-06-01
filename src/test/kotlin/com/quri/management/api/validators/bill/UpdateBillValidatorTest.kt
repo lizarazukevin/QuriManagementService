@@ -21,7 +21,7 @@ class UpdateBillValidatorTest :
         describe("validate") {
 
             context("when all fields are null") {
-                it("passes — all fields are optional on update") {
+                it("passes, all fields are optional on update") {
                     val input = BillFixtures.anUpdateBillInput()
                     validator.validate("updateBill", input)
                 }

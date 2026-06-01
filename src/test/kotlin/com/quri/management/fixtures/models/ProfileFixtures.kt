@@ -41,6 +41,17 @@ object ProfileFixtures {
             .updatedBy(updatedBy)
             .build()
 
+    fun aUserLocation(
+        city: String = "Arlington",
+        state: String = "VA",
+        country: String = "US",
+    ): UserLocation =
+        UserLocation.builder()
+            .city(city)
+            .state(state)
+            .country(country)
+            .build()
+
     fun aCreateProfileInput(
         username: String = "testuser",
         firstName: String = "Test",
