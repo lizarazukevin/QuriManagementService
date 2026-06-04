@@ -158,6 +158,7 @@ tasks.register<Test>("integration") {
 	testClassesDirs = integrationSourceSet.output.classesDirs
 	classpath = integrationSourceSet.runtimeClasspath
 	shouldRunAfter("test")
+	failOnNoDiscoveredTests = false // TODO: remove when tests exist
 }
 
 // ── Coverage ──────────────────────────────────────────────────────────────────
