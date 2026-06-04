@@ -12,9 +12,8 @@ import org.testcontainers.containers.MongoDBContainer
  * and provides a shared MongoDB container via @ServiceConnection
  */
 @SpringBootTest
-@TestConfiguration
 @ActiveProfiles("integration")
-class IntegrationTest : DescribeSpec() {
+abstract class IntegrationTest : DescribeSpec() {
     companion object {
         // Starts MongoDB container before Spring context initializes.
         // @ServiceConnection auto-wires the URI into Spring properties,
