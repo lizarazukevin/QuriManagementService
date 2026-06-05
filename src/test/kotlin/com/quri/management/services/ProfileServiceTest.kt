@@ -70,14 +70,14 @@ class ProfileServiceTest :
                     val created = ProfileFixtures.aProfile()
                     coJustRun { createProfileValidator.validate(any(), any()) }
                     coEvery { profileCollection.create(input, DEFAULT_OWNER_ID) } returns created
-                    coEvery { profileCollection.exists(any()) } returns false
+                    coEvery { profileCollection.existsByEmail(any()) } returns null
 
                     val result = profileService.createProfile(input, DEFAULT_OWNER_ID)
 
                     result shouldBe created
                     coVerify(exactly = 1) { createProfileValidator.validate("createProfile", input) }
                     coVerify(exactly = 1) { profileCollection.create(input, DEFAULT_OWNER_ID) }
-                    coVerify(exactly = 1) { profileCollection.exists(any()) }
+                    coVerify(exactly = 1) { profileCollection.existsByEmail(any()) }
                 }
             }
 
@@ -85,7 +85,7 @@ class ProfileServiceTest :
                 it("throws ValidationException before attempting to persist") {
                     val input = ProfileFixtures.aCreateProfileInput()
                     coJustRun { createProfileValidator.validate(any(), any()) }
-                    coEvery { profileCollection.exists(any()) } returns true
+                    coEvery { profileCollection.existsByEmail(any()) } returns ProfileFixtures.aProfile()
 
                     shouldThrow<ValidationException> {
                         profileService.createProfile(input, DEFAULT_OWNER_ID)
@@ -100,7 +100,7 @@ class ProfileServiceTest :
                     val input = ProfileFixtures.aCreateProfileInput()
                     coJustRun { createProfileValidator.validate(any(), any()) }
                     coEvery { profileCollection.create(any(), any()) } returns null
-                    coEvery { profileCollection.exists(any()) } returns false
+                    coEvery { profileCollection.existsByEmail(any()) } returns null
 
                     shouldThrow<InternalFailureException> {
                         profileService.createProfile(input, DEFAULT_OWNER_ID)

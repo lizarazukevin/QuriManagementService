@@ -1,6 +1,5 @@
 package com.quri.management.services
 
-import com.mongodb.client.model.Filters.eq
 import com.quri.client.model.CreateProfileInput
 import com.quri.client.model.DeleteProfileInput
 import com.quri.client.model.GetProfileInput
@@ -12,7 +11,6 @@ import com.quri.management.api.validation.profile.CreateProfileValidator
 import com.quri.management.api.validation.profile.UpdateProfileValidator
 import com.quri.management.api.validation.require
 import com.quri.management.db.mongo.collections.ProfileCollection
-import com.quri.management.db.mongo.documents.ProfileDocument
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 
@@ -53,7 +51,7 @@ class ProfileService(
     ): Profile {
         createProfileValidator.validate("createProfile", input)
 
-        require(!profileCollection.exists(eq(ProfileDocument::email.name, input.email))) {
+        require(profileCollection.existsByEmail(input.email) == null) {
             "A profile with email '${input.email}' already exists"
         }
 
