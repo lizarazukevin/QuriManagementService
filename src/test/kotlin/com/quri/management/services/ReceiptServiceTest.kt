@@ -40,7 +40,7 @@ class ReceiptServiceTest :
             context("when a receipt exists for the given ID") {
                 it("returns the matching receipt") {
                     val receipt = ReceiptFixtures.aReceipt()
-                    val input = ReceiptFixtures.aGetReceiptInput(receiptId = DEFAULT_RECEIPT_ID)
+                    val input = ReceiptFixtures.aGetReceiptInput(id = DEFAULT_RECEIPT_ID)
                     coEvery { receiptCollection.findById(any()) } returns receipt
 
                     val result = receiptService.getReceiptFromId(input)
@@ -51,7 +51,7 @@ class ReceiptServiceTest :
 
             context("when no receipt exists for the given ID") {
                 it("throws ResourceNotFoundException") {
-                    val input = ReceiptFixtures.aGetReceiptInput(receiptId = DEFAULT_RECEIPT_ID)
+                    val input = ReceiptFixtures.aGetReceiptInput(id = DEFAULT_RECEIPT_ID)
                     coEvery { receiptCollection.findById(any()) } returns null
 
                     shouldThrow<ResourceNotFoundException> {
@@ -137,7 +137,7 @@ class ReceiptServiceTest :
             context("when the receipt exists") {
                 it("returns the deleted ObjectId") {
                     val objectId = ObjectId(DEFAULT_RECEIPT_ID)
-                    val input = ReceiptFixtures.aDeleteReceiptInput(receiptId = DEFAULT_RECEIPT_ID)
+                    val input = ReceiptFixtures.aDeleteReceiptInput(id = DEFAULT_RECEIPT_ID)
                     coEvery { receiptCollection.deleteById(any()) } returns objectId
 
                     val result = receiptService.deleteReceipt(input)
@@ -148,7 +148,7 @@ class ReceiptServiceTest :
 
             context("when the receipt does not exist") {
                 it("throws ResourceNotFoundException") {
-                    val input = ReceiptFixtures.aDeleteReceiptInput(receiptId = DEFAULT_RECEIPT_ID)
+                    val input = ReceiptFixtures.aDeleteReceiptInput(id = DEFAULT_RECEIPT_ID)
                     coEvery { receiptCollection.deleteById(any()) } returns null
 
                     shouldThrow<ResourceNotFoundException> {

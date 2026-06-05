@@ -41,7 +41,7 @@ class ProfileServiceTest :
             context("when a profile exists for the given ID") {
                 it("passes the correct ObjectId and returns the matching profile") {
                     val profile = ProfileFixtures.aProfile()
-                    val input = ProfileFixtures.aGetProfileInput(profileId = DEFAULT_PROFILE_ID)
+                    val input = ProfileFixtures.aGetProfileInput(id = DEFAULT_PROFILE_ID)
                     coEvery { profileCollection.findById(any()) } returns profile
 
                     val result = profileService.getProfileFromId(input)
@@ -52,7 +52,7 @@ class ProfileServiceTest :
 
             context("when no profile exists for the given ID") {
                 it("throws ResourceNotFoundException") {
-                    val input = ProfileFixtures.aGetProfileInput(profileId = DEFAULT_PROFILE_ID)
+                    val input = ProfileFixtures.aGetProfileInput(id = DEFAULT_PROFILE_ID)
                     coEvery { profileCollection.findById(any()) } returns null
 
                     shouldThrow<ResourceNotFoundException> {
@@ -155,7 +155,7 @@ class ProfileServiceTest :
             context("when the profile exists") {
                 it("passes the correct ObjectId and returns it") {
                     val objectId = ObjectId(DEFAULT_PROFILE_ID)
-                    val input = ProfileFixtures.aDeleteProfileInput(profileId = DEFAULT_PROFILE_ID)
+                    val input = ProfileFixtures.aDeleteProfileInput(id = DEFAULT_PROFILE_ID)
                     coEvery { profileCollection.deleteById(any()) } returns objectId
 
                     val result = profileService.deleteProfile(input)
@@ -166,7 +166,7 @@ class ProfileServiceTest :
 
             context("when the profile does not exist") {
                 it("throws ResourceNotFoundException") {
-                    val input = ProfileFixtures.aDeleteProfileInput(profileId = DEFAULT_PROFILE_ID)
+                    val input = ProfileFixtures.aDeleteProfileInput(id = DEFAULT_PROFILE_ID)
                     coEvery { profileCollection.deleteById(any()) } returns null
 
                     shouldThrow<ResourceNotFoundException> {

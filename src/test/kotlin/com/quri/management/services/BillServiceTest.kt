@@ -40,7 +40,7 @@ class BillServiceTest :
             context("when a bill exists for the given ID") {
                 it("returns the matching bill") {
                     val bill = BillFixtures.aBill()
-                    val input = BillFixtures.aGetBillInput(billId = DEFAULT_BILL_ID)
+                    val input = BillFixtures.aGetBillInput(id = DEFAULT_BILL_ID)
                     coEvery { billCollection.findById(any()) } returns bill
 
                     val result = billService.getBillFromId(input)
@@ -51,7 +51,7 @@ class BillServiceTest :
 
             context("when no bill exists for the given ID") {
                 it("throws ResourceNotFoundException") {
-                    val input = BillFixtures.aGetBillInput(billId = DEFAULT_BILL_ID)
+                    val input = BillFixtures.aGetBillInput(id = DEFAULT_BILL_ID)
                     coEvery { billCollection.findById(any()) } returns null
 
                     shouldThrow<ResourceNotFoundException> {
@@ -134,7 +134,7 @@ class BillServiceTest :
             context("when the bill exists") {
                 it("returns the deleted bill ID as a string") {
                     val objectId = ObjectId(DEFAULT_BILL_ID)
-                    val input = BillFixtures.aDeleteBillInput(billId = DEFAULT_BILL_ID)
+                    val input = BillFixtures.aDeleteBillInput(id = DEFAULT_BILL_ID)
                     coEvery { billCollection.deleteById(any()) } returns objectId
 
                     val result = billService.deleteBill(input)
@@ -145,7 +145,7 @@ class BillServiceTest :
 
             context("when the bill does not exist") {
                 it("throws ResourceNotFoundException") {
-                    val input = BillFixtures.aDeleteBillInput(billId = DEFAULT_BILL_ID)
+                    val input = BillFixtures.aDeleteBillInput(id = DEFAULT_BILL_ID)
                     coEvery { billCollection.deleteById(any()) } returns null
 
                     shouldThrow<ResourceNotFoundException> {

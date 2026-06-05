@@ -104,19 +104,19 @@ object ReceiptFixtures {
             .country(country)
             .build()
 
-    fun aGetReceiptInput(receiptId: String = DEFAULT_RECEIPT_ID): GetReceiptInput =
+    fun aGetReceiptInput(id: String = DEFAULT_RECEIPT_ID): GetReceiptInput =
         GetReceiptInput.builder()
-            .id(receiptId)
+            .id(id)
             .build()
 
-    fun aDeleteReceiptInput(receiptId: String = DEFAULT_RECEIPT_ID): DeleteReceiptInput =
+    fun aDeleteReceiptInput(id: String = DEFAULT_RECEIPT_ID): DeleteReceiptInput =
         DeleteReceiptInput.builder()
-            .id(receiptId)
+            .id(id)
             .build()
 
     @Suppress("CyclomaticComplexMethod") // fixture builder: complexity is mechanical field mapping, not logic
     fun anUpdateReceiptInput(
-        receiptId: String = DEFAULT_RECEIPT_ID,
+        id: String = DEFAULT_RECEIPT_ID,
         vendorName: String? = null,
         items: List<Item>? = null,
         occurredAt: Instant? = null,
@@ -129,7 +129,7 @@ object ReceiptFixtures {
         photoId: String? = null,
     ): UpdateReceiptInput =
         UpdateReceiptInput.builder()
-            .id(receiptId)
+            .id(id)
             .apply { vendorName?.let { vendorName(it) } }
             .apply { items?.let { items(it) } }
             .apply { occurredAt?.let { occurredAt(it) } }
