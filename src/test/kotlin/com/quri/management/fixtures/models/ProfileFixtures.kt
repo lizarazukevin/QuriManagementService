@@ -71,19 +71,19 @@ object ProfileFixtures {
             .apply { phoneNumber?.let { phoneNumber(phoneNumber) } }
             .build()
 
-    fun aGetProfileInput(profileId: String = DEFAULT_PROFILE_ID): GetProfileInput =
+    fun aGetProfileInput(id: String = DEFAULT_PROFILE_ID): GetProfileInput =
         GetProfileInput.builder()
-            .id(profileId)
+            .id(id)
             .build()
 
-    fun aDeleteProfileInput(profileId: String = DEFAULT_PROFILE_ID): DeleteProfileInput =
+    fun aDeleteProfileInput(id: String = DEFAULT_PROFILE_ID): DeleteProfileInput =
         DeleteProfileInput.builder()
-            .id(profileId)
+            .id(id)
             .build()
 
     @Suppress("CyclomaticComplexMethod")
     fun anUpdateProfileInput(
-        profileId: String = DEFAULT_PROFILE_ID,
+        id: String = DEFAULT_PROFILE_ID,
         username: String? = null,
         firstName: String? = null,
         lastName: String? = null,
@@ -97,7 +97,7 @@ object ProfileFixtures {
         location: UserLocation? = null,
     ): UpdateProfileInput =
         UpdateProfileInput.builder()
-            .id(profileId)
+            .id(id)
             .apply { username?.let { username(it) } }
             .apply { firstName?.let { firstName(it) } }
             .apply { lastName?.let { lastName(it) } }

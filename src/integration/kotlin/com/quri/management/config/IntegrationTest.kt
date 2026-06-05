@@ -1,25 +1,21 @@
 package com.quri.management.config
 
+import com.quri.management.clients.MongoClientProviderTest
+import io.kotest.core.extensions.ApplyExtension
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.extensions.spring.SpringExtension
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
-import org.testcontainers.containers.MongoDBContainer
 
 /**
  * Base class for all integration tests, boots the Spring context
- * and provides a shared MongoDB container via @ServiceConnection
+ * Boots the full Spring context against a real MongoDB instance.
  */
 @SpringBootTest
 @ActiveProfiles("integration")
+@ApplyExtension(SpringExtension::class)
+@Import(MongoClientProviderTest::class)
 abstract class IntegrationTest : DescribeSpec() {
-    companion object {
-        // Starts MongoDB container before Spring context initializes.
-        // @ServiceConnection auto-wires the URI into Spring properties,
-        // replacing manual @DynamicPropertySource configuration and single resource
-        @ServiceConnection
-        val mongo = MongoDBContainer("mongo:latest").apply {
-            start()
-        }
-    }
+    override val extensions = listOf(SpringExtension())
 }

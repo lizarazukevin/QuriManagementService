@@ -3,16 +3,10 @@ package com.quri.management.clients
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.kotlin.client.coroutine.MongoClient
-import com.quri.management.db.mongo.codecs.AddressCodec
-import com.quri.management.db.mongo.codecs.DiscountCodec
-import com.quri.management.db.mongo.codecs.FeeCodec
-import com.quri.management.db.mongo.codecs.ItemCodec
-import com.quri.management.db.mongo.codecs.LiableCodec
-import com.quri.management.db.mongo.codecs.MonetaryAmountCodec
-import com.quri.management.db.mongo.codecs.UserLocationCodec
-import org.bson.codecs.configuration.CodecRegistries
+import org.bson.codecs.configuration.CodecRegistry
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
 /**
  * Provides a configured [MongoClient] bean for the application context.
@@ -30,9 +24,10 @@ import org.springframework.context.annotation.Configuration
  * For production, inject via your secrets manager (e.g. AWS Secrets Manager, Vault).
  */
 @Configuration
-class MongoClientProvider {
+class MongoClientProvider(private val customCodecRegistry: CodecRegistry) {
 
     @Bean
+    @Profile("!integration")
     fun mongoClient(): MongoClient {
         val username = requireEnv("MONGO_USERNAME")
         val password = requireEnv("MONGO_PASSWORD")
@@ -41,26 +36,9 @@ class MongoClientProvider {
 
         val uri = "mongodb+srv://$username:$password@$cluster/?appName=$appName"
 
-        // codec registry to serialize/deserialize embedded structured JSON in documents to Smithy model
-        val monetaryAmountCodec = MonetaryAmountCodec()
-        val liableCodec = LiableCodec()
-        val discountCodec = DiscountCodec(monetaryAmountCodec)
-
-        val codecRegistry = CodecRegistries.fromRegistries(
-            CodecRegistries.fromCodecs(
-                AddressCodec(),
-                discountCodec,
-                FeeCodec(monetaryAmountCodec),
-                ItemCodec(monetaryAmountCodec, liableCodec, discountCodec),
-                monetaryAmountCodec,
-                UserLocationCodec(),
-            ),
-            MongoClientSettings.getDefaultCodecRegistry(),
-        )
-
         val settings = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(uri))
-            .codecRegistry(codecRegistry)
+            .codecRegistry(customCodecRegistry)
             .build()
 
         return MongoClient.create(settings)

@@ -60,18 +60,18 @@ object BillFixtures {
             .apply { description?.let { description(it) } }
             .build()
 
-    fun aGetBillInput(billId: String = DEFAULT_BILL_ID): GetBillInput =
+    fun aGetBillInput(id: String = DEFAULT_BILL_ID): GetBillInput =
         GetBillInput.builder()
-            .id(billId)
+            .id(id)
             .build()
 
-    fun aDeleteBillInput(billId: String = DEFAULT_BILL_ID): DeleteBillInput =
+    fun aDeleteBillInput(id: String = DEFAULT_BILL_ID): DeleteBillInput =
         DeleteBillInput.builder()
-            .id(billId)
+            .id(id)
             .build()
 
     fun anUpdateBillInput(
-        billId: String = DEFAULT_BILL_ID,
+        id: String = DEFAULT_BILL_ID,
         name: String? = null,
         status: BillStatus? = null,
         hidden: Boolean? = null,
@@ -80,7 +80,7 @@ object BillFixtures {
         receipts: List<String>? = null,
     ): UpdateBillInput =
         UpdateBillInput.builder()
-            .id(billId)
+            .id(id)
             .apply { status?.let { status(it) } }
             .apply { name?.let { name(it) } }
             .apply { hidden?.let { hidden(it) } }
