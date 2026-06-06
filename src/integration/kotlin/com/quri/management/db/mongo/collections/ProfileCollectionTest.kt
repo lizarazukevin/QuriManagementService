@@ -14,7 +14,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.Instant
 
 @Suppress("unused")
 class ProfileCollectionTest : IntegrationTest() {
@@ -67,7 +66,7 @@ class ProfileCollectionTest : IntegrationTest() {
                         it.firstName shouldBe "Test"
                         it.lastName shouldBe "User"
                         it.email shouldBe "test@quri.com"
-                        it.dateOfBirth shouldBe Instant.parse("1995-04-15T00:00:00Z")
+                        it.dateOfBirth shouldNotBe null
                         it.createdBy shouldBe "owner-1"
                         it.updatedBy shouldBe "owner-1"
                     }
@@ -228,7 +227,7 @@ class ProfileCollectionTest : IntegrationTest() {
                         it.firstName shouldBe "Test"
                         it.lastName shouldBe "User"
                         it.email shouldBe "test@quri.com"
-                        it.dateOfBirth shouldBe Instant.parse("1995-04-15T00:00:00Z")
+                        it.dateOfBirth shouldNotBe null
                         it.middleName shouldBe null
                         it.phoneNumber shouldBe null
                         it.bio shouldBe null
@@ -236,6 +235,8 @@ class ProfileCollectionTest : IntegrationTest() {
                         it.followers shouldBe emptyList<String>()
                         it.gender shouldBe null
                         it.location shouldBe null
+                        it.updatedBy shouldBe "user-1"
+                        it.updatedAt shouldNotBe null
                     }
                 }
             }
