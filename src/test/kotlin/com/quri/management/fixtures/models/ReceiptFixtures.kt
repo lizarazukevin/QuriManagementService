@@ -3,9 +3,11 @@ package com.quri.management.fixtures.models
 import com.quri.client.model.Address
 import com.quri.client.model.CreateReceiptInput
 import com.quri.client.model.DeleteReceiptInput
+import com.quri.client.model.Discount
 import com.quri.client.model.Fee
 import com.quri.client.model.GetReceiptInput
 import com.quri.client.model.Item
+import com.quri.client.model.Liable
 import com.quri.client.model.MonetaryAmount
 import com.quri.client.model.PaymentMethod
 import com.quri.client.model.Receipt
@@ -33,11 +35,15 @@ object ReceiptFixtures {
         name: String = "Test Item",
         units: Int = 1,
         unitCost: MonetaryAmount = aMonetaryAmount(),
+        liable: List<Liable>? = emptyList(),
+        discounts: List<Discount>? = emptyList(),
     ): Item =
         Item.builder()
             .name(name)
             .units(units)
             .unitCost(unitCost)
+            .liable(liable)
+            .discounts(discounts)
             .build()
 
     fun aFee(
@@ -126,7 +132,9 @@ object ReceiptFixtures {
         tip: BigDecimal? = null,
         totalSavings: MonetaryAmount? = null,
         fees: List<Fee>? = null,
+        address: Address? = null,
         photoId: String? = null,
+        urls: List<String>? = null,
     ): UpdateReceiptInput =
         UpdateReceiptInput.builder()
             .id(id)
@@ -139,6 +147,8 @@ object ReceiptFixtures {
             .apply { tip?.let { tip(it) } }
             .apply { totalSavings?.let { totalSavings(it) } }
             .apply { fees?.let { fees(it) } }
+            .apply { address?.let { address(it) } }
             .apply { photoId?.let { photoId(it) } }
+            .apply { urls?.let { urls(it) } }
             .build()
 }

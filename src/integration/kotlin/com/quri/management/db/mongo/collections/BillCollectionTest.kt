@@ -6,7 +6,9 @@ import com.quri.management.config.IntegrationTest
 import com.quri.management.db.mongo.MongoSchema.Collections
 import com.quri.management.db.mongo.documents.BillDocument
 import com.quri.management.fixtures.models.BillFixtures
+import com.quri.management.fixtures.models.BillFixtures.DEFAULT_BILL_ID
 import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -55,13 +57,14 @@ class BillCollectionTest : IntegrationTest() {
 
             context("when input is valid") {
                 it("persists and returns the bill with a generated ID") {
-                    val input = BillFixtures.aCreateBillInput(name = "Test Bill", hidden = false)
+                    val input = BillFixtures.aCreateBillInput()
 
                     val result = billCollection.create(input, "owner-1")
 
                     assertSoftly(result!!) {
                         it.id shouldNotBe null
                         it.name shouldBe "Test Bill"
+                        it.status shouldBe BillStatus.DRAFT
                         it.isHidden shouldBe false
                         it.createdBy shouldBe "owner-1"
                         it.updatedBy shouldBe "owner-1"
@@ -158,7 +161,7 @@ class BillCollectionTest : IntegrationTest() {
                         hidden = true,
                         description = "Updated Description",
                         balance = BillFixtures.aMonetaryAmount(),
-                        receipts = listOf(ObjectId().toString()),
+                        receipts = listOf(DEFAULT_BILL_ID),
                     )
 
                     val result = billCollection.update(input, "user-1")
@@ -170,7 +173,7 @@ class BillCollectionTest : IntegrationTest() {
                         it.isHidden shouldBe true
                         it.description shouldBe "Updated Description"
                         it.balance shouldBe BillFixtures.aMonetaryAmount()
-                        it.receipts shouldNotBe emptyList<ObjectId>()
+                        it.receipts shouldContain DEFAULT_BILL_ID
                         it.updatedBy shouldBe "user-1"
                         it.updatedAt shouldNotBe null
                     }

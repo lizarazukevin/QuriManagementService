@@ -87,12 +87,14 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
     }
 
     /**
-     * Determines if an entry in the collection exists with the given criteria.
+     * Determines if an entry in the collection exists based on email.
      *
-     * @param filter the query filter to match against (e.g., `eq("email", value)`)
      * @return true if at least one document matches the filter, false otherwise
      */
-    suspend fun exists(filter: Bson): Boolean = collection.find(filter).limit(1).firstOrNull() != null
+    suspend fun existsByEmail(email: String): Profile? {
+        val filter = eq(ProfileDocument::email.name, email)
+        return collection.find(filter).limit(1).firstOrNull()?.toApi()
+    }
 
     /**
      * Updates a profile by its [ObjectId].
