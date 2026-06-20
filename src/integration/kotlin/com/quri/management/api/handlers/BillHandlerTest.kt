@@ -24,7 +24,13 @@ import org.springframework.http.MediaType
 
 @Suppress("unused")
 @WebFluxTest(
-    controllers = [CreateBill::class, DeleteBill::class, GetBill::class, ListBills::class, UpdateBill::class],
+    controllers = [
+        CreateBill::class,
+        DeleteBill::class,
+        GetBill::class,
+        ListBills::class,
+        UpdateBill::class,
+    ],
 )
 class BillHandlerTest : HandlerTest() {
 
