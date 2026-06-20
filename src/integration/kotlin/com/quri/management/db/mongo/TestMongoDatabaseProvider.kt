@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Primary
  * Isolated database name prevents bleed between test runs and environments
  */
 @TestConfiguration
-class MongoDatabaseProviderTest {
+class TestMongoDatabaseProvider {
     @Bean
     @Primary
     fun mongoDatabase(mongoClient: MongoClient): MongoDatabase = mongoClient.getDatabase("quri-integration-test")

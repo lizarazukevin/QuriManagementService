@@ -69,6 +69,7 @@ spring-boot-starter-oauth2-resource-server = { module = "org.springframework.boo
 spring-boot-starter-security           = { module = "org.springframework.boot:spring-boot-starter-security"           }
 spring-boot-starter-test               = { module = "org.springframework.boot:spring-boot-starter-test"               }
 spring-boot-starter-webflux            = { module = "org.springframework.boot:spring-boot-starter-webflux"            }
+spring-boot-starter-webflux-test       = { module = "org.springframework.boot:spring-boot-starter-webflux-test"       }
 
 # ── Kotlin ────────────────────────────────────────────────────────────────────
 # kotlinx-coroutines-reactor bridges suspend functions into Reactor's Mono/Flux,
