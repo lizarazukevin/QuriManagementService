@@ -17,8 +17,8 @@ import org.testcontainers.containers.MongoDBContainer
  */
 private val mongoContainer = MongoDBContainer("mongo:latest").apply { start() }
 
-@TestConfiguration
 @Profile("integration")
+@TestConfiguration
 class TestMongoClientProvider(private val customCodecRegistry: CodecRegistry) {
 
     /**

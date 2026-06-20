@@ -15,8 +15,8 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult
 import org.springframework.test.web.reactive.server.WebTestClient
 
 /**
- * Base class for handler tests.
- * SpringBoot context included with payload serialization.
+ * Base class for handler/controller tests.
+ * SpringBoot context included to mock service and auth provider.
  */
 @WebFluxTest
 @ActiveProfiles("integration")
