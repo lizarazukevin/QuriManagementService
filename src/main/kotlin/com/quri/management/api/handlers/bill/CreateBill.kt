@@ -4,9 +4,11 @@ import com.quri.client.model.CreateBillInput
 import com.quri.client.model.CreateBillOutput
 import com.quri.management.api.security.identity.UserIdentity
 import com.quri.management.services.BillService
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 /**
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/bills")
 class CreateBill(private val billService: BillService, private val userIdentity: UserIdentity) {
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     suspend fun createBill(@RequestBody input: CreateBillInput): CreateBillOutput {
         val bill = billService.createBill(input, userIdentity.userId())
 

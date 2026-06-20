@@ -126,6 +126,9 @@ dependencies {
 	// Ref: https://testcontainers.com/modules/mongodb/
 	integrationImplementation(libs.testcontainers.mongodb)
 
+	// MVC related tests, tests the web controller layer
+	integrationImplementation(libs.spring.boot.starter.webflux.test)
+
 	// ── Code Quality ──────────────────────────────────────────────────────────
 	// Ref: https://detekt.dev/docs/intro
 	detektPlugins(libs.detekt.rules.ktlint.wrapper)

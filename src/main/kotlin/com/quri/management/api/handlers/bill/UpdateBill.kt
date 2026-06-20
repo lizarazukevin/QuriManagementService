@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
  * Handles the bill update operation.
  */
 @RestController
-@RequestMapping("/bills{id}")
+@RequestMapping("/bills/{id}")
 class UpdateBill(private val billService: BillService, private val userIdentity: UserIdentity) {
     @PatchMapping
     suspend fun updateBill(
