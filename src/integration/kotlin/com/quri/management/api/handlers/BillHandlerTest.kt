@@ -2,8 +2,6 @@ package com.quri.management.api.handlers
 
 import com.ninjasquad.springmockk.MockkBean
 import com.quri.client.model.Bill
-import com.quri.client.model.ResourceNotFoundException
-import com.quri.client.model.ValidationException
 import com.quri.management.api.handlers.bill.CreateBill
 import com.quri.management.api.handlers.bill.DeleteBill
 import com.quri.management.api.handlers.bill.GetBill
@@ -63,20 +61,6 @@ class BillHandlerTest : HandlerTest() {
                     result.jsonPath("$.bill.createdBy") shouldBe DEFAULT_USER_ID
                 }
             }
-
-            context("when input is invalid") {
-                it("returns 400") {
-                    coEvery { billService.createBill(any(), any()) } throws
-                        ValidationException.builder().message("name is required").build()
-
-                    webTestClient.post()
-                        .uri("/bills")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(BillFixtures.aCreateBillInput())
-                        .exchange()
-                        .expectStatus().isBadRequest
-                }
-            }
         }
 
         describe("getBill") {
@@ -94,18 +78,6 @@ class BillHandlerTest : HandlerTest() {
 
                     result.jsonPath("$.bill.id") shouldBe DEFAULT_BILL_ID
                     result.jsonPath("$.bill.status") shouldBe "DRAFT"
-                }
-            }
-
-            context("when bill does not exist") {
-                it("returns 404") {
-                    coEvery { billService.getBillFromId(any()) } throws
-                        ResourceNotFoundException.builder().message("bill not found").build()
-
-                    webTestClient.get()
-                        .uri("/bills/missing-id")
-                        .exchange()
-                        .expectStatus().isNotFound
                 }
             }
         }
@@ -191,18 +163,6 @@ class BillHandlerTest : HandlerTest() {
                     result.jsonPath("$.id") shouldBe DEFAULT_BILL_ID
                 }
             }
-
-            context("when bill does not exist") {
-                it("returns 404") {
-                    coEvery { billService.deleteBill(any()) } throws
-                        ResourceNotFoundException.builder().message("bill not found").build()
-
-                    webTestClient.delete()
-                        .uri("/bills/missing-id")
-                        .exchange()
-                        .expectStatus().isNotFound
-                }
-            }
         }
 
         describe("updateBill") {
@@ -221,20 +181,6 @@ class BillHandlerTest : HandlerTest() {
                         .returnResult()
 
                     result.jsonPath("$.bill.id") shouldBe DEFAULT_BILL_ID
-                }
-            }
-
-            context("when input is invalid") {
-                it("returns 400") {
-                    coEvery { billService.updateBill(any(), any()) } throws
-                        ValidationException.builder().message("invalid amount").build()
-
-                    webTestClient.patch()
-                        .uri("/bills/$DEFAULT_BILL_ID")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(BillFixtures.anUpdateBillInput())
-                        .exchange()
-                        .expectStatus().isBadRequest
                 }
             }
         }

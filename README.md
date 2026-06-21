@@ -225,13 +225,32 @@ The controller structure (one class per operation, explicit input/output builder
 
 Custom [MongoDB Codec](https://www.mongodb.com/docs/drivers/java/sync/current/data-formats/codecs/) implementations are provided for all embedded Smithy structured types (e.g. `MonetaryAmountCodec`). These are registered directly in the Mongo client registry, eliminating manual mapping code between database documents and domain models.
 
+### Testing
+
+All tests are written with [Kotest](https://kotest.io/), using `DescribeSpec` for a Kotlin-idiomatic, readable test structure with multiplatform support.
+
+Two test sourcesets provide different levels of coverage:
+
+| Sourceset | Base class | Scope | Annotation |
+|---|---|---|---|
+| `src/test/` | — | Unit tests (validators, services, documents, etc.) | — |
+| `src/integration/` | `IntegrationTest` | Full Spring context + real MongoDB | `@SpringBootTest` |
+| `src/integration/` | `HandlerTest` | Sliced WebFlux handler tests (controllers only) | `@WebFluxTest` |
+
+- **Handler tests** use `@WebFluxTest` with `WebTestClient` — they mock security and only bring in web/serialization/error-handling beans, keeping them fast.
+- **Integration tests** use `@SpringBootTest` and connect to a real MongoDB (via `application-integration.yml`), exercising the full stack end-to-end.
+
+```bash
+./gradlew test                    # unit tests only
+./gradlew integration             # integration tests
+```
+
 ---
 
 ## Project Status
 
 This service is under active development. Known limitations:
 
-- **No test suite** — Tests are disabled in the build config and planned for a future milestone.
 - **Input validation** — Edge cases and input validation are not fully covered yet.
 - **Local development only** - Personal domain for this project does not currently exist, all development work must be done locally, fetching cookies from the frontend.
 
@@ -242,7 +261,7 @@ This service is under active development. Known limitations:
 - [x] Add global exception handling
 - [x] Native Smithy Jackson serialization
 - [x] MongoDB Smithy Codecs for direct object persistence
-- [ ] Add a proper test suite (unit + integration)
+- [x] Add a proper test suite (unit + integration)
 - [ ] Docker support
 - [ ] OpenAPI/Swagger docs
 - [ ] Monitoring and metrics

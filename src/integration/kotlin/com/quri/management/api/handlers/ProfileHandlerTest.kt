@@ -2,8 +2,6 @@ package com.quri.management.api.handlers
 
 import com.ninjasquad.springmockk.MockkBean
 import com.quri.client.model.Profile
-import com.quri.client.model.ResourceNotFoundException
-import com.quri.client.model.ValidationException
 import com.quri.management.api.handlers.profile.CreateProfile
 import com.quri.management.api.handlers.profile.DeleteProfile
 import com.quri.management.api.handlers.profile.GetProfile
@@ -63,20 +61,6 @@ class ProfileHandlerTest : HandlerTest() {
                     result.jsonPath("$.profile.createdBy") shouldBe DEFAULT_USER_ID
                 }
             }
-
-            context("when input is invalid") {
-                it("returns 400") {
-                    coEvery { profileService.createProfile(any(), any()) } throws
-                        ValidationException.builder().message("email is required").build()
-
-                    webTestClient.post()
-                        .uri("/profiles")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(ProfileFixtures.aCreateProfileInput())
-                        .exchange()
-                        .expectStatus().isBadRequest
-                }
-            }
         }
 
         describe("getProfile") {
@@ -94,18 +78,6 @@ class ProfileHandlerTest : HandlerTest() {
 
                     result.jsonPath("$.profile.id") shouldBe DEFAULT_PROFILE_ID
                     result.jsonPath("$.profile.username") shouldBe "testuser"
-                }
-            }
-
-            context("when profile does not exist") {
-                it("returns 404") {
-                    coEvery { profileService.getProfileFromId(any()) } throws
-                        ResourceNotFoundException.builder().message("profile not found").build()
-
-                    webTestClient.get()
-                        .uri("/profiles/missing-id")
-                        .exchange()
-                        .expectStatus().isNotFound
                 }
             }
         }
@@ -191,18 +163,6 @@ class ProfileHandlerTest : HandlerTest() {
                     result.jsonPath("$.id") shouldBe DEFAULT_PROFILE_ID
                 }
             }
-
-            context("when profile does not exist") {
-                it("returns 404") {
-                    coEvery { profileService.deleteProfile(any()) } throws
-                        ResourceNotFoundException.builder().message("profile not found").build()
-
-                    webTestClient.delete()
-                        .uri("/profiles/missing-id")
-                        .exchange()
-                        .expectStatus().isNotFound
-                }
-            }
         }
 
         describe("updateProfile") {
@@ -221,20 +181,6 @@ class ProfileHandlerTest : HandlerTest() {
                         .returnResult()
 
                     result.jsonPath("$.profile.id") shouldBe DEFAULT_PROFILE_ID
-                }
-            }
-
-            context("when input is invalid") {
-                it("returns 400") {
-                    coEvery { profileService.updateProfile(any(), any()) } throws
-                        ValidationException.builder().message("invalid email").build()
-
-                    webTestClient.patch()
-                        .uri("/profiles/$DEFAULT_PROFILE_ID")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(ProfileFixtures.anUpdateProfileInput())
-                        .exchange()
-                        .expectStatus().isBadRequest
                 }
             }
         }

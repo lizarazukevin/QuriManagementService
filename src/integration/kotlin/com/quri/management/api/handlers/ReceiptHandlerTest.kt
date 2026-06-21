@@ -2,8 +2,6 @@ package com.quri.management.api.handlers
 
 import com.ninjasquad.springmockk.MockkBean
 import com.quri.client.model.Receipt
-import com.quri.client.model.ResourceNotFoundException
-import com.quri.client.model.ValidationException
 import com.quri.management.api.handlers.receipt.CreateReceipt
 import com.quri.management.api.handlers.receipt.DeleteReceipt
 import com.quri.management.api.handlers.receipt.GetReceipt
@@ -34,6 +32,7 @@ class ReceiptHandlerTest : HandlerTest() {
 
     @MockkBean
     lateinit var userIdentity: UserIdentity
+
     @MockkBean
     lateinit var receiptService: ReceiptService
 
@@ -88,7 +87,7 @@ class ReceiptHandlerTest : HandlerTest() {
             context("when called with no params") {
                 it("returns 200 with default pageSize") {
                     coEvery { receiptService.listReceipts(pageSize = 20, nextToken = null) } returns
-                            (listOf(ReceiptFixtures.aReceipt()) to null)
+                        (listOf(ReceiptFixtures.aReceipt()) to null)
 
                     val result = webTestClient.get()
                         .uri("/receipts")
@@ -105,7 +104,7 @@ class ReceiptHandlerTest : HandlerTest() {
             context("when maxResults exceeds the max page size") {
                 it("clamps to 100") {
                     coEvery { receiptService.listReceipts(pageSize = 100, nextToken = null) } returns
-                            (emptyList<Receipt>() to null)
+                        (emptyList<Receipt>() to null)
 
                     webTestClient.get()
                         .uri("/receipts?maxResults=9999")
@@ -119,7 +118,7 @@ class ReceiptHandlerTest : HandlerTest() {
             context("when maxResults is below 1") {
                 it("clamps to 1") {
                     coEvery { receiptService.listReceipts(pageSize = 1, nextToken = null) } returns
-                            (emptyList<Receipt>() to null)
+                        (emptyList<Receipt>() to null)
 
                     webTestClient.get()
                         .uri("/receipts?maxResults=0")
