@@ -1,13 +1,10 @@
 package com.quri.management.api.security.auth
 
+import com.quri.management.fixtures.security.ClerkClaimsFixtures
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.oauth2.jwt.Jwt
 
 @Suppress("unused")
 class ClerkAuthoritiesConverterTest :
@@ -15,47 +12,29 @@ class ClerkAuthoritiesConverterTest :
 
         val converter = ClerkAuthoritiesConverter()
 
-        fun aJwt(claims: Map<String, Any> = emptyMap()): Jwt =
-            mockk<Jwt> {
-                every { this@mockk.claims } returns claims
-            }
-
         describe("convert") {
 
             context("when metadata claim contains a role") {
-                it("returns a ROLE_ prefixed authority uppercased") {
-                    val jwt = aJwt(
-                        claims = mapOf(
-                            ClerkAuthoritiesConverter.METADATA_CLAIM to mapOf(
-                                ClerkAuthoritiesConverter.ROLE_CLAIM to "admin",
-                            ),
-                        ),
-                    )
+                it("returns a single ROLE_ prefixed authority, uppercased") {
+                    val jwt = ClerkClaimsFixtures.aJwt(claims = ClerkClaimsFixtures.claimsWithRole(role = "admin"))
 
                     val result = converter.convert(jwt)
 
-                    result shouldHaveSize 1
-                    result.first() shouldBe SimpleGrantedAuthority("ROLE_ADMIN")
+                    result shouldBe listOf(SimpleGrantedAuthority("ROLE_ADMIN"))
                 }
 
-                it("uppercases the role value") {
-                    val jwt = aJwt(
-                        claims = mapOf(
-                            ClerkAuthoritiesConverter.METADATA_CLAIM to mapOf(
-                                ClerkAuthoritiesConverter.ROLE_CLAIM to "member",
-                            ),
-                        ),
-                    )
+                it("uppercases a differently-cased role value") {
+                    val jwt = ClerkClaimsFixtures.aJwt(claims = ClerkClaimsFixtures.claimsWithRole(role = "member"))
 
                     val result = converter.convert(jwt)
 
-                    result.first() shouldBe SimpleGrantedAuthority("ROLE_MEMBER")
+                    result shouldBe listOf(SimpleGrantedAuthority("ROLE_MEMBER"))
                 }
             }
 
             context("when metadata claim is absent") {
                 it("returns empty list") {
-                    val jwt = aJwt(claims = emptyMap())
+                    val jwt = ClerkClaimsFixtures.aJwt(claims = ClerkClaimsFixtures.EMPTY_CLAIMS)
 
                     val result = converter.convert(jwt)
 
@@ -65,13 +44,7 @@ class ClerkAuthoritiesConverterTest :
 
             context("when metadata claim exists but has no role key") {
                 it("returns empty list") {
-                    val jwt = aJwt(
-                        claims = mapOf(
-                            ClerkAuthoritiesConverter.METADATA_CLAIM to mapOf(
-                                "other_key" to "some_value",
-                            ),
-                        ),
-                    )
+                    val jwt = ClerkClaimsFixtures.aJwt(claims = ClerkClaimsFixtures.claimsWithoutRoleKey())
 
                     val result = converter.convert(jwt)
 
@@ -81,11 +54,7 @@ class ClerkAuthoritiesConverterTest :
 
             context("when metadata claim is not a map") {
                 it("returns empty list") {
-                    val jwt = aJwt(
-                        claims = mapOf(
-                            ClerkAuthoritiesConverter.METADATA_CLAIM to "not-a-map",
-                        ),
-                    )
+                    val jwt = ClerkClaimsFixtures.aJwt(claims = ClerkClaimsFixtures.claimsWithMetadataNotAMap())
 
                     val result = converter.convert(jwt)
 
@@ -95,13 +64,7 @@ class ClerkAuthoritiesConverterTest :
 
             context("when role claim is not a string") {
                 it("returns empty list") {
-                    val jwt = aJwt(
-                        claims = mapOf(
-                            ClerkAuthoritiesConverter.METADATA_CLAIM to mapOf(
-                                ClerkAuthoritiesConverter.ROLE_CLAIM to 123,
-                            ),
-                        ),
-                    )
+                    val jwt = ClerkClaimsFixtures.aJwt(claims = ClerkClaimsFixtures.claimsWithNonStringRole())
 
                     val result = converter.convert(jwt)
 
