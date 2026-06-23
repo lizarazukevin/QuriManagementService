@@ -179,6 +179,7 @@ kover {
 					"*.QuriManagementServiceApplication*",
 					"*.SecurityConfig*",
 					"*.SmithyJacksonConfig*",
+					"*.serialization*",	// managed by Smithy
 					"*.MongoClientProvider*",
 					"*.MongoDatabaseProvider*",
 				)
