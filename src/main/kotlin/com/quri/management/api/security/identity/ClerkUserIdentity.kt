@@ -18,8 +18,8 @@ class ClerkUserIdentity : UserIdentity {
 
     override suspend fun role(): String =
         authentication().authorities
-            .firstOrNull { it.authority?.startsWith(ClerkAuthoritiesConverter.ROLE_PREFIX) == true }
-            ?.authority
+            .mapNotNull { it.authority }
+            .firstOrNull { it.startsWith(ClerkAuthoritiesConverter.ROLE_PREFIX) }
             ?.removePrefix(ClerkAuthoritiesConverter.ROLE_PREFIX)
             ?.lowercase()
             ?: ClerkAuthoritiesConverter.DEFAULT_ROLE
