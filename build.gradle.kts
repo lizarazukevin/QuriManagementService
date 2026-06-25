@@ -182,8 +182,8 @@ kover {
 					"*.serialization*",	// managed by Smithy
 					"*.MongoClientProvider*",
 					"*.MongoDatabaseProvider*",
-					"*.TestMongoDatabaseProvider*",
 					"*.MongoSchema*",
+					"*Test*",
 				)
 			}
 		}
