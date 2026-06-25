@@ -169,7 +169,7 @@ kover {
 		total {
 			html { onCheck = false }
 			verify {
-				rule { minBound(60) }
+				rule { minBound(90) }
 			}
 		}
 		filters {
@@ -182,6 +182,8 @@ kover {
 					"*.serialization*",	// managed by Smithy
 					"*.MongoClientProvider*",
 					"*.MongoDatabaseProvider*",
+					"*.TestMongoDatabaseProvider*",
+					"*.MongoSchema*",
 				)
 			}
 		}
