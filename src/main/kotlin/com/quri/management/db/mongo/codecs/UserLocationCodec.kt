@@ -2,7 +2,6 @@ package com.quri.management.db.mongo.codecs
 
 import com.quri.client.model.UserLocation
 import org.bson.BsonReader
-import org.bson.BsonType
 import org.bson.BsonWriter
 import org.bson.codecs.Codec
 import org.bson.codecs.DecoderContext
@@ -28,24 +27,18 @@ class UserLocationCodec : Codec<UserLocation> {
         reader: BsonReader,
         decoderContext: DecoderContext,
     ): UserLocation {
-        var city: String? = null
-        var state: String? = null
-        var country: String? = null
-
         reader.readStartDocument()
-        while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-            when (reader.readName()) {
-                "city" -> city = reader.readString()
-                "state" -> state = reader.readString()
-                "country" -> country = reader.readString()
-            }
-        }
+
+        val city = reader.readString("city")
+        val state = reader.readString("state")
+        val country = reader.readString("country")
+
         reader.readEndDocument()
 
         return UserLocation.builder()
-            .city(city!!)
-            .state(state!!)
-            .country(country!!)
+            .city(city)
+            .state(state)
+            .country(country)
             .build()
     }
 }

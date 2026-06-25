@@ -33,36 +33,34 @@ class AddressCodec : Codec<Address> {
         reader: BsonReader,
         decoderContext: DecoderContext,
     ): Address {
-        var street: String? = null
-        var city: String? = null
-        var state: String? = null
-        var postalCode: String? = null
-        var country: String? = null
+        reader.readStartDocument()
+
+        val street = reader.readString("street")
+        val city = reader.readString("city")
+        val state = reader.readString("state")
+        val postalCode = reader.readString("postalCode")
+        val country = reader.readString("country")
+
         var unit: String? = null
         var rawInput: String? = null
         var formatted: String? = null
 
-        reader.readStartDocument()
         while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
             when (reader.readName()) {
-                "street" -> street = reader.readString()
-                "city" -> city = reader.readString()
-                "state" -> state = reader.readString()
-                "postalCode" -> postalCode = reader.readString()
-                "country" -> country = reader.readString()
                 "unit" -> unit = reader.readString()
                 "rawInput" -> rawInput = reader.readString()
                 "formatted" -> formatted = reader.readString()
             }
         }
+
         reader.readEndDocument()
 
         return Address.builder()
-            .street(street!!)
-            .city(city!!)
-            .state(state!!)
-            .postalCode(postalCode!!)
-            .country(country!!)
+            .street(street)
+            .city(city)
+            .state(state)
+            .postalCode(postalCode)
+            .country(country)
             .unit(unit)
             .rawInput(rawInput)
             .formatted(formatted)

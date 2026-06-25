@@ -66,6 +66,7 @@ class ReceiptCollectionTest : IntegrationTest() {
                     assertSoftly(result!!) {
                         it.id shouldNotBe null
                         it.vendorName shouldBe "Test Vendor"
+                        it.items shouldHaveSize 1
                         it.items shouldContain ReceiptFixtures.anItem()
                         it.occurredAt shouldBe Instant.parse("2024-01-01T00:00:00Z")
                         it.paymentMethod shouldBe PaymentMethod.CREDIT
@@ -80,6 +81,22 @@ class ReceiptCollectionTest : IntegrationTest() {
                     val second = receiptCollection.create(ReceiptFixtures.aCreateReceiptInput(), "owner-1")
 
                     first!!.id shouldNotBe second!!.id
+                }
+
+                it("round-trips nested liable and discount fields through a fresh fetch") {
+                    val input = ReceiptFixtures.aCreateReceiptInput()
+                    val created = receiptCollection.create(input, "owner-1")!!
+
+                    val fetched = receiptCollection.findById(ObjectId(created.id))!!
+
+                    assertSoftly(fetched) {
+                        it.items shouldHaveSize 1
+                        it.items[0].liable shouldHaveSize 1
+                        it.items[0].liable!![0] shouldBe ReceiptFixtures.aLiable()
+                        it.items[0].discounts shouldHaveSize 2
+                        it.items[0].discounts!![0] shouldBe ReceiptFixtures.anAmountDiscount()
+                        it.items[0].discounts!![1] shouldBe ReceiptFixtures.aRateDiscount()
+                    }
                 }
             }
         }
@@ -153,7 +170,7 @@ class ReceiptCollectionTest : IntegrationTest() {
             }
         }
 
-        describe("update") {
+        describe("update via PUT") {
 
             context("when the receipt exists") {
                 it("updates specified fields and returns the updated receipt") {
@@ -168,7 +185,7 @@ class ReceiptCollectionTest : IntegrationTest() {
                         tax = BigDecimal("6.90"),
                         tip = BigDecimal("6.70"),
                         totalSavings = ReceiptFixtures.aMonetaryAmount(),
-                        fees = listOf(ReceiptFixtures.aFee()),
+                        fees = listOf(ReceiptFixtures.aFlatFee(), ReceiptFixtures.aPercentageFee()),
                         address = ReceiptFixtures.aValidAddress(),
                         photoId = "https://updated.photo.id",
                         urls = listOf("https://url.com"),
@@ -179,6 +196,7 @@ class ReceiptCollectionTest : IntegrationTest() {
                     assertSoftly(result!!) {
                         it.id shouldBe created.id
                         it.vendorName shouldBe "Updated Test Vendor"
+                        it.items shouldHaveSize 1
                         it.items shouldContain ReceiptFixtures.anItem()
                         it.occurredAt shouldNotBe null
                         it.paymentMethod shouldBe PaymentMethod.CASH
@@ -186,7 +204,9 @@ class ReceiptCollectionTest : IntegrationTest() {
                         it.tax shouldBe BigDecimal("6.90")
                         it.tip shouldBe BigDecimal("6.70")
                         it.totalSavings shouldBe ReceiptFixtures.aMonetaryAmount()
-                        it.fees shouldContain ReceiptFixtures.aFee()
+                        it.fees shouldHaveSize 2
+                        it.fees shouldContain ReceiptFixtures.aFlatFee()
+                        it.fees shouldContain ReceiptFixtures.aPercentageFee()
                         it.address shouldBe ReceiptFixtures.aValidAddress()
                         it.photoId shouldBe "https://updated.photo.id"
                         it.urls shouldContain "https://url.com"
@@ -195,7 +215,29 @@ class ReceiptCollectionTest : IntegrationTest() {
                     }
                 }
 
-                it("leaves unspecified fields unchanged") {
+                it("omits optional fields in address") {
+                    val created = receiptCollection.create(ReceiptFixtures.aCreateReceiptInput(), "owner-1")!!
+                    val input = ReceiptFixtures.anUpdateReceiptInput(
+                        id = created.id,
+                        vendorName = created.vendorName,
+                        items = created.items,
+                        occurredAt = created.occurredAt,
+                        paymentMethod = created.paymentMethod,
+                        subtotal = created.subtotal,
+                        address = ReceiptFixtures.aMinimalAddress(),
+                    )
+
+                    val result = receiptCollection.update(input, "user-1")
+
+                    assertSoftly(result!!.address!!) {
+                        it.street shouldBe "123 Main Street"
+                        it.unit shouldBe null
+                        it.rawInput shouldBe null
+                        it.formatted shouldBe null
+                    }
+                }
+
+                it("omits all optional fields") {
                     val created = receiptCollection.create(
                         ReceiptFixtures.aCreateReceiptInput(vendorName = "Original Vendor Name"),
                         "owner-1",

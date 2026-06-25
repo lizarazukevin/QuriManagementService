@@ -35,22 +35,24 @@ class DiscountCodec(private val monetaryAmountCodec: MonetaryAmountCodec) : Code
         reader: BsonReader,
         decoderContext: DecoderContext,
     ): Discount {
-        var category: DiscountType? = null
+        reader.readStartDocument()
+
+        val category = DiscountType.from(reader.readString("category"))
+
         var value: MonetaryAmount? = null
         var rate: BigDecimal? = null
 
-        reader.readStartDocument()
         while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
             when (reader.readName()) {
-                "category" -> category = DiscountType.from(reader.readString())
                 "value" -> value = monetaryAmountCodec.decode(reader, decoderContext)
                 "rate" -> rate = reader.readDecimal128().bigDecimalValue()
             }
         }
+
         reader.readEndDocument()
 
         return Discount.builder()
-            .category(category!!)
+            .category(category)
             .value(value)
             .rate(rate)
             .build()

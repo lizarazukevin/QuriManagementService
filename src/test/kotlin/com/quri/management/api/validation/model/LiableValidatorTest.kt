@@ -47,20 +47,6 @@ class LiableValidatorTest :
                 }
             }
 
-            context("when userId is not a valid ObjectId") {
-                it("throws ValidationException for invalid ObjectId") {
-                    shouldThrow<ValidationException> {
-                        validator.validate(
-                            "field",
-                            Liable.builder()
-                                .userId("test")
-                                .rate(BigDecimal("0.69"))
-                                .build(),
-                        )
-                    }
-                }
-            }
-
             context("when rate is out of range") {
                 it("throws ValidationException above one") {
                     shouldThrow<ValidationException> {

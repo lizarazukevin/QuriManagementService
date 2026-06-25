@@ -2,7 +2,6 @@ package com.quri.management.db.mongo.codecs
 
 import com.quri.client.model.MonetaryAmount
 import org.bson.BsonReader
-import org.bson.BsonType
 import org.bson.BsonWriter
 import org.bson.codecs.Codec
 import org.bson.codecs.DecoderContext
@@ -28,21 +27,16 @@ class MonetaryAmountCodec : Codec<MonetaryAmount> {
         reader: BsonReader,
         decoderContext: DecoderContext,
     ): MonetaryAmount {
-        var amount: java.math.BigDecimal? = null
-        var currency: String? = null
-
         reader.readStartDocument()
-        while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-            when (reader.readName()) {
-                "amount" -> amount = reader.readDecimal128().bigDecimalValue()
-                "currency" -> currency = reader.readString()
-            }
-        }
+
+        val amount = reader.readDecimal128("amount").bigDecimalValue()
+        val currency = reader.readString("currency")
+
         reader.readEndDocument()
 
         return MonetaryAmount.builder()
-            .amount(amount!!)
-            .currency(currency!!)
+            .amount(amount)
+            .currency(currency)
             .build()
     }
 }

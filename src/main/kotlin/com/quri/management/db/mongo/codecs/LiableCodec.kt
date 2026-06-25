@@ -2,13 +2,11 @@ package com.quri.management.db.mongo.codecs
 
 import com.quri.client.model.Liable
 import org.bson.BsonReader
-import org.bson.BsonType
 import org.bson.BsonWriter
 import org.bson.codecs.Codec
 import org.bson.codecs.DecoderContext
 import org.bson.codecs.EncoderContext
 import org.bson.types.Decimal128
-import java.math.BigDecimal
 
 class LiableCodec : Codec<Liable> {
 
@@ -29,21 +27,16 @@ class LiableCodec : Codec<Liable> {
         reader: BsonReader,
         context: DecoderContext,
     ): Liable {
-        var userId: String? = null
-        var rate: BigDecimal? = null
-
         reader.readStartDocument()
-        while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-            when (reader.readName()) {
-                "userId" -> userId = reader.readString()
-                "rate" -> rate = reader.readDecimal128().bigDecimalValue()
-            }
-        }
+
+        val userId = reader.readString("userId")
+        val rate = reader.readDecimal128("rate").bigDecimalValue()
+
         reader.readEndDocument()
 
         return Liable.builder()
-            .userId(userId!!)
-            .rate(rate!!)
+            .userId(userId)
+            .rate(rate)
             .build()
     }
 }
