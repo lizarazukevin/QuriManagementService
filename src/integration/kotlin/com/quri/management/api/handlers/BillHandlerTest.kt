@@ -176,8 +176,8 @@ class BillHandlerTest : HandlerTest() {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(
                             BillFixtures.anUpdateBillInput(
-                            hidden = false, // fixture requires non-null hidden value for update body
-                        )
+                                hidden = false, // fixture requires non-null hidden value for update body
+                            ),
                         )
                         .exchange()
                         .expectStatus().isOk

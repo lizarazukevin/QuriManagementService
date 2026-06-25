@@ -28,9 +28,11 @@ suspend fun <T : Any> paginate(
     filter: Bson = Filters.empty(),
     idExtractor: (T) -> ObjectId,
 ): Pair<List<T>, String?> {
-    val cursorFilter = nextToken
-        ?.let { Filters.and(filter, Filters.gt("_id", ObjectId(it))) }
-        ?: filter
+    val cursorFilter = if (nextToken != null) {
+        Filters.and(filter, Filters.gt("_id", ObjectId(nextToken)))
+    } else {
+        filter
+    }
 
     val results = collection
         .find(cursorFilter)
