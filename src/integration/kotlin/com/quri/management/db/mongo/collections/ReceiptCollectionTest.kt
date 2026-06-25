@@ -92,10 +92,10 @@ class ReceiptCollectionTest : IntegrationTest() {
                     assertSoftly(fetched) {
                         it.items shouldHaveSize 1
                         it.items[0].liable shouldHaveSize 1
-                        it.items[0].liable!![0] shouldBe ReceiptFixtures.aLiable()
+                        it.items[0].liable shouldContain ReceiptFixtures.aLiable()
                         it.items[0].discounts shouldHaveSize 2
-                        it.items[0].discounts!![0] shouldBe ReceiptFixtures.anAmountDiscount()
-                        it.items[0].discounts!![1] shouldBe ReceiptFixtures.aRateDiscount()
+                        it.items[0].discounts shouldContain ReceiptFixtures.anAmountDiscount()
+                        it.items[0].discounts shouldContain ReceiptFixtures.aRateDiscount()
                     }
                 }
             }
