@@ -55,9 +55,8 @@ class ReceiptCollection(dataStoreDatabase: MongoDatabase) {
         ownerId: String,
     ): Receipt? {
         val doc = ReceiptDocument.from(input, ownerId)
-        val result = collection.insertOne(doc)
-        val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
-        return doc.toApi(generatedId)
+        collection.insertOne(doc)
+        return doc.toApi(doc.id.toHexString())
     }
 
     /**
