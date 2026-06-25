@@ -55,9 +55,8 @@ class BillCollection(private val dataStoreDatabase: MongoDatabase) {
         ownerId: String,
     ): Bill? {
         val doc = BillDocument.from(input, ownerId)
-        val result = collection.insertOne(doc)
-        val generatedId = result.insertedId?.asObjectId()?.value?.toString() ?: return null
-        return doc.toApi(generatedId)
+        collection.insertOne(doc)
+        return doc.toApi(doc.id.toHexString())
     }
 
     /**
