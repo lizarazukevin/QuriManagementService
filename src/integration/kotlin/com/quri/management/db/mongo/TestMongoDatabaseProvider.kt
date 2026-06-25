@@ -5,10 +5,12 @@ import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
 
 /**
  * Isolated database name prevents bleed between test runs and environments
  */
+@Profile("integration")
 @TestConfiguration
 class TestMongoDatabaseProvider {
     @Bean
