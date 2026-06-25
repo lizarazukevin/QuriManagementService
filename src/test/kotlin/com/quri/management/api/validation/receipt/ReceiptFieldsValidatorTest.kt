@@ -204,7 +204,10 @@ class ReceiptFieldsValidatorTest :
 
             context("fees") {
                 it("passes for valid fee list") {
-                    validator.validate("field", fees = listOf(ReceiptFixtures.aFee()))
+                    validator.validate(
+                        "field",
+                        fees = listOf(ReceiptFixtures.aFlatFee(), ReceiptFixtures.aPercentageFee()),
+                    )
                 }
 
                 it("throws ValidationException for fee with neither value nor rate") {
@@ -221,7 +224,8 @@ class ReceiptFieldsValidatorTest :
                         validator.validate(
                             "field",
                             fees = listOf(
-                                ReceiptFixtures.aFee(),
+                                ReceiptFixtures.aFlatFee(),
+                                ReceiptFixtures.aPercentageFee(),
                                 Fee.builder().name("Service").build(),
                             ),
                         )

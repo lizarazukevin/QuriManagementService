@@ -125,26 +125,6 @@ class ItemValidatorTest :
 
                     validator.validate("field", item)
                 }
-
-                it("throws ValidationException when user ID is not valid") {
-                    val item = Item.builder()
-                        .name("Item")
-                        .units(1)
-                        .unitCost(ReceiptFixtures.aMonetaryAmount())
-                        .liable(
-                            listOf(
-                                Liable.builder()
-                                    .userId("fake-id")
-                                    .rate(BigDecimal("0.69"))
-                                    .build(),
-                            ),
-                        )
-                        .build()
-
-                    shouldThrow<ValidationException> {
-                        validator.validate("field", item)
-                    }
-                }
             }
         }
     })

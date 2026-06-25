@@ -52,8 +52,10 @@ class UpdateReceiptValidatorTest :
                         tax = BigDecimal("0.05"),
                         tip = BigDecimal("0.05"),
                         totalSavings = ReceiptFixtures.aMonetaryAmount(),
-                        fees = listOf(ReceiptFixtures.aFee()),
+                        fees = listOf(ReceiptFixtures.aFlatFee(), ReceiptFixtures.aFlatFee()),
+                        address = ReceiptFixtures.aValidAddress(),
                         photoId = "test photo id",
+                        urls = listOf("https://example.com"),
                     )
                     validator.validate("UpdateReceipt", input)
                 }

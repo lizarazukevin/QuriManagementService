@@ -34,14 +34,15 @@ class FeeCodec(private val monetaryAmountCodec: MonetaryAmountCodec) : Codec<Fee
         reader: BsonReader,
         decoderContext: DecoderContext,
     ): Fee {
-        var name: String? = null
+        reader.readStartDocument()
+
+        val name = reader.readString("name")
+
         var value: MonetaryAmount? = null
         var rate: BigDecimal? = null
 
-        reader.readStartDocument()
         while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
             when (reader.readName()) {
-                "name" -> name = reader.readString()
                 "value" -> value = monetaryAmountCodec.decode(reader, decoderContext)
                 "rate" -> rate = reader.readDecimal128().bigDecimalValue()
             }
@@ -49,7 +50,7 @@ class FeeCodec(private val monetaryAmountCodec: MonetaryAmountCodec) : Codec<Fee
         reader.readEndDocument()
 
         return Fee.builder()
-            .name(name!!)
+            .name(name)
             .value(value)
             .rate(rate)
             .build()

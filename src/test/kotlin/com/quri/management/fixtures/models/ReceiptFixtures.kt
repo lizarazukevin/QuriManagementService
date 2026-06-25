@@ -4,6 +4,7 @@ import com.quri.client.model.Address
 import com.quri.client.model.CreateReceiptInput
 import com.quri.client.model.DeleteReceiptInput
 import com.quri.client.model.Discount
+import com.quri.client.model.DiscountType
 import com.quri.client.model.Fee
 import com.quri.client.model.GetReceiptInput
 import com.quri.client.model.Item
@@ -31,12 +32,57 @@ object ReceiptFixtures {
             .currency(currency)
             .build()
 
+    fun aLiable(
+        userId: String = DEFAULT_USER_ID,
+        rate: BigDecimal = BigDecimal("1.0"),
+    ): Liable =
+        Liable.builder()
+            .userId(userId)
+            .rate(rate)
+            .build()
+
+    fun anAmountDiscount(
+        category: DiscountType = DiscountType.PROMO,
+        value: MonetaryAmount = aMonetaryAmount(amount = BigDecimal("1.00")),
+    ): Discount =
+        Discount.builder()
+            .category(category)
+            .value(value)
+            .build()
+
+    fun aRateDiscount(
+        category: DiscountType = DiscountType.PROMO,
+        rate: BigDecimal = BigDecimal("0.1"),
+    ): Discount =
+        Discount.builder()
+            .category(category)
+            .rate(rate)
+            .build()
+
+    fun aFlatFee(
+        name: String = "Service Fee",
+        value: MonetaryAmount = aMonetaryAmount(),
+    ): Fee =
+        Fee.builder()
+            .name(name)
+            .value(value)
+            .build()
+
+    fun aPercentageFee(
+        name: String = "Service Fee",
+        rate: BigDecimal = BigDecimal("0.05"),
+    ): Fee =
+        Fee.builder()
+            .name(name)
+            .rate(rate)
+            .build()
+
     fun anItem(
         name: String = "Test Item",
         units: Int = 1,
         unitCost: MonetaryAmount = aMonetaryAmount(),
-        liable: List<Liable>? = emptyList(),
-        discounts: List<Discount>? = emptyList(),
+        liable: List<Liable>? = listOf(aLiable()),
+        discounts: List<Discount>? = listOf(anAmountDiscount(), aRateDiscount()),
     ): Item =
         Item.builder()
             .name(name)
@@ -46,15 +92,7 @@ object ReceiptFixtures {
             .discounts(discounts)
             .build()
 
-    fun aFee(
-        name: String = "Service Fee",
-        value: MonetaryAmount = aMonetaryAmount(),
-    ): Fee =
-        Fee.builder()
-            .name(name)
-            .value(value)
-            .build()
-
+    @Suppress("CyclomaticComplexMethod")
     fun aReceipt(
         id: String = DEFAULT_RECEIPT_ID,
         vendorName: String = "Test Vendor",
@@ -62,6 +100,13 @@ object ReceiptFixtures {
         occurredAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
         paymentMethod: PaymentMethod = PaymentMethod.CREDIT,
         subtotal: MonetaryAmount = aMonetaryAmount(),
+        tax: BigDecimal? = BigDecimal("0.06"),
+        tip: BigDecimal? = BigDecimal("0.15"),
+        totalSavings: MonetaryAmount? = aMonetaryAmount(amount = BigDecimal("2.00")),
+        fees: List<Fee>? = listOf(aFlatFee(), aPercentageFee()),
+        address: Address? = aValidAddress(),
+        photoId: String? = "photo-1",
+        urls: List<String>? = listOf("https://example.com/receipt.jpg"),
         createdAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
         createdBy: String = DEFAULT_USER_ID,
         updatedAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
@@ -74,10 +119,53 @@ object ReceiptFixtures {
             .occurredAt(occurredAt)
             .paymentMethod(paymentMethod)
             .subtotal(subtotal)
+            .apply { tax?.let { tax(it) } }
+            .apply { tip?.let { tip(it) } }
+            .apply { totalSavings?.let { totalSavings(it) } }
+            .apply { fees?.let { fees(it) } }
+            .apply { address?.let { address(it) } }
+            .apply { photoId?.let { photoId(it) } }
+            .apply { urls?.let { urls(it) } }
             .createdAt(createdAt)
             .createdBy(createdBy)
             .updatedAt(updatedAt)
             .updatedBy(updatedBy)
+            .build()
+
+    fun aValidAddress(
+        street: String = "123 Main Street",
+        city: String = "Arlington",
+        state: String = "VA",
+        postalCode: String = "20001",
+        country: String = "US",
+        unit: String? = "Apt 4B",
+        rawInput: String? = "123 main st apt 4b arlington va 20001",
+        formatted: String? = "123 Main Street, Apt 4B, Arlington, VA 20001, US",
+    ): Address =
+        Address.builder()
+            .street(street)
+            .city(city)
+            .state(state)
+            .postalCode(postalCode)
+            .country(country)
+            .apply { unit?.let { unit(it) } }
+            .apply { rawInput?.let { rawInput(it) } }
+            .apply { formatted?.let { formatted(it) } }
+            .build()
+
+    fun aMinimalAddress(
+        street: String = "123 Main Street",
+        city: String = "Arlington",
+        state: String = "VA",
+        postalCode: String = "20001",
+        country: String = "US",
+    ): Address =
+        Address.builder()
+            .street(street)
+            .city(city)
+            .state(state)
+            .postalCode(postalCode)
+            .country(country)
             .build()
 
     fun aCreateReceiptInput(
@@ -93,21 +181,6 @@ object ReceiptFixtures {
             .occurredAt(occurredAt)
             .paymentMethod(paymentMethod)
             .subtotal(subtotal)
-            .build()
-
-    fun aValidAddress(
-        street: String = "123 Main Street",
-        city: String = "Arlington",
-        state: String = "VA",
-        postalCode: String = "20001",
-        country: String = "US",
-    ): Address =
-        Address.builder()
-            .street(street)
-            .city(city)
-            .state(state)
-            .postalCode(postalCode)
-            .country(country)
             .build()
 
     fun aGetReceiptInput(id: String = DEFAULT_RECEIPT_ID): GetReceiptInput =

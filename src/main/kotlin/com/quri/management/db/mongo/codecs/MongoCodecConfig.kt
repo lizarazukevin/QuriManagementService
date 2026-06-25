@@ -29,6 +29,7 @@ class MongoCodecConfig {
                 discountCodec,
                 FeeCodec(monetaryAmountCodec),
                 ItemCodec(monetaryAmountCodec, liableCodec, discountCodec),
+                liableCodec,
                 monetaryAmountCodec,
                 UserLocationCodec(),
             ),
