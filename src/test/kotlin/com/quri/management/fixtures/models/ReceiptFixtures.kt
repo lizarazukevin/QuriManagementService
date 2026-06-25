@@ -92,46 +92,6 @@ object ReceiptFixtures {
             .discounts(discounts)
             .build()
 
-    @Suppress("CyclomaticComplexMethod")
-    fun aReceipt(
-        id: String = DEFAULT_RECEIPT_ID,
-        vendorName: String = "Test Vendor",
-        items: List<Item> = listOf(anItem()),
-        occurredAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
-        paymentMethod: PaymentMethod = PaymentMethod.CREDIT,
-        subtotal: MonetaryAmount = aMonetaryAmount(),
-        tax: BigDecimal? = BigDecimal("0.06"),
-        tip: BigDecimal? = BigDecimal("0.15"),
-        totalSavings: MonetaryAmount? = aMonetaryAmount(amount = BigDecimal("2.00")),
-        fees: List<Fee>? = listOf(aFlatFee(), aPercentageFee()),
-        address: Address? = aValidAddress(),
-        photoId: String? = "photo-1",
-        urls: List<String>? = listOf("https://example.com/receipt.jpg"),
-        createdAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
-        createdBy: String = DEFAULT_USER_ID,
-        updatedAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
-        updatedBy: String = DEFAULT_USER_ID,
-    ): Receipt =
-        Receipt.builder()
-            .id(id)
-            .vendorName(vendorName)
-            .items(items)
-            .occurredAt(occurredAt)
-            .paymentMethod(paymentMethod)
-            .subtotal(subtotal)
-            .apply { tax?.let { tax(it) } }
-            .apply { tip?.let { tip(it) } }
-            .apply { totalSavings?.let { totalSavings(it) } }
-            .apply { fees?.let { fees(it) } }
-            .apply { address?.let { address(it) } }
-            .apply { photoId?.let { photoId(it) } }
-            .apply { urls?.let { urls(it) } }
-            .createdAt(createdAt)
-            .createdBy(createdBy)
-            .updatedAt(updatedAt)
-            .updatedBy(updatedBy)
-            .build()
-
     fun aValidAddress(
         street: String = "123 Main Street",
         city: String = "Arlington",
@@ -166,6 +126,46 @@ object ReceiptFixtures {
             .state(state)
             .postalCode(postalCode)
             .country(country)
+            .build()
+
+    @Suppress("CyclomaticComplexMethod")
+    fun aReceipt(
+        id: String = DEFAULT_RECEIPT_ID,
+        vendorName: String = "Test Vendor",
+        items: List<Item> = listOf(anItem()),
+        occurredAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
+        paymentMethod: PaymentMethod = PaymentMethod.CREDIT,
+        subtotal: MonetaryAmount = aMonetaryAmount(),
+        tax: BigDecimal = BigDecimal("0.06"),
+        tip: BigDecimal = BigDecimal("0.15"),
+        totalSavings: MonetaryAmount = aMonetaryAmount(amount = BigDecimal("2.00")),
+        fees: List<Fee> = listOf(aFlatFee(), aPercentageFee()),
+        address: Address = aValidAddress(),
+        photoId: String = "photo-1",
+        urls: List<String> = listOf("https://example.com/receipt.jpg"),
+        createdAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
+        createdBy: String = DEFAULT_USER_ID,
+        updatedAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
+        updatedBy: String = DEFAULT_USER_ID,
+    ): Receipt =
+        Receipt.builder()
+            .id(id)
+            .vendorName(vendorName)
+            .items(items)
+            .occurredAt(occurredAt)
+            .paymentMethod(paymentMethod)
+            .subtotal(subtotal)
+            .tax(tax)
+            .tip(tip)
+            .totalSavings(totalSavings)
+            .fees(fees)
+            .address(address)
+            .photoId(photoId)
+            .urls(urls)
+            .createdAt(createdAt)
+            .createdBy(createdBy)
+            .updatedAt(updatedAt)
+            .updatedBy(updatedBy)
             .build()
 
     fun aCreateReceiptInput(

@@ -33,14 +33,14 @@ class ProfileCollectionTest : IntegrationTest() {
 
         describe("findById") {
 
-            context("when a profile exists for a given ID") {
+            context("when a profile exists for the given ID") {
                 it("returns the matching profile") {
                     val input = ProfileFixtures.aCreateProfileInput()
                     val created = profileCollection.create(input, "owner-1")!!
 
-                    val result = profileCollection.findById(ObjectId(created.id))
-                    result shouldNotBe null
-                    result!!.id shouldBe created.id
+                    val result = profileCollection.findById(ObjectId(created.id))!!
+
+                    result.id shouldBe created.id
                 }
             }
 
@@ -54,13 +54,13 @@ class ProfileCollectionTest : IntegrationTest() {
 
         describe("create") {
 
-            context("input is a valid") {
+            context("when input is valid") {
                 it("persists and returns the profile with a generated ID") {
                     val input = ProfileFixtures.aCreateProfileInput()
 
-                    val result = profileCollection.create(input, "owner-1")
+                    val result = profileCollection.create(input, "owner-1")!!
 
-                    assertSoftly(result!!) {
+                    assertSoftly(result) {
                         it.id shouldNotBe null
                         it.username shouldBe "testuser"
                         it.firstName shouldBe "Test"
@@ -73,17 +73,17 @@ class ProfileCollectionTest : IntegrationTest() {
                 }
 
                 it("assigns distinct IDs to separate documents") {
-                    val first = profileCollection.create(ProfileFixtures.aCreateProfileInput(), "owner-1")
-                    val second = profileCollection.create(ProfileFixtures.aCreateProfileInput(), "owner-2")
+                    val first = profileCollection.create(ProfileFixtures.aCreateProfileInput(), "owner-1")!!
+                    val second = profileCollection.create(ProfileFixtures.aCreateProfileInput(), "owner-2")!!
 
-                    first!!.id shouldNotBe second!!.id
+                    first.id shouldNotBe second.id
                 }
             }
         }
 
         describe("listAll") {
 
-            context("when no profiles exists") {
+            context("when no profiles exist") {
                 it("returns an empty list and null token") {
                     val (results, token) = profileCollection.listAll(10, null)
 
@@ -150,19 +150,19 @@ class ProfileCollectionTest : IntegrationTest() {
             }
         }
 
-        describe("exists") {
-            context("when the profile exists") {
+        describe("existsByEmail") {
+            context("when a profile with email exists") {
                 it("returns the profile") {
                     val input = ProfileFixtures.aCreateProfileInput(email = "test@quri.com")
                     val created = profileCollection.create(input, "owner-1")!!
 
-                    val result = profileCollection.existsByEmail(created.email)!!
+                    val result = profileCollection.existsByEmail(created.email)
 
                     result shouldNotBe null
                 }
             }
 
-            context("when the profile does not exist") {
+            context("when the email does not match any profile") {
                 it("returns null") {
                     val input = ProfileFixtures.aCreateProfileInput(email = "test@quri.com")
                     val created = profileCollection.create(input, "owner-1")
@@ -174,7 +174,7 @@ class ProfileCollectionTest : IntegrationTest() {
             }
         }
 
-        describe("update") {
+        describe("update via PATCH") {
 
             context("when the profile exists") {
                 it("updates specified fields and returns the updated profile") {
@@ -194,9 +194,9 @@ class ProfileCollectionTest : IntegrationTest() {
                         location = ProfileFixtures.aUserLocation(),
                     )
 
-                    val result = profileCollection.update(input, "user-1")
+                    val result = profileCollection.update(input, "user-1")!!
 
-                    assertSoftly(result!!) {
+                    assertSoftly(result) {
                         it.id shouldBe created.id
                         it.username shouldBe "UpdatedUsername"
                         it.firstName shouldBe "UpdatedFirstName"
@@ -209,6 +209,8 @@ class ProfileCollectionTest : IntegrationTest() {
                         it.followers shouldContain DEFAULT_PROFILE_ID
                         it.gender shouldBe Gender.PREFER_NOT_TO_SAY
                         it.location shouldBe ProfileFixtures.aUserLocation()
+                        it.updatedBy shouldBe "user-1"
+                        it.updatedAt shouldNotBe null
                     }
                 }
 
@@ -219,9 +221,9 @@ class ProfileCollectionTest : IntegrationTest() {
                     )!!
                     val input = ProfileFixtures.anUpdateProfileInput(id = created.id)
 
-                    val result = profileCollection.update(input, "user-1")
+                    val result = profileCollection.update(input, "user-1")!!
 
-                    assertSoftly(result!!) {
+                    assertSoftly(result) {
                         it.id shouldBe created.id
                         it.username shouldBe "OriginalUsername"
                         it.firstName shouldBe "Test"

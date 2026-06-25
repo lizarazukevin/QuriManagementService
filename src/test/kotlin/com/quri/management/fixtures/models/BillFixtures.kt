@@ -17,11 +17,21 @@ object BillFixtures {
     const val DEFAULT_OWNER_ID = "owner-1"
     const val DEFAULT_USER_ID = "user-1"
 
+    fun aMonetaryAmount(
+        amount: BigDecimal = BigDecimal("10.00"),
+        currency: String = "USD",
+    ): MonetaryAmount =
+        MonetaryAmount.builder()
+            .amount(amount)
+            .currency(currency)
+            .build()
+
     fun aBill(
         id: String = DEFAULT_BILL_ID,
         name: String = "Test Bill",
         status: BillStatus = BillStatus.DRAFT,
         hidden: Boolean = false,
+        description: String = "Test bill description",
         createdAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
         createdBy: String = DEFAULT_USER_ID,
         updatedAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
@@ -32,32 +42,16 @@ object BillFixtures {
             .name(name)
             .status(status)
             .hidden(hidden)
+            .description(description)
             .createdAt(createdAt)
             .createdBy(createdBy)
             .updatedAt(updatedAt)
             .updatedBy(updatedBy)
             .build()
 
-    fun aMonetaryAmount(
-        amount: BigDecimal = BigDecimal("10.00"),
-        currency: String = "USD",
-    ): MonetaryAmount =
-        MonetaryAmount.builder()
-            .amount(amount)
-            .currency(currency)
-            .build()
-
-    fun aCreateBillInput(
-        name: String = "Test Bill",
-        status: BillStatus = BillStatus.DRAFT,
-        hidden: Boolean = false,
-        description: String? = null,
-    ): CreateBillInput =
+    fun aCreateBillInput(name: String = "Test Bill"): CreateBillInput =
         CreateBillInput.builder()
             .name(name)
-            .status(status)
-            .hidden(hidden)
-            .apply { description?.let { description(it) } }
             .build()
 
     fun aGetBillInput(id: String = DEFAULT_BILL_ID): GetBillInput =

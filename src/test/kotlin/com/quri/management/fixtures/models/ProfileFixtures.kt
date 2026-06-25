@@ -16,6 +16,17 @@ object ProfileFixtures {
     const val DEFAULT_OWNER_ID = "owner-1"
     const val DEFAULT_USER_ID = "user-1"
 
+    fun aUserLocation(
+        city: String = "Arlington",
+        state: String = "VA",
+        country: String = "US",
+    ): UserLocation =
+        UserLocation.builder()
+            .city(city)
+            .state(state)
+            .country(country)
+            .build()
+
     fun aProfile(
         id: String = DEFAULT_PROFILE_ID,
         username: String = "testuser",
@@ -23,6 +34,13 @@ object ProfileFixtures {
         lastName: String = "User",
         email: String = "test@quri.com",
         dateOfBirth: Instant = Instant.parse("1995-04-15T00:00:00Z"),
+        middleName: String = "Middle",
+        phoneNumber: String = "1234567890",
+        bio: String = "test",
+        following: List<String> = listOf("user-2"),
+        followers: List<String> = listOf("user-3"),
+        gender: Gender = Gender.MALE,
+        location: UserLocation = aUserLocation(),
         createdAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
         createdBy: String = DEFAULT_USER_ID,
         updatedAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
@@ -35,21 +53,17 @@ object ProfileFixtures {
             .lastName(lastName)
             .email(email)
             .dateOfBirth(dateOfBirth)
+            .middleName(middleName)
+            .phoneNumber(phoneNumber)
+            .bio(bio)
+            .following(following)
+            .followers(followers)
+            .gender(gender)
+            .location(location)
             .createdAt(createdAt)
             .createdBy(createdBy)
             .updatedAt(updatedAt)
             .updatedBy(updatedBy)
-            .build()
-
-    fun aUserLocation(
-        city: String = "Arlington",
-        state: String = "VA",
-        country: String = "US",
-    ): UserLocation =
-        UserLocation.builder()
-            .city(city)
-            .state(state)
-            .country(country)
             .build()
 
     fun aCreateProfileInput(
@@ -58,8 +72,6 @@ object ProfileFixtures {
         lastName: String = "User",
         email: String = "test@quri.com",
         dateOfBirth: Instant = Instant.parse("1995-04-15T00:00:00Z"),
-        middleName: String? = null,
-        phoneNumber: String? = null,
     ): CreateProfileInput =
         CreateProfileInput.builder()
             .username(username)
@@ -67,8 +79,6 @@ object ProfileFixtures {
             .lastName(lastName)
             .email(email)
             .dateOfBirth(dateOfBirth)
-            .apply { middleName?.let { middleName(it) } }
-            .apply { phoneNumber?.let { phoneNumber(phoneNumber) } }
             .build()
 
     fun aGetProfileInput(id: String = DEFAULT_PROFILE_ID): GetProfileInput =

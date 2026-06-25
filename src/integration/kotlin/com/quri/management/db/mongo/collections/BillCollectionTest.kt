@@ -38,10 +38,9 @@ class BillCollectionTest : IntegrationTest() {
                     val input = BillFixtures.aCreateBillInput()
                     val created = billCollection.create(input, "owner-1")!!
 
-                    val result = billCollection.findById(ObjectId(created.id))
+                    val result = billCollection.findById(ObjectId(created.id))!!
 
-                    result shouldNotBe null
-                    result!!.id shouldBe created.id
+                    result.id shouldBe created.id
                 }
             }
 
@@ -59,9 +58,9 @@ class BillCollectionTest : IntegrationTest() {
                 it("persists and returns the bill with a generated ID") {
                     val input = BillFixtures.aCreateBillInput()
 
-                    val result = billCollection.create(input, "owner-1")
+                    val result = billCollection.create(input, "owner-1")!!
 
-                    assertSoftly(result!!) {
+                    assertSoftly(result) {
                         it.id shouldNotBe null
                         it.name shouldBe "Test Bill"
                         it.status shouldBe BillStatus.DRAFT
@@ -72,10 +71,10 @@ class BillCollectionTest : IntegrationTest() {
                 }
 
                 it("assigns distinct IDs to separate documents") {
-                    val first = billCollection.create(BillFixtures.aCreateBillInput(), "owner-1")
-                    val second = billCollection.create(BillFixtures.aCreateBillInput(), "owner-1")
+                    val first = billCollection.create(BillFixtures.aCreateBillInput(), "owner-1")!!
+                    val second = billCollection.create(BillFixtures.aCreateBillInput(), "owner-1")!!
 
-                    first!!.id shouldNotBe second!!.id
+                    first.id shouldNotBe second.id
                 }
             }
         }
@@ -149,7 +148,7 @@ class BillCollectionTest : IntegrationTest() {
             }
         }
 
-        describe("update") {
+        describe("update via PATCH") {
 
             context("when the bill exists") {
                 it("updates specified fields and returns the updated bill") {
@@ -164,9 +163,9 @@ class BillCollectionTest : IntegrationTest() {
                         receipts = listOf(DEFAULT_BILL_ID),
                     )
 
-                    val result = billCollection.update(input, "user-1")
+                    val result = billCollection.update(input, "user-1")!!
 
-                    assertSoftly(result!!) {
+                    assertSoftly(result) {
                         it.id shouldBe created.id
                         it.name shouldBe "Updated Name"
                         it.status shouldBe BillStatus.PUBLISHED
@@ -186,9 +185,9 @@ class BillCollectionTest : IntegrationTest() {
                     )!!
                     val input = BillFixtures.anUpdateBillInput(id = created.id, hidden = true)
 
-                    val result = billCollection.update(input, "user-1")
+                    val result = billCollection.update(input, "user-1")!!
 
-                    assertSoftly(result!!) {
+                    assertSoftly(result) {
                         it.name shouldBe "Original Name"
                         it.isHidden shouldBe true
                     }

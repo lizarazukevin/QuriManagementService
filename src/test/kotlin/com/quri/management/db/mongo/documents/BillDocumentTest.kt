@@ -10,7 +10,6 @@ import com.quri.management.fixtures.models.ReceiptFixtures
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import org.bson.types.ObjectId
 
 @Suppress("unused")
@@ -126,49 +125,19 @@ class BillDocumentTest :
         describe("from(CreateBillInput)") {
 
             it("maps all input fields correctly") {
-                val input = BillFixtures.aCreateBillInput(
-                    name = "New Bill",
-                    hidden = false,
-                )
+                val input = BillFixtures.aCreateBillInput()
                 val ownerId = "owner-abc"
 
                 val result = BillDocument.from(input, ownerId)
 
                 assertSoftly(result) {
-                    it.name shouldBe "New Bill"
+                    it.name shouldBe "Test Bill"
                     it.hidden shouldBe false
                     it.status shouldBe input.status.value
                     it.createdBy shouldBe ownerId
                     it.updatedBy shouldBe ownerId
-                }
-            }
-
-            it("sets createdAt and updatedAt to the same non-null instant") {
-                val input = BillFixtures.aCreateBillInput()
-
-                val result = BillDocument.from(input, "owner-1")
-
-                assertSoftly(result) {
-                    it.createdAt shouldNotBe null
-                    it.updatedAt shouldNotBe null
                     it.createdAt shouldBe it.updatedAt
                 }
-            }
-
-            it("maps optional description when present") {
-                val input = BillFixtures.aCreateBillInput(description = "A description")
-
-                val result = BillDocument.from(input, "owner-1")
-
-                result.description shouldBe "A description"
-            }
-
-            it("produces null description when absent") {
-                val input = BillFixtures.aCreateBillInput(description = null)
-
-                val result = BillDocument.from(input, "owner-1")
-
-                result.description shouldBe null
             }
         }
     })

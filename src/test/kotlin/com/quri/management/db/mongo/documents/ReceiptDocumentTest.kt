@@ -84,17 +84,14 @@ class ReceiptDocumentTest :
         describe("from(CreateReceiptInput)") {
 
             it("maps all input fields and sets audit fields") {
-                val input = ReceiptFixtures.aCreateReceiptInput(
-                    vendorName = "New Vendor",
-                    paymentMethod = PaymentMethod.CASH,
-                )
+                val input = ReceiptFixtures.aCreateReceiptInput()
                 val ownerId = "owner-abc"
 
                 val result = ReceiptDocument.from(input, ownerId)
 
                 assertSoftly(result) {
-                    it.vendorName shouldBe "New Vendor"
-                    it.paymentMethod shouldBe PaymentMethod.CASH.value
+                    it.vendorName shouldBe "Test Vendor"
+                    it.paymentMethod shouldBe PaymentMethod.CREDIT.value
                     it.createdBy shouldBe ownerId
                     it.updatedBy shouldBe ownerId
                     it.createdAt shouldNotBe null

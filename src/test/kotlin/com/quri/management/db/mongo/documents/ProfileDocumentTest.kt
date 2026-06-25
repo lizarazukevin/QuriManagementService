@@ -8,6 +8,7 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.bson.types.ObjectId
+import java.time.Instant
 
 @Suppress("unused")
 class ProfileDocumentTest :
@@ -109,21 +110,17 @@ class ProfileDocumentTest :
         describe("from(CreateProfileInput)") {
 
             it("maps all input fields and sets audit fields") {
-                val input = ProfileFixtures.aCreateProfileInput(
-                    username = "newuser",
-                    firstName = "New",
-                    lastName = "User",
-                    email = "new@quri.com",
-                )
+                val input = ProfileFixtures.aCreateProfileInput()
                 val ownerId = "owner-abc"
 
                 val result = ProfileDocument.from(input, ownerId)
 
                 assertSoftly(result) {
-                    it.username shouldBe "newuser"
-                    it.firstName shouldBe "New"
+                    it.username shouldBe "testuser"
+                    it.firstName shouldBe "Test"
                     it.lastName shouldBe "User"
-                    it.email shouldBe "new@quri.com"
+                    it.email shouldBe "test@quri.com"
+                    it.dateOfBirth shouldBe Instant.parse("1995-04-15T00:00:00Z")
                     it.createdBy shouldBe ownerId
                     it.updatedBy shouldBe ownerId
                     it.createdAt shouldNotBe null

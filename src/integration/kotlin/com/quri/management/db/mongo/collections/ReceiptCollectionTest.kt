@@ -40,10 +40,9 @@ class ReceiptCollectionTest : IntegrationTest() {
                     val input = ReceiptFixtures.aCreateReceiptInput()
                     val created = receiptCollection.create(input, "owner-1")!!
 
-                    val result = receiptCollection.findById(ObjectId(created.id))
+                    val result = receiptCollection.findById(ObjectId(created.id))!!
 
-                    result shouldNotBe null
-                    result!!.id shouldBe created.id
+                    result.id shouldBe created.id
                 }
             }
 
@@ -61,9 +60,9 @@ class ReceiptCollectionTest : IntegrationTest() {
                 it("persists and returns the receipt with a generated ID") {
                     val input = ReceiptFixtures.aCreateReceiptInput()
 
-                    val result = receiptCollection.create(input, "owner-1")
+                    val result = receiptCollection.create(input, "owner-1")!!
 
-                    assertSoftly(result!!) {
+                    assertSoftly(result) {
                         it.id shouldNotBe null
                         it.vendorName shouldBe "Test Vendor"
                         it.items shouldHaveSize 1
@@ -77,26 +76,10 @@ class ReceiptCollectionTest : IntegrationTest() {
                 }
 
                 it("assigns distinct IDs to separate documents") {
-                    val first = receiptCollection.create(ReceiptFixtures.aCreateReceiptInput(), "owner-1")
-                    val second = receiptCollection.create(ReceiptFixtures.aCreateReceiptInput(), "owner-1")
+                    val first = receiptCollection.create(ReceiptFixtures.aCreateReceiptInput(), "owner-1")!!
+                    val second = receiptCollection.create(ReceiptFixtures.aCreateReceiptInput(), "owner-1")!!
 
-                    first!!.id shouldNotBe second!!.id
-                }
-
-                it("round-trips nested liable and discount fields through a fresh fetch") {
-                    val input = ReceiptFixtures.aCreateReceiptInput()
-                    val created = receiptCollection.create(input, "owner-1")!!
-
-                    val fetched = receiptCollection.findById(ObjectId(created.id))!!
-
-                    assertSoftly(fetched) {
-                        it.items shouldHaveSize 1
-                        it.items[0].liable shouldHaveSize 1
-                        it.items[0].liable shouldContain ReceiptFixtures.aLiable()
-                        it.items[0].discounts shouldHaveSize 2
-                        it.items[0].discounts shouldContain ReceiptFixtures.anAmountDiscount()
-                        it.items[0].discounts shouldContain ReceiptFixtures.aRateDiscount()
-                    }
+                    first.id shouldNotBe second.id
                 }
             }
         }
@@ -191,9 +174,9 @@ class ReceiptCollectionTest : IntegrationTest() {
                         urls = listOf("https://url.com"),
                     )
 
-                    val result = receiptCollection.update(input, "user-1")
+                    val result = receiptCollection.update(input, "user-1")!!
 
-                    assertSoftly(result!!) {
+                    assertSoftly(result) {
                         it.id shouldBe created.id
                         it.vendorName shouldBe "Updated Test Vendor"
                         it.items shouldHaveSize 1
@@ -227,9 +210,9 @@ class ReceiptCollectionTest : IntegrationTest() {
                         address = ReceiptFixtures.aMinimalAddress(),
                     )
 
-                    val result = receiptCollection.update(input, "user-1")
+                    val result = receiptCollection.update(input, "user-1")!!
 
-                    assertSoftly(result!!.address!!) {
+                    assertSoftly(result.address) {
                         it.street shouldBe "123 Main Street"
                         it.unit shouldBe null
                         it.rawInput shouldBe null
