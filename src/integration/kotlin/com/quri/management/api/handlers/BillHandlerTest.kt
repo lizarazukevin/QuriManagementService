@@ -174,13 +174,18 @@ class BillHandlerTest : HandlerTest() {
                     val result = webTestClient.patch()
                         .uri("/bills/$DEFAULT_BILL_ID")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(BillFixtures.anUpdateBillInput())
+                        .bodyValue(
+                            BillFixtures.anUpdateBillInput(
+                            hidden = false, // fixture requires non-null hidden value for update body
+                        )
+                        )
                         .exchange()
                         .expectStatus().isOk
                         .expectBody()
                         .returnResult()
 
                     result.jsonPath("$.bill.id") shouldBe DEFAULT_BILL_ID
+                    result.jsonPath("$.bill.hidden") shouldBe false
                 }
             }
         }

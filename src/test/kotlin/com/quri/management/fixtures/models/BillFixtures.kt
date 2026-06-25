@@ -68,16 +68,16 @@ object BillFixtures {
         id: String = DEFAULT_BILL_ID,
         name: String? = null,
         status: BillStatus? = null,
-        hidden: Boolean = false,
+        hidden: Boolean? = null,
         description: String? = null,
         balance: MonetaryAmount? = null,
         receipts: List<String>? = null,
     ): UpdateBillInput =
         UpdateBillInput.builder()
             .id(id)
-            .hidden(hidden)
-            .apply { status?.let { status(it) } }
             .apply { name?.let { name(it) } }
+            .apply { status?.let { status(it) } }
+            .apply { hidden?.let { hidden(it) } }
             .apply { description?.let { description(it) } }
             .apply { balance?.let { balance(it) } }
             .apply { receipts?.let { receipts(it) } }
