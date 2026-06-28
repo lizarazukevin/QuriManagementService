@@ -1,8 +1,19 @@
 ---
 # Keeps GitHub Actions versions (actions/checkout, setup-java, etc.) current
 #
-# Scope is intentionally limited to github-actions. Gradle/Kotlin/Spring
-# dependency versions in libs.versions.toml are not managed here.
+# github-actions: monthly checks, all updates bundled into one grouped PR.
+#
+# gradle: weekly checks (faster visibility into security patches), but with
+# risk-tiered grouping:
+#   - patch/minor bumps (Spring, Kotlin, Kotest, Testcontainers, etc.) are
+#     bundled into a single low-risk PR per cycle.
+#   - major version bumps are deliberately excluded from grouping, so each
+#     lands as its own clearly-labeled PR and can't hide inside a routine
+#     batch of patch bumps. Major bumps are the ones most likely to need
+#     an actual look at changelogs/breaking changes before merging.
+#
+# Neither ecosystem auto-merges anything — PRs only ever propose updates;
+# merging is still a manual decision.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -14,3 +25,16 @@ updates:
       github-actions:
         patterns:
           - "*"
+
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      gradle-patch-minor:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
