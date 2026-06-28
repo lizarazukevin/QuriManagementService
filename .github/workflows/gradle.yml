@@ -1,0 +1,75 @@
+---
+# Builds and tests QuriManagementService (Kotlin + Spring Boot + Gradle).
+#
+# QuriModels is consumed via a Gradle composite build (see settings.gradle.kts:
+# includeBuild("../QuriModels")), not as a published Maven artifact. That means
+# this workflow checks out both repos side by side so Gradle can substitute
+# `com.quri:quri-models` with QuriModels' current source at build time — no
+# publish step, no version pinning, always builds against latest QuriModels.
+#
+# Steps run in order: detekt (static analysis) -> unit tests -> integration
+# tests (Testcontainers + real Mongo via Docker) -> kover coverage gate (90%).
+name: Gradle Build & Test
+
+"on":
+  push:
+    branches: [ main, 'ci' ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout QuriManagementService
+        uses: actions/checkout@v7
+        with:
+          path: QuriManagementService
+
+      - name: Checkout QuriModels
+        uses: actions/checkout@v7
+        with:
+          repository: lizarazukevin/QuriModels
+          path: QuriModels
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Detekt
+        working-directory: QuriManagementService
+        run: ./gradlew detekt --no-daemon
+
+      - name: Unit tests
+        working-directory: QuriManagementService
+        run: ./gradlew test --no-daemon
+
+      - name: Integration tests
+        working-directory: QuriManagementService
+        run: ./gradlew integration --no-daemon
+
+      - name: Coverage verification
+        working-directory: QuriManagementService
+        run: ./gradlew koverVerify --no-daemon
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: |
+            QuriManagementService/build/reports/tests/
+            QuriManagementService/build/reports/detekt/
+            QuriManagementService/build/reports/kover/
+          retention-days: 14
