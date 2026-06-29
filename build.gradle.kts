@@ -96,35 +96,33 @@ dependencies {
 	testImplementation(libs.spring.boot.starter.test) {
 		exclude(module = "mockito-core")
 	}
-	testImplementation(libs.spring.boot.starter.test)
 	testImplementation(libs.kotest.runner.junit5)
 	testImplementation(libs.kotest.assertions.core)
 	testImplementation(libs.kotest.property)
 	testImplementation(libs.mockk)
 
 	// ── Integration Test ──────────────────────────────────────────────────────
-	val integrationImplementation by configurations
 
 	// Support for constructor dependency injection, bridges Kotest's coroutine execution model
 	// with Spring's requirement for JUnit, enabling proper application context + caching
 	// Ref: https://kotest.io/docs/extensions/spring.html
-	integrationImplementation(libs.kotest.extensions.spring)
+	add(integrationSourceSet.implementationConfigurationName, libs.kotest.extensions.spring)
 
 	// Target and replace a specific Spring bean inside the active application context with MockK mock
 	// Ref: https://github.com/Ninja-Squad/springmockk
-	integrationImplementation(libs.springmockk)
+	add(integrationSourceSet.implementationConfigurationName, libs.springmockk)
 
 	// Manage services running inside containers, integrates with JUnit to start up containers before
 	// tests run and are practical for writing integration tests against a real backend service (e.g. Mongo, MySQL)
 	// Ref: https://docs.spring.io/spring-boot/reference/testing/testcontainers.html
-	integrationImplementation(libs.spring.boot.testcontainers)
+	add(integrationSourceSet.implementationConfigurationName, libs.spring.boot.testcontainers)
 
 	// Downloads, starts, and stops genuine MongoDB service inside isolated container
 	// Ref: https://testcontainers.com/modules/mongodb/
-	integrationImplementation(libs.testcontainers.mongodb)
+	add(integrationSourceSet.implementationConfigurationName, libs.testcontainers.mongodb)
 
 	// MVC related tests, tests the web controller layer
-	integrationImplementation(libs.spring.boot.starter.webflux.test)
+	add(integrationSourceSet.implementationConfigurationName, libs.spring.boot.starter.webflux.test)
 
 	// ── Code Quality ──────────────────────────────────────────────────────────
 	// Ref: https://detekt.dev/docs/intro
