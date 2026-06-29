@@ -7,10 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class MonetaryAmountValidator : Validator<MonetaryAmount> {
-    override suspend fun validate(
-        field: String,
-        input: MonetaryAmount,
-    ) {
+    override suspend fun validate(field: String, input: MonetaryAmount) {
         input.currency.validatePattern(
             "$field.currency",
             Regex("^[A-Z]{3}$"),

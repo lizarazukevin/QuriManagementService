@@ -16,25 +16,23 @@ object JwtFixtures {
         tokenValue: String = DEFAULT_TOKEN_VALUE,
         issuedAt: Instant = DEFAULT_ISSUED_AT,
         expiresAt: Instant = DEFAULT_EXPIRES_AT,
-    ): Jwt =
-        Jwt.withTokenValue(tokenValue)
-            .header("alg", DEFAULT_ALG)
-            .subject(subject)
-            .claim("sub", subject)
-            .issuedAt(issuedAt)
-            .expiresAt(expiresAt)
-            .build()
+    ): Jwt = Jwt.withTokenValue(tokenValue)
+        .header("alg", DEFAULT_ALG)
+        .subject(subject)
+        .claim("sub", subject)
+        .issuedAt(issuedAt)
+        .expiresAt(expiresAt)
+        .build()
 
     fun aJwtWithNoSubject(
         tokenValue: String = DEFAULT_TOKEN_VALUE,
         issuedAt: Instant = DEFAULT_ISSUED_AT,
         expiresAt: Instant = DEFAULT_EXPIRES_AT,
-    ): Jwt =
-        Jwt(
-            tokenValue,
-            issuedAt,
-            expiresAt,
-            mapOf("alg" to DEFAULT_ALG),
-            mapOf("aud" to listOf("test")),
-        )
+    ): Jwt = Jwt(
+        tokenValue,
+        issuedAt,
+        expiresAt,
+        mapOf("alg" to DEFAULT_ALG),
+        mapOf("aud" to listOf("test")),
+    )
 }

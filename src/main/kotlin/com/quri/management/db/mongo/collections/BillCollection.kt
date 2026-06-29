@@ -50,10 +50,7 @@ class BillCollection(private val dataStoreDatabase: MongoDatabase) {
      * @return the persisted [Bill] with [Bill.id] populated, or `null` if
      * the insert did not return a generated ID
      */
-    suspend fun create(
-        input: CreateBillInput,
-        ownerId: String,
-    ): Bill? {
+    suspend fun create(input: CreateBillInput, ownerId: String): Bill? {
         val doc = BillDocument.from(input, ownerId)
         collection.insertOne(doc)
         return doc.toApi(doc.id.toHexString())
@@ -66,10 +63,7 @@ class BillCollection(private val dataStoreDatabase: MongoDatabase) {
      * @param nextToken is the bookmarked ID the next paginated list starts from
      * @return list of all [Bill] documents mapped to Smithy models and nullable pagination token
      */
-    suspend fun listAll(
-        pageSize: Int,
-        nextToken: String?,
-    ): Pair<List<Bill>, String?> =
+    suspend fun listAll(pageSize: Int, nextToken: String?): Pair<List<Bill>, String?> =
         paginate(collection, pageSize, nextToken) { it.id }
             .let { (docs, token) -> docs.map { it.toApi() } to token }
 
@@ -94,20 +88,14 @@ class BillCollection(private val dataStoreDatabase: MongoDatabase) {
      * @param userId actor behind update
      * @return updated [Bill] document, `null` if update did not go through
      */
-    suspend fun update(
-        input: UpdateBillInput,
-        userId: String,
-    ): Bill? {
+    suspend fun update(input: UpdateBillInput, userId: String): Bill? {
         val filter = eq("_id", ObjectId(input.id))
         val updates = buildUpdates(input, userId)
         val options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         return collection.findOneAndUpdate(filter, combine(updates), options)?.toApi()
     }
 
-    private fun buildUpdates(
-        input: UpdateBillInput,
-        userId: String,
-    ): List<Bson> {
+    private fun buildUpdates(input: UpdateBillInput, userId: String): List<Bson> {
         val updates = mutableListOf<Bson>()
 
         input.name?.let { updates.add(set("name", it)) }

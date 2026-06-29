@@ -24,18 +24,17 @@ object BillDocumentFixtures {
         createdAt: Instant = DEFAULT_INSTANT,
         updatedBy: String = DEFAULT_USER_ID,
         updatedAt: Instant = DEFAULT_INSTANT,
-    ): BillDocument =
-        BillDocument(
-            id = id,
-            name = name,
-            status = status,
-            hidden = hidden,
-            description = description,
-            balance = balance,
-            receipts = receipts,
-            createdBy = createdBy,
-            createdAt = createdAt,
-            updatedBy = updatedBy,
-            updatedAt = updatedAt,
-        )
+    ): BillDocument = BillDocument(
+        id = id,
+        name = name,
+        status = status,
+        hidden = hidden,
+        description = description,
+        balance = balance,
+        receipts = receipts,
+        createdBy = createdBy,
+        createdAt = createdAt,
+        updatedBy = updatedBy,
+        updatedAt = updatedAt,
+    )
 }

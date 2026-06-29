@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/profiles")
 class ListProfiles(private val profileService: ProfileService) {
     @GetMapping
-    suspend fun listProfiles(
-        @RequestParam maxResults: Int?,
-        @RequestParam nextToken: String?,
-    ): ListProfilesOutput {
+    suspend fun listProfiles(@RequestParam maxResults: Int?, @RequestParam nextToken: String?): ListProfilesOutput {
         val pageSize = (maxResults ?: DEFAULT_PROFILE_PAGE_SIZE).coerceIn(1, MAX_PROFILE_PAGE_SIZE)
         val input = ListProfilesInput.builder()
             .maxResults(pageSize)

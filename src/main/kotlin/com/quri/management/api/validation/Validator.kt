@@ -10,20 +10,14 @@ import com.quri.client.model.ValidationException
  * for use in error messages.
  */
 fun interface Validator<T> {
-    suspend fun validate(
-        field: String,
-        input: T,
-    )
+    suspend fun validate(field: String, input: T)
 }
 
 /**
  * Fails fast with a [ValidationException] if [condition] is false.
  * The [message] is lazily evaluated.
  */
-fun require(
-    condition: Boolean,
-    message: () -> String,
-) {
+fun require(condition: Boolean, message: () -> String) {
     if (!condition) {
         throw ValidationException.builder()
             .message(message())

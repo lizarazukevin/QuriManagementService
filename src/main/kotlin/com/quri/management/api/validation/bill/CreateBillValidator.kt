@@ -8,10 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class CreateBillValidator(private val billFieldsValidator: BillFieldsValidator) : Validator<CreateBillInput> {
-    override suspend fun validate(
-        field: String,
-        input: CreateBillInput,
-    ) {
+    override suspend fun validate(field: String, input: CreateBillInput) {
         billFieldsValidator.validate(
             field = field,
             name = input.name,

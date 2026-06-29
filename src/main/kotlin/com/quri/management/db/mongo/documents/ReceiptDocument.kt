@@ -39,32 +39,28 @@ data class ReceiptDocument(
     val updatedBy: String,
     val updatedAt: Instant,
 ) {
-    fun toApi(generatedId: String? = null): Receipt =
-        Receipt.builder()
-            .id(generatedId ?: id.toString())
-            .vendorName(vendorName)
-            .items(items)
-            .occurredAt(occurredAt)
-            .paymentMethod(PaymentMethod.from(paymentMethod))
-            .subtotal(subtotal)
-            .tax(tax)
-            .tip(tip)
-            .totalSavings(totalSavings)
-            .fees(fees)
-            .address(address)
-            .photoId(photoId)
-            .urls(urls)
-            .createdBy(createdBy)
-            .createdAt(createdAt)
-            .updatedBy(updatedBy)
-            .updatedAt(updatedAt)
-            .build()
+    fun toApi(generatedId: String? = null): Receipt = Receipt.builder()
+        .id(generatedId ?: id.toString())
+        .vendorName(vendorName)
+        .items(items)
+        .occurredAt(occurredAt)
+        .paymentMethod(PaymentMethod.from(paymentMethod))
+        .subtotal(subtotal)
+        .tax(tax)
+        .tip(tip)
+        .totalSavings(totalSavings)
+        .fees(fees)
+        .address(address)
+        .photoId(photoId)
+        .urls(urls)
+        .createdBy(createdBy)
+        .createdAt(createdAt)
+        .updatedBy(updatedBy)
+        .updatedAt(updatedAt)
+        .build()
 
     companion object {
-        fun from(
-            input: CreateReceiptInput,
-            ownerId: String,
-        ): ReceiptDocument {
+        fun from(input: CreateReceiptInput, ownerId: String): ReceiptDocument {
             val now = Instant.now()
             return ReceiptDocument(
                 vendorName = input.vendorName,
@@ -86,11 +82,7 @@ data class ReceiptDocument(
             )
         }
 
-        fun from(
-            input: UpdateReceiptInput,
-            original: ReceiptDocument,
-            userId: String,
-        ): ReceiptDocument {
+        fun from(input: UpdateReceiptInput, original: ReceiptDocument, userId: String): ReceiptDocument {
             val now = Instant.now()
             return ReceiptDocument(
                 id = original.id,

@@ -16,11 +16,7 @@ class DiscountCodec(private val monetaryAmountCodec: MonetaryAmountCodec) : Code
 
     override fun getEncoderClass(): Class<Discount> = Discount::class.java
 
-    override fun encode(
-        writer: BsonWriter,
-        value: Discount,
-        encoderContext: EncoderContext,
-    ) {
+    override fun encode(writer: BsonWriter, value: Discount, encoderContext: EncoderContext) {
         writer.writeStartDocument()
         writer.writeString("category", value.category.value)
         value.value?.let { ma ->
@@ -31,10 +27,7 @@ class DiscountCodec(private val monetaryAmountCodec: MonetaryAmountCodec) : Code
         writer.writeEndDocument()
     }
 
-    override fun decode(
-        reader: BsonReader,
-        decoderContext: DecoderContext,
-    ): Discount {
+    override fun decode(reader: BsonReader, decoderContext: DecoderContext): Discount {
         reader.readStartDocument()
 
         val category = DiscountType.from(reader.readString("category"))

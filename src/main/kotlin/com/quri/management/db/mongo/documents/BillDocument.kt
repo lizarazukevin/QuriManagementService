@@ -28,26 +28,22 @@ data class BillDocument(
     val updatedBy: String,
     val updatedAt: Instant,
 ) {
-    fun toApi(generatedId: String? = null): Bill =
-        Bill.builder()
-            .id(generatedId ?: id.toString())
-            .name(name)
-            .status(BillStatus.from(status))
-            .hidden(hidden)
-            .description(description)
-            .balance(balance)
-            .receipts(receipts?.map(ObjectId::toHexString))
-            .createdBy(createdBy)
-            .createdAt(createdAt)
-            .updatedBy(updatedBy)
-            .updatedAt(updatedAt)
-            .build()
+    fun toApi(generatedId: String? = null): Bill = Bill.builder()
+        .id(generatedId ?: id.toString())
+        .name(name)
+        .status(BillStatus.from(status))
+        .hidden(hidden)
+        .description(description)
+        .balance(balance)
+        .receipts(receipts?.map(ObjectId::toHexString))
+        .createdBy(createdBy)
+        .createdAt(createdAt)
+        .updatedBy(updatedBy)
+        .updatedAt(updatedAt)
+        .build()
 
     companion object {
-        fun from(
-            input: CreateBillInput,
-            ownerId: String,
-        ): BillDocument {
+        fun from(input: CreateBillInput, ownerId: String): BillDocument {
             val now = Instant.now()
             return BillDocument(
                 name = input.name,

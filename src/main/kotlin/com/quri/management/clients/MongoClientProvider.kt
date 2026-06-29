@@ -53,10 +53,9 @@ class MongoClientProvider(private val customCodecRegistry: CodecRegistry) {
      * @param name the environment variable name
      * @throws IllegalStateException if the variable is not set or blank
      */
-    private fun requireEnv(name: String): String =
-        System.getenv(name)?.takeIf { it.isNotBlank() }
-            ?: error(
-                "Required environment variable '$name' is not set. " +
-                    "Check your run configuration or deployment secrets.",
-            )
+    private fun requireEnv(name: String): String = System.getenv(name)?.takeIf { it.isNotBlank() }
+        ?: error(
+            "Required environment variable '$name' is not set. " +
+                "Check your run configuration or deployment secrets.",
+        )
 }

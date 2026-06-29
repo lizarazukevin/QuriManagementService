@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/receipts/{id}")
 class UpdateReceipt(private val receiptService: ReceiptService, private val userIdentity: UserIdentity) {
     @PutMapping
-    suspend fun updateReceipt(
-        @PathVariable id: String,
-        @RequestBody input: UpdateReceiptInput,
-    ): UpdateReceiptOutput {
+    suspend fun updateReceipt(@PathVariable id: String, @RequestBody input: UpdateReceiptInput): UpdateReceiptOutput {
         val input = input.toBuilder()
             .id(id)
             .build()

@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/profiles/{id}")
 class UpdateProfile(private val profileService: ProfileService, private val userIdentity: UserIdentity) {
     @PatchMapping
-    suspend fun updateProfile(
-        @PathVariable id: String,
-        @RequestBody input: UpdateProfileInput,
-    ): UpdateProfileOutput {
+    suspend fun updateProfile(@PathVariable id: String, @RequestBody input: UpdateProfileInput): UpdateProfileOutput {
         val input = input.toBuilder()
             .id(id)
             .build()

@@ -16,11 +16,7 @@ object ProfileFixtures {
     const val DEFAULT_OWNER_ID = "owner-1"
     const val DEFAULT_USER_ID = "user-1"
 
-    fun aUserLocation(
-        city: String = "Arlington",
-        state: String = "VA",
-        country: String = "US",
-    ): UserLocation =
+    fun aUserLocation(city: String = "Arlington", state: String = "VA", country: String = "US"): UserLocation =
         UserLocation.builder()
             .city(city)
             .state(state)
@@ -45,26 +41,25 @@ object ProfileFixtures {
         createdBy: String = DEFAULT_USER_ID,
         updatedAt: Instant = Instant.parse("2024-01-01T00:00:00Z"),
         updatedBy: String = DEFAULT_USER_ID,
-    ): Profile =
-        Profile.builder()
-            .id(id)
-            .username(username)
-            .firstName(firstName)
-            .lastName(lastName)
-            .email(email)
-            .dateOfBirth(dateOfBirth)
-            .middleName(middleName)
-            .phoneNumber(phoneNumber)
-            .bio(bio)
-            .following(following)
-            .followers(followers)
-            .gender(gender)
-            .location(location)
-            .createdAt(createdAt)
-            .createdBy(createdBy)
-            .updatedAt(updatedAt)
-            .updatedBy(updatedBy)
-            .build()
+    ): Profile = Profile.builder()
+        .id(id)
+        .username(username)
+        .firstName(firstName)
+        .lastName(lastName)
+        .email(email)
+        .dateOfBirth(dateOfBirth)
+        .middleName(middleName)
+        .phoneNumber(phoneNumber)
+        .bio(bio)
+        .following(following)
+        .followers(followers)
+        .gender(gender)
+        .location(location)
+        .createdAt(createdAt)
+        .createdBy(createdBy)
+        .updatedAt(updatedAt)
+        .updatedBy(updatedBy)
+        .build()
 
     fun aCreateProfileInput(
         username: String = "testuser",
@@ -72,24 +67,21 @@ object ProfileFixtures {
         lastName: String = "User",
         email: String = "test@quri.com",
         dateOfBirth: Instant = Instant.parse("1995-04-15T00:00:00Z"),
-    ): CreateProfileInput =
-        CreateProfileInput.builder()
-            .username(username)
-            .firstName(firstName)
-            .lastName(lastName)
-            .email(email)
-            .dateOfBirth(dateOfBirth)
-            .build()
+    ): CreateProfileInput = CreateProfileInput.builder()
+        .username(username)
+        .firstName(firstName)
+        .lastName(lastName)
+        .email(email)
+        .dateOfBirth(dateOfBirth)
+        .build()
 
-    fun aGetProfileInput(id: String = DEFAULT_PROFILE_ID): GetProfileInput =
-        GetProfileInput.builder()
-            .id(id)
-            .build()
+    fun aGetProfileInput(id: String = DEFAULT_PROFILE_ID): GetProfileInput = GetProfileInput.builder()
+        .id(id)
+        .build()
 
-    fun aDeleteProfileInput(id: String = DEFAULT_PROFILE_ID): DeleteProfileInput =
-        DeleteProfileInput.builder()
-            .id(id)
-            .build()
+    fun aDeleteProfileInput(id: String = DEFAULT_PROFILE_ID): DeleteProfileInput = DeleteProfileInput.builder()
+        .id(id)
+        .build()
 
     @Suppress("CyclomaticComplexMethod")
     fun anUpdateProfileInput(
@@ -105,19 +97,18 @@ object ProfileFixtures {
         followers: List<String>? = null,
         gender: Gender? = null,
         location: UserLocation? = null,
-    ): UpdateProfileInput =
-        UpdateProfileInput.builder()
-            .id(id)
-            .apply { username?.let { username(it) } }
-            .apply { firstName?.let { firstName(it) } }
-            .apply { lastName?.let { lastName(it) } }
-            .apply { email?.let { email(it) } }
-            .apply { middleName?.let { middleName(it) } }
-            .apply { phoneNumber?.let { phoneNumber(it) } }
-            .apply { bio?.let { bio(it) } }
-            .apply { following?.let { following(it) } }
-            .apply { followers?.let { followers(it) } }
-            .apply { gender?.let { gender(it) } }
-            .apply { location?.let { location(it) } }
-            .build()
+    ): UpdateProfileInput = UpdateProfileInput.builder()
+        .id(id)
+        .apply { username?.let { username(it) } }
+        .apply { firstName?.let { firstName(it) } }
+        .apply { lastName?.let { lastName(it) } }
+        .apply { email?.let { email(it) } }
+        .apply { middleName?.let { middleName(it) } }
+        .apply { phoneNumber?.let { phoneNumber(it) } }
+        .apply { bio?.let { bio(it) } }
+        .apply { following?.let { following(it) } }
+        .apply { followers?.let { followers(it) } }
+        .apply { gender?.let { gender(it) } }
+        .apply { location?.let { location(it) } }
+        .build()
 }

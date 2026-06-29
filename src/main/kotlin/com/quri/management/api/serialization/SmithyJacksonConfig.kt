@@ -51,20 +51,19 @@ class SmithyJacksonConfig {
      * Spring Boot automatically registers any [Module] bean with its [JsonMapper].
      */
     @Bean
-    fun smithyModule(): SimpleModule =
-        SimpleModule().apply {
-            addSerializer(BillStatus::class.java, BillStatusSerializer())
-            addDeserializer(BillStatus::class.java, BillStatusDeserializer())
+    fun smithyModule(): SimpleModule = SimpleModule().apply {
+        addSerializer(BillStatus::class.java, BillStatusSerializer())
+        addDeserializer(BillStatus::class.java, BillStatusDeserializer())
 
-            addSerializer(PaymentMethod::class.java, PaymentMethodSerializer())
-            addDeserializer(PaymentMethod::class.java, PaymentMethodDeserializer())
+        addSerializer(PaymentMethod::class.java, PaymentMethodSerializer())
+        addDeserializer(PaymentMethod::class.java, PaymentMethodDeserializer())
 
-            addSerializer(DiscountType::class.java, DiscountTypeSerializer())
-            addDeserializer(DiscountType::class.java, DiscountTypeDeserializer())
+        addSerializer(DiscountType::class.java, DiscountTypeSerializer())
+        addDeserializer(DiscountType::class.java, DiscountTypeDeserializer())
 
-            addSerializer(Gender::class.java, GenderSerializer())
-            addDeserializer(Gender::class.java, GenderDeserializer())
-        }
+        addSerializer(Gender::class.java, GenderSerializer())
+        addDeserializer(Gender::class.java, GenderDeserializer())
+    }
 
     /**
      * Adds Jackson mixins to the autoconfigured [JsonMapper] so that Smithy
@@ -76,47 +75,46 @@ class SmithyJacksonConfig {
      * how to use the Smithy Builders.
      */
     @Bean
-    fun smithyMixinCustomizer(): JsonMapperBuilderCustomizer =
-        JsonMapperBuilderCustomizer { builder ->
-            builder.addMixIn(CreateBillInput::class.java, CreateBillInputMixin::class.java)
-            builder.addMixIn(CreateBillInput.Builder::class.java, CreateBillInputBuilderMixin::class.java)
+    fun smithyMixinCustomizer(): JsonMapperBuilderCustomizer = JsonMapperBuilderCustomizer { builder ->
+        builder.addMixIn(CreateBillInput::class.java, CreateBillInputMixin::class.java)
+        builder.addMixIn(CreateBillInput.Builder::class.java, CreateBillInputBuilderMixin::class.java)
 
-            builder.addMixIn(CreateProfileInput::class.java, CreateProfileInputMixin::class.java)
-            builder.addMixIn(CreateProfileInput.Builder::class.java, CreateProfileInputBuilderMixin::class.java)
+        builder.addMixIn(CreateProfileInput::class.java, CreateProfileInputMixin::class.java)
+        builder.addMixIn(CreateProfileInput.Builder::class.java, CreateProfileInputBuilderMixin::class.java)
 
-            builder.addMixIn(CreateReceiptInput::class.java, CreateReceiptInputMixin::class.java)
-            builder.addMixIn(CreateReceiptInput.Builder::class.java, CreateReceiptInputBuilderMixin::class.java)
+        builder.addMixIn(CreateReceiptInput::class.java, CreateReceiptInputMixin::class.java)
+        builder.addMixIn(CreateReceiptInput.Builder::class.java, CreateReceiptInputBuilderMixin::class.java)
 
-            builder.addMixIn(UpdateBillInput::class.java, UpdateBillInputMixin::class.java)
-            builder.addMixIn(UpdateBillInput.Builder::class.java, UpdateBillInputBuilderMixin::class.java)
+        builder.addMixIn(UpdateBillInput::class.java, UpdateBillInputMixin::class.java)
+        builder.addMixIn(UpdateBillInput.Builder::class.java, UpdateBillInputBuilderMixin::class.java)
 
-            builder.addMixIn(UpdateProfileInput::class.java, UpdateProfileInputMixin::class.java)
-            builder.addMixIn(UpdateProfileInput.Builder::class.java, UpdateProfileInputBuilderMixin::class.java)
+        builder.addMixIn(UpdateProfileInput::class.java, UpdateProfileInputMixin::class.java)
+        builder.addMixIn(UpdateProfileInput.Builder::class.java, UpdateProfileInputBuilderMixin::class.java)
 
-            builder.addMixIn(UpdateReceiptInput::class.java, UpdateReceiptInputMixin::class.java)
-            builder.addMixIn(UpdateReceiptInput.Builder::class.java, UpdateReceiptInputBuilderMixin::class.java)
+        builder.addMixIn(UpdateReceiptInput::class.java, UpdateReceiptInputMixin::class.java)
+        builder.addMixIn(UpdateReceiptInput.Builder::class.java, UpdateReceiptInputBuilderMixin::class.java)
 
-            builder.addMixIn(Address::class.java, AddressMixin::class.java)
-            builder.addMixIn(Address.Builder::class.java, AddressBuilderMixin::class.java)
+        builder.addMixIn(Address::class.java, AddressMixin::class.java)
+        builder.addMixIn(Address.Builder::class.java, AddressBuilderMixin::class.java)
 
-            builder.addMixIn(Discount::class.java, DiscountMixin::class.java)
-            builder.addMixIn(Discount.Builder::class.java, DiscountBuilderMixin::class.java)
+        builder.addMixIn(Discount::class.java, DiscountMixin::class.java)
+        builder.addMixIn(Discount.Builder::class.java, DiscountBuilderMixin::class.java)
 
-            builder.addMixIn(Fee::class.java, FeeMixin::class.java)
-            builder.addMixIn(Fee.Builder::class.java, FeeBuilderMixin::class.java)
+        builder.addMixIn(Fee::class.java, FeeMixin::class.java)
+        builder.addMixIn(Fee.Builder::class.java, FeeBuilderMixin::class.java)
 
-            builder.addMixIn(Item::class.java, ItemMixin::class.java)
-            builder.addMixIn(Item.Builder::class.java, ItemBuilderMixin::class.java)
+        builder.addMixIn(Item::class.java, ItemMixin::class.java)
+        builder.addMixIn(Item.Builder::class.java, ItemBuilderMixin::class.java)
 
-            builder.addMixIn(Liable::class.java, LiableMixin::class.java)
-            builder.addMixIn(Liable.Builder::class.java, LiableBuilderMixin::class.java)
+        builder.addMixIn(Liable::class.java, LiableMixin::class.java)
+        builder.addMixIn(Liable.Builder::class.java, LiableBuilderMixin::class.java)
 
-            builder.addMixIn(MonetaryAmount::class.java, MonetaryAmountMixin::class.java)
-            builder.addMixIn(MonetaryAmount.Builder::class.java, MonetaryAmountBuilderMixin::class.java)
+        builder.addMixIn(MonetaryAmount::class.java, MonetaryAmountMixin::class.java)
+        builder.addMixIn(MonetaryAmount.Builder::class.java, MonetaryAmountBuilderMixin::class.java)
 
-            builder.addMixIn(UserLocation::class.java, ProfileLocationMixin::class.java)
-            builder.addMixIn(UserLocation.Builder::class.java, ProfileLocationBuilderMixin::class.java)
-        }
+        builder.addMixIn(UserLocation::class.java, ProfileLocationMixin::class.java)
+        builder.addMixIn(UserLocation.Builder::class.java, ProfileLocationBuilderMixin::class.java)
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -127,11 +125,7 @@ class SmithyJacksonConfig {
  * Serializes a [BillStatus] enum as its Smithy string value (e.g. "DRAFT").
  */
 class BillStatusSerializer : StdSerializer<BillStatus>(BillStatus::class.java) {
-    override fun serialize(
-        value: BillStatus,
-        gen: JsonGenerator,
-        ctxt: SerializationContext,
-    ) {
+    override fun serialize(value: BillStatus, gen: JsonGenerator, ctxt: SerializationContext) {
         gen.writeString(value.value)
     }
 }
@@ -140,10 +134,7 @@ class BillStatusSerializer : StdSerializer<BillStatus>(BillStatus::class.java) {
  * Deserializes a [BillStatus] enum from its Smithy string value.
  */
 class BillStatusDeserializer : StdDeserializer<BillStatus>(BillStatus::class.java) {
-    override fun deserialize(
-        p: JsonParser,
-        ctxt: DeserializationContext,
-    ): BillStatus {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): BillStatus {
         val raw = p.valueAsString
         return try {
             BillStatus.from(p.valueAsString)
@@ -160,11 +151,7 @@ class BillStatusDeserializer : StdDeserializer<BillStatus>(BillStatus::class.jav
  * Serializes a [PaymentMethod] enum as its Smithy string value (e.g. "DEBIT").
  */
 class PaymentMethodSerializer : StdSerializer<PaymentMethod>(PaymentMethod::class.java) {
-    override fun serialize(
-        value: PaymentMethod,
-        gen: JsonGenerator,
-        ctxt: SerializationContext,
-    ) {
+    override fun serialize(value: PaymentMethod, gen: JsonGenerator, ctxt: SerializationContext) {
         gen.writeString(value.value)
     }
 }
@@ -173,10 +160,7 @@ class PaymentMethodSerializer : StdSerializer<PaymentMethod>(PaymentMethod::clas
  * Deserializes a [PaymentMethod] enum from its Smithy string value.
  */
 class PaymentMethodDeserializer : StdDeserializer<PaymentMethod>(PaymentMethod::class.java) {
-    override fun deserialize(
-        p: JsonParser,
-        ctxt: DeserializationContext,
-    ): PaymentMethod {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PaymentMethod {
         val raw = p.valueAsString
         return try {
             PaymentMethod.from(p.valueAsString)
@@ -193,11 +177,7 @@ class PaymentMethodDeserializer : StdDeserializer<PaymentMethod>(PaymentMethod::
  * Serializes a [DiscountType] enum as its Smithy string value (e.g. "COUPON").
  */
 class DiscountTypeSerializer : StdSerializer<DiscountType>(DiscountType::class.java) {
-    override fun serialize(
-        value: DiscountType,
-        gen: JsonGenerator,
-        ctxt: SerializationContext,
-    ) {
+    override fun serialize(value: DiscountType, gen: JsonGenerator, ctxt: SerializationContext) {
         gen.writeString(value.value)
     }
 }
@@ -206,10 +186,7 @@ class DiscountTypeSerializer : StdSerializer<DiscountType>(DiscountType::class.j
  * Deserializes a [DiscountType] enum from its Smithy string value.
  */
 class DiscountTypeDeserializer : StdDeserializer<DiscountType>(DiscountType::class.java) {
-    override fun deserialize(
-        p: JsonParser,
-        ctxt: DeserializationContext,
-    ): DiscountType {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): DiscountType {
         val raw = p.valueAsString
         return try {
             DiscountType.from(p.valueAsString)
@@ -226,11 +203,7 @@ class DiscountTypeDeserializer : StdDeserializer<DiscountType>(DiscountType::cla
  * Serializes a [Gender] enum as its Smithy string value (e.g. "MALE", "FEMALE").
  */
 class GenderSerializer : StdSerializer<Gender>(Gender::class.java) {
-    override fun serialize(
-        value: Gender,
-        gen: JsonGenerator,
-        ctxt: SerializationContext,
-    ) {
+    override fun serialize(value: Gender, gen: JsonGenerator, ctxt: SerializationContext) {
         gen.writeString(value.value)
     }
 }
@@ -239,10 +212,7 @@ class GenderSerializer : StdSerializer<Gender>(Gender::class.java) {
  * Deserializes a [Gender] enum from its Smithy string value.
  */
 class GenderDeserializer : StdDeserializer<Gender>(Gender::class.java) {
-    override fun deserialize(
-        p: JsonParser,
-        ctxt: DeserializationContext,
-    ): Gender = Gender.from(p.valueAsString)
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Gender = Gender.from(p.valueAsString)
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

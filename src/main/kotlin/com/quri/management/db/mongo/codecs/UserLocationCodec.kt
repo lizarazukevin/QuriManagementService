@@ -11,11 +11,7 @@ class UserLocationCodec : Codec<UserLocation> {
 
     override fun getEncoderClass(): Class<UserLocation> = UserLocation::class.java
 
-    override fun encode(
-        writer: BsonWriter,
-        value: UserLocation,
-        encoderContext: EncoderContext,
-    ) {
+    override fun encode(writer: BsonWriter, value: UserLocation, encoderContext: EncoderContext) {
         writer.writeStartDocument()
         writer.writeString("city", value.city)
         writer.writeString("state", value.state)
@@ -23,10 +19,7 @@ class UserLocationCodec : Codec<UserLocation> {
         writer.writeEndDocument()
     }
 
-    override fun decode(
-        reader: BsonReader,
-        decoderContext: DecoderContext,
-    ): UserLocation {
+    override fun decode(reader: BsonReader, decoderContext: DecoderContext): UserLocation {
         reader.readStartDocument()
 
         val city = reader.readString("city")
