@@ -11,7 +11,7 @@
 [versions]
 
 # ── Build Plugins ─────────────────────────────────────────────────────────────
-spring-boot            = "4.0.5"
+spring-boot            = "4.1.0"
 spring-dependency      = "1.1.7"
 kotlin                 = "2.4.0"
 detekt                 = "2.0.0-alpha.5"
@@ -24,24 +24,24 @@ quri-models            = "0.1.0"
 # java-server-codegen remains at 0.0.3 (developer preview — not used at runtime).
 # waiting on kotlin server codgen: https://github.com/smithy-lang/smithy-kotlin/issues/1011
 # Track: https://github.com/smithy-lang/smithy-java/releases
-smithy-java            = "1.1.0"
+smithy-java            = "1.4.0"
 
 # ── Database ──────────────────────────────────────────────────────────────────
-mongodb                = "5.6.4"
+mongodb                = "5.8.0"
 
 # ── Observability ─────────────────────────────────────────────────────────────
 logstash-logback       = "9.0"
 
 # ── Kotlin Ecosystem ──────────────────────────────────────────────────────────
 # reactor integration required for suspend functions in WebFlux controllers.
-kotlinx-coroutines     = "1.10.2"
+kotlinx-coroutines     = "1.11.0"
 
 # ── Testing Ecosystem ─────────────────────────────────────────────────────────
-kotest                 = "6.1.11"
+kotest                 = "6.2.1"
 kover                  = "0.9.8"
-mockk                  = "1.14.9"
+mockk                  = "1.14.11"
 springmockk            = "5.0.1"
-testcontainers         = "1.20.4"
+testcontainers         = "1.21.4"
 
 # ─────────────────────────────────────────────────────────────────────────────
 
