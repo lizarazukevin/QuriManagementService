@@ -24,11 +24,7 @@ fun <T : Any> T?.validateRequired(field: String): T {
  * Validates string length is within [min]..[max]. Passes through the
  * validated string so it can be chained.
  */
-fun String?.validateLength(
-    field: String,
-    min: Int = 0,
-    max: Int,
-): String {
+fun String?.validateLength(field: String, min: Int = 0, max: Int): String {
     val value = validateRequired(field)
     require(value.length in min..max) { "$field must be $min-$max characters" }
     return value
@@ -38,11 +34,7 @@ fun String?.validateLength(
  * Validates a string matches the given [pattern]. The [hint] should
  * describe the expected format (e.g., "must be a valid ISO 4217 code").
  */
-fun String?.validatePattern(
-    field: String,
-    pattern: Regex,
-    hint: String,
-): String? {
+fun String?.validatePattern(field: String, pattern: Regex, hint: String): String? {
     val value = validateRequired(field)
     require(value.matches(pattern)) { "$field $hint" }
     return this
@@ -60,11 +52,7 @@ fun BigDecimal?.validateRate(field: String): BigDecimal? {
 /**
  * Validates an integer is within [min]..[max].
  */
-fun Int?.validateInteger(
-    field: String,
-    min: Int = 0,
-    max: Int,
-): Int? {
+fun Int?.validateInteger(field: String, min: Int = 0, max: Int): Int? {
     val value = validateRequired(field)
     require(value in min..max) { "$field must be between $min and $max" }
     return this

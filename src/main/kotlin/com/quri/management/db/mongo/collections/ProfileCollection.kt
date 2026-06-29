@@ -50,10 +50,7 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
      * @return the persisted [Profile] with [Profile.id] populated, or `null` if
      * the insert did not return a generated ID
      */
-    suspend fun create(
-        input: CreateProfileInput,
-        ownerId: String,
-    ): Profile? {
+    suspend fun create(input: CreateProfileInput, ownerId: String): Profile? {
         val doc = ProfileDocument.from(input, ownerId)
         collection.insertOne(doc)
         return doc.toApi(doc.id.toHexString())
@@ -67,10 +64,7 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
      *
      * @return pair of all [Profile] documents mapped to Smithy models and nullable pagination token
      */
-    suspend fun listAll(
-        pageSize: Int,
-        nextToken: String?,
-    ): Pair<List<Profile>, String?> =
+    suspend fun listAll(pageSize: Int, nextToken: String?): Pair<List<Profile>, String?> =
         paginate(collection, pageSize, nextToken) { it.id }
             .let { (docs, token) -> docs.map { it.toApi() } to token }
 
@@ -105,20 +99,14 @@ class ProfileCollection(dataStoreDatabase: MongoDatabase) {
      * @param userId actor behind update
      * @return updated [Profile] document, `null` if update was not successful.
      */
-    suspend fun update(
-        input: UpdateProfileInput,
-        userId: String,
-    ): Profile? {
+    suspend fun update(input: UpdateProfileInput, userId: String): Profile? {
         val filter = eq("_id", ObjectId(input.id))
         val updates = buildUpdates(input, userId)
         val options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
         return collection.findOneAndUpdate(filter, combine(updates), options)?.toApi()
     }
 
-    private fun buildUpdates(
-        input: UpdateProfileInput,
-        userId: String,
-    ): List<Bson> {
+    private fun buildUpdates(input: UpdateProfileInput, userId: String): List<Bson> {
         val updates = mutableListOf<Bson>()
 
         input.username?.let { updates.add(set("username", it)) }

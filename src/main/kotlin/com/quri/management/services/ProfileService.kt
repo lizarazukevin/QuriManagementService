@@ -31,11 +31,10 @@ class ProfileService(
      * @return the matching [Profile]
      * @throws ResourceNotFoundException if no profile exists with the ID provided
      */
-    suspend fun getProfileFromId(input: GetProfileInput): Profile =
-        profileCollection.findById(ObjectId(input.id))
-            ?: throw ResourceNotFoundException.builder()
-                .message("Profile with ID `${input.id}` not found")
-                .build()
+    suspend fun getProfileFromId(input: GetProfileInput): Profile = profileCollection.findById(ObjectId(input.id))
+        ?: throw ResourceNotFoundException.builder()
+            .message("Profile with ID `${input.id}` not found")
+            .build()
 
     /**
      * Creates a new profile.
@@ -45,10 +44,7 @@ class ProfileService(
      * @return the persisted [Profile] with its db-generated ID
      * @throws InternalFailureException if the insert did not return a generated ID
      */
-    suspend fun createProfile(
-        input: CreateProfileInput,
-        ownerId: String,
-    ): Profile {
+    suspend fun createProfile(input: CreateProfileInput, ownerId: String): Profile {
         createProfileValidator.validate("createProfile", input)
 
         require(profileCollection.existsByEmail(input.email) == null) {
@@ -68,10 +64,8 @@ class ProfileService(
      * @param nextToken is the bookmarked ID the next paginated list starts from
      * @return list of all [Profile] records and nullable pagination token
      */
-    suspend fun listProfiles(
-        pageSize: Int,
-        nextToken: String?,
-    ): Pair<List<Profile>, String?> = profileCollection.listAll(pageSize, nextToken)
+    suspend fun listProfiles(pageSize: Int, nextToken: String?): Pair<List<Profile>, String?> =
+        profileCollection.listAll(pageSize, nextToken)
 
     /**
      * Deletes a profile by its ID.
@@ -80,11 +74,10 @@ class ProfileService(
      * @return the deleted profile ID as a [String]
      * @throws ResourceNotFoundException if no profile exists with the ID provided
      */
-    suspend fun deleteProfile(input: DeleteProfileInput): ObjectId =
-        profileCollection.deleteById(ObjectId(input.id))
-            ?: throw ResourceNotFoundException.builder()
-                .message("Profile with ID `${input.id}` not found")
-                .build()
+    suspend fun deleteProfile(input: DeleteProfileInput): ObjectId = profileCollection.deleteById(ObjectId(input.id))
+        ?: throw ResourceNotFoundException.builder()
+            .message("Profile with ID `${input.id}` not found")
+            .build()
 
     /**
      * Updates a profile with user changes.
@@ -94,10 +87,7 @@ class ProfileService(
      * @return [Profile] after update
      * @throws ResourceNotFoundException if no profile exists with the ID provided
      */
-    suspend fun updateProfile(
-        input: UpdateProfileInput,
-        userId: String,
-    ): Profile {
+    suspend fun updateProfile(input: UpdateProfileInput, userId: String): Profile {
         updateProfileValidator.validate("updateProfile", input)
         return profileCollection.update(input, userId)
             ?: throw ResourceNotFoundException.builder()

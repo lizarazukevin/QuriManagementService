@@ -12,28 +12,25 @@ import org.springframework.stereotype.Component
 @Component
 class ClerkUserIdentity : UserIdentity {
 
-    override suspend fun userId(): String =
-        authentication().token.subject
-            ?: error("Could not resolve userId")
+    override suspend fun userId(): String = authentication().token.subject
+        ?: error("Could not resolve userId")
 
-    override suspend fun role(): String =
-        authentication().authorities
-            .mapNotNull { it.authority }
-            .firstOrNull { it.startsWith(ClerkAuthoritiesConverter.ROLE_PREFIX) }
-            ?.removePrefix(ClerkAuthoritiesConverter.ROLE_PREFIX)
-            ?.lowercase()
-            ?: ClerkAuthoritiesConverter.DEFAULT_ROLE
+    override suspend fun role(): String = authentication().authorities
+        .mapNotNull { it.authority }
+        .firstOrNull { it.startsWith(ClerkAuthoritiesConverter.ROLE_PREFIX) }
+        ?.removePrefix(ClerkAuthoritiesConverter.ROLE_PREFIX)
+        ?.lowercase()
+        ?: ClerkAuthoritiesConverter.DEFAULT_ROLE
 
     /**
      * Retrieves JWT authentication token from the reactive security context.
      * Populated after verifying the JWT signature, it throws if called outside
      * an authenticated request.
      */
-    private suspend fun authentication(): JwtAuthenticationToken =
-        ReactiveSecurityContextHolder.getContext()
-            .map {
-                it.authentication as? JwtAuthenticationToken
-                    ?: error("No authenticated JWT in SecurityContext")
-            }
-            .awaitSingle()
+    private suspend fun authentication(): JwtAuthenticationToken = ReactiveSecurityContextHolder.getContext()
+        .map {
+            it.authentication as? JwtAuthenticationToken
+                ?: error("No authenticated JWT in SecurityContext")
+        }
+        .awaitSingle()
 }

@@ -31,9 +31,8 @@ class ClerkAuthoritiesConverter : Converter<Jwt, Collection<GrantedAuthority>> {
         return listOf(SimpleGrantedAuthority("${ROLE_PREFIX}${role.uppercase()}"))
     }
 
-    private fun Jwt.extractRole(): String? =
-        (claims[METADATA_CLAIM] as? Map<*, *>)
-            ?.get(ROLE_CLAIM) as? String
+    private fun Jwt.extractRole(): String? = (claims[METADATA_CLAIM] as? Map<*, *>)
+        ?.get(ROLE_CLAIM) as? String
 
     companion object {
         const val METADATA_CLAIM = "metadata"

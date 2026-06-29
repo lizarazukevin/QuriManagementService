@@ -64,13 +64,9 @@ class GlobalExceptionHandler {
         return error(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred")
     }
 
-    private fun error(
-        status: HttpStatus,
-        message: String,
-    ): ResponseEntity<ErrorResponse> =
-        ResponseEntity
-            .status(status)
-            .body(ErrorResponse(status.value(), message))
+    private fun error(status: HttpStatus, message: String): ResponseEntity<ErrorResponse> = ResponseEntity
+        .status(status)
+        .body(ErrorResponse(status.value(), message))
 
     private fun findValidationMessage(cause: Throwable?): String? {
         var current = cause

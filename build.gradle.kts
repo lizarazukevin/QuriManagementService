@@ -19,10 +19,7 @@ kotlin {
 	jvmToolchain(21)
 	compilerOptions {
 		// Treat platform types (Java nullability) as errors rather than warnings.
-		// param-property enables annotation targets on constructor parameters.
-		freeCompilerArgs.addAll(
-			"-Xjsr305=strict",
-			"-Xannotation-default-target=param-property")
+		freeCompilerArgs.addAll("-Xjsr305=strict")
 	}
 }
 

@@ -29,11 +29,10 @@ class BillService(
      * @return the matching [Bill]
      * @throws ResourceNotFoundException if no bill exists with the ID provided
      */
-    suspend fun getBillFromId(input: GetBillInput): Bill =
-        billCollection.findById(ObjectId(input.id))
-            ?: throw ResourceNotFoundException.builder()
-                .message("Bill with ID `${input.id}` not found")
-                .build()
+    suspend fun getBillFromId(input: GetBillInput): Bill = billCollection.findById(ObjectId(input.id))
+        ?: throw ResourceNotFoundException.builder()
+            .message("Bill with ID `${input.id}` not found")
+            .build()
 
     /**
      * Creates a new bill.
@@ -43,10 +42,7 @@ class BillService(
      * @return the persisted [Bill] with db-generated ID
      * @throws InternalFailureException if the insert did not return a generated ID
      */
-    suspend fun createBill(
-        input: CreateBillInput,
-        ownerId: String,
-    ): Bill {
+    suspend fun createBill(input: CreateBillInput, ownerId: String): Bill {
         createBillValidator.validate("createBill", input)
         return billCollection.create(input, ownerId)
             ?: throw InternalFailureException.builder()
@@ -61,10 +57,8 @@ class BillService(
      * @param nextToken is the bookmarked ID the next paginated list starts from
      * @return list of all [Bill] records and nullable pagination token
      */
-    suspend fun listBills(
-        pageSize: Int,
-        nextToken: String?,
-    ): Pair<List<Bill>, String?> = billCollection.listAll(pageSize, nextToken)
+    suspend fun listBills(pageSize: Int, nextToken: String?): Pair<List<Bill>, String?> =
+        billCollection.listAll(pageSize, nextToken)
 
     /**
      * Deletes a bill by its ID.
@@ -73,11 +67,10 @@ class BillService(
      * @return the deleted bill ID
      * @throws ResourceNotFoundException if no bill exists with the ID provided
      */
-    suspend fun deleteBill(input: DeleteBillInput): ObjectId =
-        billCollection.deleteById(ObjectId(input.id))
-            ?: throw ResourceNotFoundException.builder()
-                .message("Bill with ID `${input.id}` not found")
-                .build()
+    suspend fun deleteBill(input: DeleteBillInput): ObjectId = billCollection.deleteById(ObjectId(input.id))
+        ?: throw ResourceNotFoundException.builder()
+            .message("Bill with ID `${input.id}` not found")
+            .build()
 
     /**
      * Updates a bill with user changes.
@@ -87,10 +80,7 @@ class BillService(
      * @return [Bill] after update
      * @throws ResourceNotFoundException if no bill exists with the ID provided
      */
-    suspend fun updateBill(
-        input: UpdateBillInput,
-        userId: String,
-    ): Bill {
+    suspend fun updateBill(input: UpdateBillInput, userId: String): Bill {
         updateBillValidator.validate("updateBill", input)
         return billCollection.update(input, userId)
             ?: throw ResourceNotFoundException.builder()

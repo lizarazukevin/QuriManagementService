@@ -50,10 +50,7 @@ class ReceiptCollection(dataStoreDatabase: MongoDatabase) {
      * @return the persisted [Receipt] with [Receipt.id] populated, or `null` if
      * the insert did not return a generated ID
      */
-    suspend fun create(
-        input: CreateReceiptInput,
-        ownerId: String,
-    ): Receipt? {
+    suspend fun create(input: CreateReceiptInput, ownerId: String): Receipt? {
         val doc = ReceiptDocument.from(input, ownerId)
         collection.insertOne(doc)
         return doc.toApi(doc.id.toHexString())
@@ -67,10 +64,7 @@ class ReceiptCollection(dataStoreDatabase: MongoDatabase) {
      *
      * @return list of all [Receipt] documents mapped to Smithy models and nullable pagination token
      */
-    suspend fun listAll(
-        pageSize: Int,
-        nextToken: String?,
-    ): Pair<List<Receipt>, String?> =
+    suspend fun listAll(pageSize: Int, nextToken: String?): Pair<List<Receipt>, String?> =
         paginate(collection, pageSize, nextToken) { it.id }
             .let { (docs, token) -> docs.map { it.toApi() } to token }
 
@@ -94,10 +88,7 @@ class ReceiptCollection(dataStoreDatabase: MongoDatabase) {
      * @param userId actor behind update
      * @return update [Receipt] document, `null` if update was not successful.
      */
-    suspend fun update(
-        input: UpdateReceiptInput,
-        userId: String,
-    ): Receipt? {
+    suspend fun update(input: UpdateReceiptInput, userId: String): Receipt? {
         val filter = eq("_id", ObjectId(input.id))
         val original = collection.find(filter).firstOrNull() ?: return null
         val replacement = ReceiptDocument.from(input, original, userId)

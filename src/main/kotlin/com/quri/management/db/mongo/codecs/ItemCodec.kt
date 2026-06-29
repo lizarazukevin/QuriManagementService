@@ -18,11 +18,7 @@ class ItemCodec(
 
     override fun getEncoderClass(): Class<Item> = Item::class.java
 
-    override fun encode(
-        writer: BsonWriter,
-        value: Item,
-        encoderContext: EncoderContext,
-    ) {
+    override fun encode(writer: BsonWriter, value: Item, encoderContext: EncoderContext) {
         writer.writeStartDocument()
         writer.writeString("name", value.name)
         writer.writeInt32("units", value.units)
@@ -47,10 +43,7 @@ class ItemCodec(
         writer.writeEndDocument()
     }
 
-    override fun decode(
-        reader: BsonReader,
-        decoderContext: DecoderContext,
-    ): Item {
+    override fun decode(reader: BsonReader, decoderContext: DecoderContext): Item {
         reader.readStartDocument()
 
         val name = reader.readString("name")

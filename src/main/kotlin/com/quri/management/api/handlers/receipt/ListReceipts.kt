@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/receipts")
 class ListReceipts(private val receiptService: ReceiptService) {
     @GetMapping
-    suspend fun listReceipts(
-        @RequestParam maxResults: Int?,
-        @RequestParam nextToken: String?,
-    ): ListReceiptsOutput {
+    suspend fun listReceipts(@RequestParam maxResults: Int?, @RequestParam nextToken: String?): ListReceiptsOutput {
         val pageSize = (maxResults ?: DEFAULT_RECEIPTS_PAGE_SIZE).coerceIn(1, MAX_RECEIPTS_PAGE_SIZE)
         val input = ListReceiptsInput.builder()
             .maxResults(pageSize)

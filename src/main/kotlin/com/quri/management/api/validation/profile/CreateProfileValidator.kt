@@ -7,10 +7,7 @@ import org.springframework.stereotype.Component
 @Component
 class CreateProfileValidator(private val profileFieldsValidator: ProfileFieldsValidator) :
     Validator<CreateProfileInput> {
-    override suspend fun validate(
-        field: String,
-        input: CreateProfileInput,
-    ) {
+    override suspend fun validate(field: String, input: CreateProfileInput) {
         profileFieldsValidator.validate(
             field = field,
             username = input.username,

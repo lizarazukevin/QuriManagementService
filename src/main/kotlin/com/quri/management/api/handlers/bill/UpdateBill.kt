@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/bills/{id}")
 class UpdateBill(private val billService: BillService, private val userIdentity: UserIdentity) {
     @PatchMapping
-    suspend fun updateBill(
-        @PathVariable id: String,
-        @RequestBody input: UpdateBillInput,
-    ): UpdateBillOutput {
+    suspend fun updateBill(@PathVariable id: String, @RequestBody input: UpdateBillInput): UpdateBillOutput {
         val input = input.toBuilder()
             .id(id)
             .build()

@@ -7,10 +7,7 @@ import org.springframework.stereotype.Component
 @Component
 class CreateReceiptValidator(private val receiptFieldsValidator: ReceiptFieldsValidator) :
     Validator<CreateReceiptInput> {
-    override suspend fun validate(
-        field: String,
-        input: CreateReceiptInput,
-    ) {
+    override suspend fun validate(field: String, input: CreateReceiptInput) {
         receiptFieldsValidator.validate(
             field = field,
             vendorName = input.vendorName,

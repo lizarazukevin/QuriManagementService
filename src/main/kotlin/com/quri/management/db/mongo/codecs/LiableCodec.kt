@@ -12,21 +12,14 @@ class LiableCodec : Codec<Liable> {
 
     override fun getEncoderClass(): Class<Liable> = Liable::class.java
 
-    override fun encode(
-        writer: BsonWriter,
-        value: Liable,
-        encoderContext: EncoderContext,
-    ) {
+    override fun encode(writer: BsonWriter, value: Liable, encoderContext: EncoderContext) {
         writer.writeStartDocument()
         writer.writeString("userId", value.userId)
         writer.writeDecimal128("rate", Decimal128(value.rate))
         writer.writeEndDocument()
     }
 
-    override fun decode(
-        reader: BsonReader,
-        context: DecoderContext,
-    ): Liable {
+    override fun decode(reader: BsonReader, context: DecoderContext): Liable {
         reader.readStartDocument()
 
         val userId = reader.readString("userId")

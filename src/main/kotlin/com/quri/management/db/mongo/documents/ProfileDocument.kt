@@ -34,32 +34,28 @@ data class ProfileDocument(
     val updatedBy: String,
     val updatedAt: Instant,
 ) {
-    fun toApi(generatedId: String? = null): Profile =
-        Profile.builder()
-            .id(generatedId ?: id.toString())
-            .username(username)
-            .firstName(firstName)
-            .lastName(lastName)
-            .email(email)
-            .following(following?.map(ObjectId::toHexString))
-            .followers(followers?.map(ObjectId::toHexString))
-            .middleName(middleName)
-            .phoneNumber(phoneNumber)
-            .bio(bio)
-            .gender(gender?.let { Gender.from(it) })
-            .dateOfBirth(dateOfBirth)
-            .location(location)
-            .createdBy(createdBy)
-            .createdAt(createdAt)
-            .updatedBy(updatedBy)
-            .updatedAt(updatedAt)
-            .build()
+    fun toApi(generatedId: String? = null): Profile = Profile.builder()
+        .id(generatedId ?: id.toString())
+        .username(username)
+        .firstName(firstName)
+        .lastName(lastName)
+        .email(email)
+        .following(following?.map(ObjectId::toHexString))
+        .followers(followers?.map(ObjectId::toHexString))
+        .middleName(middleName)
+        .phoneNumber(phoneNumber)
+        .bio(bio)
+        .gender(gender?.let { Gender.from(it) })
+        .dateOfBirth(dateOfBirth)
+        .location(location)
+        .createdBy(createdBy)
+        .createdAt(createdAt)
+        .updatedBy(updatedBy)
+        .updatedAt(updatedAt)
+        .build()
 
     companion object {
-        fun from(
-            input: CreateProfileInput,
-            ownerId: String,
-        ): ProfileDocument {
+        fun from(input: CreateProfileInput, ownerId: String): ProfileDocument {
             val now = Instant.now()
             return ProfileDocument(
                 username = input.username,

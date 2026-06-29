@@ -29,11 +29,10 @@ class ReceiptService(
      * @return the matching [Receipt]
      * @throws ResourceNotFoundException if no receipt exists with the ID provided
      */
-    suspend fun getReceiptFromId(input: GetReceiptInput): Receipt =
-        receiptCollection.findById(ObjectId(input.id))
-            ?: throw ResourceNotFoundException.builder()
-                .message("Receipt with ID `${input.id}` not found")
-                .build()
+    suspend fun getReceiptFromId(input: GetReceiptInput): Receipt = receiptCollection.findById(ObjectId(input.id))
+        ?: throw ResourceNotFoundException.builder()
+            .message("Receipt with ID `${input.id}` not found")
+            .build()
 
     /**
      * Creates a new receipt.
@@ -42,10 +41,7 @@ class ReceiptService(
      * @return the persisted [Receipt] with db-generated ID
      * @throws InternalFailureException if the insert did not return a generated ID
      */
-    suspend fun createReceipt(
-        input: CreateReceiptInput,
-        ownerId: String,
-    ): Receipt {
+    suspend fun createReceipt(input: CreateReceiptInput, ownerId: String): Receipt {
         createReceiptValidator.validate("createReceipt", input)
         return receiptCollection.create(input, ownerId)
             ?: throw InternalFailureException.builder()
@@ -60,10 +56,8 @@ class ReceiptService(
      * @param nextToken is the bookmarked ID the next paginated list starts from
      * @return list of all [Receipt] records and nullable pagination token
      */
-    suspend fun listReceipts(
-        pageSize: Int,
-        nextToken: String?,
-    ): Pair<List<Receipt>, String?> = receiptCollection.listAll(pageSize, nextToken)
+    suspend fun listReceipts(pageSize: Int, nextToken: String?): Pair<List<Receipt>, String?> =
+        receiptCollection.listAll(pageSize, nextToken)
 
     /**
      * Deletes a receipt by it's ID.
@@ -72,11 +66,10 @@ class ReceiptService(
      * @return the deleted receipt ID
      * @throws ResourceNotFoundException if no receipt exists with the ID provided
      */
-    suspend fun deleteReceipt(input: DeleteReceiptInput): ObjectId =
-        receiptCollection.deleteById(ObjectId(input.id))
-            ?: throw ResourceNotFoundException.builder()
-                .message("Receipt with ID `${input.id}` not found")
-                .build()
+    suspend fun deleteReceipt(input: DeleteReceiptInput): ObjectId = receiptCollection.deleteById(ObjectId(input.id))
+        ?: throw ResourceNotFoundException.builder()
+            .message("Receipt with ID `${input.id}` not found")
+            .build()
 
     /**
      * Updates a receipt with user changes.
@@ -86,10 +79,7 @@ class ReceiptService(
      * @return [Receipt] after update
      * @throws ResourceNotFoundException if no receipt exists with the ID provided
      */
-    suspend fun updateReceipt(
-        input: UpdateReceiptInput,
-        userId: String,
-    ): Receipt {
+    suspend fun updateReceipt(input: UpdateReceiptInput, userId: String): Receipt {
         updateReceiptValidator.validate("updateReceipt", input)
         return receiptCollection.update(input, userId)
             ?: throw ResourceNotFoundException.builder()

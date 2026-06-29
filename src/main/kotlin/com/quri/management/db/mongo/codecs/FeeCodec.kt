@@ -15,11 +15,7 @@ class FeeCodec(private val monetaryAmountCodec: MonetaryAmountCodec) : Codec<Fee
 
     override fun getEncoderClass(): Class<Fee> = Fee::class.java
 
-    override fun encode(
-        writer: BsonWriter,
-        value: Fee,
-        encoderContext: EncoderContext,
-    ) {
+    override fun encode(writer: BsonWriter, value: Fee, encoderContext: EncoderContext) {
         writer.writeStartDocument()
         writer.writeString("name", value.name)
         value.value?.let { ma ->
@@ -30,10 +26,7 @@ class FeeCodec(private val monetaryAmountCodec: MonetaryAmountCodec) : Codec<Fee
         writer.writeEndDocument()
     }
 
-    override fun decode(
-        reader: BsonReader,
-        decoderContext: DecoderContext,
-    ): Fee {
+    override fun decode(reader: BsonReader, decoderContext: DecoderContext): Fee {
         reader.readStartDocument()
 
         val name = reader.readString("name")

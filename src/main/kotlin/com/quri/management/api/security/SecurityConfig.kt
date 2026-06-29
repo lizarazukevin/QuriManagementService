@@ -56,23 +56,21 @@ class SecurityConfig(
      * Adapted to Reactor via [ReactiveJwtAuthenticationConverterAdapter].
      */
     @Bean
-    fun jwtAuthenticationConverter(): ReactiveJwtAuthenticationConverterAdapter =
-        JwtAuthenticationConverter()
-            .apply { setJwtGrantedAuthoritiesConverter(clerkAuthoritiesConverter) }
-            .let { ReactiveJwtAuthenticationConverterAdapter(it) }
+    fun jwtAuthenticationConverter(): ReactiveJwtAuthenticationConverterAdapter = JwtAuthenticationConverter()
+        .apply { setJwtGrantedAuthoritiesConverter(clerkAuthoritiesConverter) }
+        .let { ReactiveJwtAuthenticationConverterAdapter(it) }
 
     @Bean
-    fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain =
-        http
-            .csrf { it.disable() }
-            .authorizeExchange {
-                it.anyExchange().authenticated()
-            }
-            .oauth2ResourceServer { oauth2 ->
-                oauth2.jwt { it.jwtAuthenticationConverter(jwtAuthenticationConverter()) }
-                oauth2.authenticationEntryPoint(UNAUTHORIZED_ENTRY_POINT)
-            }
-            .build()
+    fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain = http
+        .csrf { it.disable() }
+        .authorizeExchange {
+            it.anyExchange().authenticated()
+        }
+        .oauth2ResourceServer { oauth2 ->
+            oauth2.jwt { it.jwtAuthenticationConverter(jwtAuthenticationConverter()) }
+            oauth2.authenticationEntryPoint(UNAUTHORIZED_ENTRY_POINT)
+        }
+        .build()
 
     companion object {
         // Returns 401 JSON instead of redirecting to a login page.

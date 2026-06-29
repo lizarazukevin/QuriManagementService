@@ -12,21 +12,14 @@ class MonetaryAmountCodec : Codec<MonetaryAmount> {
 
     override fun getEncoderClass(): Class<MonetaryAmount> = MonetaryAmount::class.java
 
-    override fun encode(
-        writer: BsonWriter,
-        value: MonetaryAmount,
-        encoderContext: EncoderContext,
-    ) {
+    override fun encode(writer: BsonWriter, value: MonetaryAmount, encoderContext: EncoderContext) {
         writer.writeStartDocument()
         writer.writeDecimal128("amount", Decimal128(value.amount))
         writer.writeString("currency", value.currency)
         writer.writeEndDocument()
     }
 
-    override fun decode(
-        reader: BsonReader,
-        decoderContext: DecoderContext,
-    ): MonetaryAmount {
+    override fun decode(reader: BsonReader, decoderContext: DecoderContext): MonetaryAmount {
         reader.readStartDocument()
 
         val amount = reader.readDecimal128("amount").bigDecimalValue()

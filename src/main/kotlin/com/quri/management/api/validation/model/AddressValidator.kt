@@ -6,10 +6,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class AddressValidator(private val addressFieldsValidator: AddressFieldsValidator) : Validator<Address> {
-    override suspend fun validate(
-        field: String,
-        input: Address,
-    ) {
+    override suspend fun validate(field: String, input: Address) {
         addressFieldsValidator.validate(
             field = field,
             street = input.street,

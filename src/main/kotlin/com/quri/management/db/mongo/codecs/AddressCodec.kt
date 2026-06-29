@@ -12,11 +12,7 @@ class AddressCodec : Codec<Address> {
 
     override fun getEncoderClass(): Class<Address> = Address::class.java
 
-    override fun encode(
-        writer: BsonWriter,
-        value: Address,
-        encoderContext: EncoderContext,
-    ) {
+    override fun encode(writer: BsonWriter, value: Address, encoderContext: EncoderContext) {
         writer.writeStartDocument()
         writer.writeString("street", value.street)
         writer.writeString("city", value.city)
@@ -29,10 +25,7 @@ class AddressCodec : Codec<Address> {
         writer.writeEndDocument()
     }
 
-    override fun decode(
-        reader: BsonReader,
-        decoderContext: DecoderContext,
-    ): Address {
+    override fun decode(reader: BsonReader, decoderContext: DecoderContext): Address {
         reader.readStartDocument()
 
         val street = reader.readString("street")
