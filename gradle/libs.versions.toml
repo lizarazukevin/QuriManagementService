@@ -38,7 +38,7 @@ kotlinx-coroutines     = "1.11.0"
 
 # ── Testing Ecosystem ─────────────────────────────────────────────────────────
 kotest                 = "6.2.2"
-kover                  = "0.9.8"
+kover                  = "0.9.9"
 mockk                  = "1.14.11"
 springmockk            = "5.0.1"
 testcontainers         = "1.21.4"
