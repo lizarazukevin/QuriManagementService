@@ -34,8 +34,6 @@ updates:
 
     ignore:
       - dependency-name: "org.jetbrains.kotlin:*"
-        update-types:
-          - "version-update:minor"
 
     groups:
       gradle-patch-minor:
