@@ -13,7 +13,7 @@
 # ── Build Plugins ─────────────────────────────────────────────────────────────
 spring-boot            = "4.1.0"
 spring-dependency      = "1.1.7"
-kotlin                 = "2.4.0"
+kotlin                 = "2.4.10"
 detekt                 = "2.0.0-alpha.5"
 
 # ── Internal Packages ─────────────────────────────────────────────────────────
@@ -27,7 +27,7 @@ quri-models            = "0.1.0"
 smithy-java            = "1.4.0"
 
 # ── Database ──────────────────────────────────────────────────────────────────
-mongodb                = "5.9.0"
+mongodb                = "5.9.1"
 
 # ── Observability ─────────────────────────────────────────────────────────────
 logstash-logback       = "9.0"
@@ -37,7 +37,7 @@ logstash-logback       = "9.0"
 kotlinx-coroutines     = "1.11.0"
 
 # ── Testing Ecosystem ─────────────────────────────────────────────────────────
-kotest                 = "6.2.2"
+kotest                 = "6.2.3"
 kover                  = "0.9.9"
 mockk                  = "1.14.11"
 springmockk            = "5.0.1"
