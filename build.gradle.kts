@@ -60,6 +60,18 @@ detekt {
 	)
 }
 
+// Pins the Kotlin version used inside detekt's isolated classpath to the
+// version detekt was actually compiled against (2.4.0).
+// Remove this once a detekt release built against 2.4.10 ships.
+// Ref: https://github.com/detekt/detekt/issues/7384
+configurations.matching { it.name == "detekt" }.configureEach {
+	resolutionStrategy.eachDependency {
+		if (requested.group == "org.jetbrains.kotlin") {
+			useVersion("2.4.0")
+		}
+	}
+}
+
 repositories {
 	mavenCentral()
 }
