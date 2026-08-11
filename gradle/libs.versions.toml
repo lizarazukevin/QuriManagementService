@@ -14,7 +14,7 @@
 spring-boot            = "4.1.0"
 spring-dependency      = "1.1.7"
 kotlin                 = "2.4.10"
-detekt                 = "2.0.0-alpha.5"
+detekt                 = "2.0.0-alpha.6"
 
 # ── Internal Packages ─────────────────────────────────────────────────────────
 quri-models            = "0.1.0"
