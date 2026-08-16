@@ -24,10 +24,10 @@ quri-models            = "0.1.0"
 # java-server-codegen remains at 0.0.3 (developer preview — not used at runtime).
 # waiting on kotlin server codgen: https://github.com/smithy-lang/smithy-kotlin/issues/1011
 # Track: https://github.com/smithy-lang/smithy-java/releases
-smithy-java            = "1.4.0"
+smithy-java            = "1.5.1"
 
 # ── Database ──────────────────────────────────────────────────────────────────
-mongodb                = "5.9.1"
+mongodb                = "5.9.2"
 
 # ── Observability ─────────────────────────────────────────────────────────────
 logstash-logback       = "9.0"
@@ -37,7 +37,7 @@ logstash-logback       = "9.0"
 kotlinx-coroutines     = "1.11.0"
 
 # ── Testing Ecosystem ─────────────────────────────────────────────────────────
-kotest                 = "6.2.3"
+kotest                 = "6.2.4"
 kover                  = "0.9.9"
 mockk                  = "1.14.11"
 springmockk            = "5.0.1"
