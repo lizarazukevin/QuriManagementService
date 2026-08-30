@@ -11,7 +11,7 @@
 [versions]
 
 # ── Build Plugins ─────────────────────────────────────────────────────────────
-spring-boot            = "4.1.0"
+spring-boot            = "4.1.1"
 spring-dependency      = "1.1.7"
 kotlin                 = "2.4.10"
 detekt                 = "2.0.0-alpha.6"
@@ -24,7 +24,7 @@ quri-models            = "0.1.0"
 # java-server-codegen remains at 0.0.3 (developer preview — not used at runtime).
 # waiting on kotlin server codgen: https://github.com/smithy-lang/smithy-kotlin/issues/1011
 # Track: https://github.com/smithy-lang/smithy-java/releases
-smithy-java            = "1.5.1"
+smithy-java            = "1.6.0"
 
 # ── Database ──────────────────────────────────────────────────────────────────
 mongodb                = "5.10.0"
