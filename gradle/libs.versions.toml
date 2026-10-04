@@ -27,7 +27,7 @@ quri-models            = "0.1.0"
 smithy-java            = "1.6.1"
 
 # ── Database ──────────────────────────────────────────────────────────────────
-mongodb                = "5.12.0"
+mongodb                = "5.13.0"
 
 # ── Observability ─────────────────────────────────────────────────────────────
 logstash-logback       = "9.0"
@@ -38,7 +38,7 @@ kotlinx-coroutines     = "1.11.0"
 
 # ── Testing Ecosystem ─────────────────────────────────────────────────────────
 kotest                 = "6.2.5"
-kover                  = "0.9.9"
+kover                  = "0.9.11"
 mockk                  = "1.14.11"
 springmockk            = "5.0.1"
 testcontainers         = "1.21.4"
