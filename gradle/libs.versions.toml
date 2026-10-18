@@ -37,7 +37,7 @@ logstash-logback       = "9.0"
 kotlinx-coroutines     = "1.11.0"
 
 # ── Testing Ecosystem ─────────────────────────────────────────────────────────
-kotest                 = "6.2.5"
+kotest                 = "6.2.6"
 kover                  = "0.9.11"
 mockk                  = "1.14.11"
 springmockk            = "5.0.1"
