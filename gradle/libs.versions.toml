@@ -11,7 +11,7 @@
 [versions]
 
 # ── Build Plugins ─────────────────────────────────────────────────────────────
-spring-boot            = "4.1.1"
+spring-boot            = "4.1.2"
 spring-dependency      = "1.1.7"
 kotlin                 = "2.4.21"
 detekt                 = "2.0.0-alpha.6"
@@ -27,7 +27,7 @@ quri-models            = "0.1.0"
 smithy-java            = "1.8.0"
 
 # ── Database ──────────────────────────────────────────────────────────────────
-mongodb                = "5.13.0"
+mongodb                = "5.14.0"
 
 # ── Observability ─────────────────────────────────────────────────────────────
 logstash-logback       = "9.0"
