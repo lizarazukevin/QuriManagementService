@@ -1,3 +1,11 @@
+
+<h1 align="center">
+  <img src="assets/quri_logo.svg" width="128" height="128" alt="Quri Logo">
+  <br>Quri
+</h1>
+
+---
+
 # Quri Management Service
 
 > Backend management service for the best bill splitter application.
